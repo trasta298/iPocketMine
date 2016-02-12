@@ -13,28 +13,28 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\generator\biome;
+namespace ipocket\level\generator\biome;
 
-use pocketmine\block\Block;
-use pocketmine\level\ChunkManager;
-use pocketmine\level\generator\normal\biome\SwampBiome;
-use pocketmine\level\generator\normal\biome\DesertBiome;
-use pocketmine\level\generator\normal\biome\ForestBiome;
-use pocketmine\level\generator\normal\biome\IcePlainsBiome;
-use pocketmine\level\generator\normal\biome\MountainsBiome;
-use pocketmine\level\generator\normal\biome\OceanBiome;
-use pocketmine\level\generator\normal\biome\PlainBiome;
-use pocketmine\level\generator\normal\biome\RiverBiome;
-use pocketmine\level\generator\normal\biome\SmallMountainsBiome;
-use pocketmine\level\generator\normal\biome\TaigaBiome;
-use pocketmine\level\generator\populator\Populator;
-use pocketmine\utils\Random;
+use ipocket\block\Block;
+use ipocket\level\ChunkManager;
+use ipocket\level\generator\normal\biome\SwampBiome;
+use ipocket\level\generator\normal\biome\DesertBiome;
+use ipocket\level\generator\normal\biome\ForestBiome;
+use ipocket\level\generator\normal\biome\IcePlainsBiome;
+use ipocket\level\generator\normal\biome\MountainsBiome;
+use ipocket\level\generator\normal\biome\OceanBiome;
+use ipocket\level\generator\normal\biome\PlainBiome;
+use ipocket\level\generator\normal\biome\RiverBiome;
+use ipocket\level\generator\normal\biome\SmallMountainsBiome;
+use ipocket\level\generator\normal\biome\TaigaBiome;
+use ipocket\level\generator\populator\Populator;
+use ipocket\utils\Random;
 
 abstract class Biome{
 

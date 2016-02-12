@@ -13,16 +13,16 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\entity;
+namespace ipocket\event\entity;
 
-use pocketmine\entity\Item;
-use pocketmine\event\Cancellable;
+use ipocket\entity\Item;
+use ipocket\event\Cancellable;
 
 class ItemDespawnEvent extends EntityEvent implements Cancellable{
 	public static $handlerList = null;

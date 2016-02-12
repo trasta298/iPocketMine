@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
 
-namespace pocketmine\item;
+namespace ipocket\item;
 
-use pocketmine\block\Block;
-use pocketmine\entity\Entity;
-use pocketmine\nbt\tag\Byte;
+use ipocket\block\Block;
+use ipocket\entity\Entity;
+use ipocket\nbt\tag\Byte;
 
 abstract class Tool extends Item{
 	const TIER_WOODEN = 1;

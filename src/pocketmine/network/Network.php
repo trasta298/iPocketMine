@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
@@ -22,64 +22,64 @@
 /**
  * Network-related classes
  */
-namespace pocketmine\network;
+namespace ipocket\network;
 
-use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\network\protocol\AddItemEntityPacket;
-use pocketmine\network\protocol\AddPaintingPacket;
-use pocketmine\network\protocol\AddPlayerPacket;
-use pocketmine\network\protocol\AdventureSettingsPacket;
-use pocketmine\network\protocol\AnimatePacket;
-use pocketmine\network\protocol\BatchPacket;
-use pocketmine\network\protocol\ContainerClosePacket;
-use pocketmine\network\protocol\ContainerOpenPacket;
-use pocketmine\network\protocol\ContainerSetContentPacket;
-use pocketmine\network\protocol\ContainerSetDataPacket;
-use pocketmine\network\protocol\ContainerSetSlotPacket;
-use pocketmine\network\protocol\CraftingDataPacket;
-use pocketmine\network\protocol\CraftingEventPacket;
-use pocketmine\network\protocol\DataPacket;
-use pocketmine\network\protocol\DropItemPacket;
-use pocketmine\network\protocol\FullChunkDataPacket;
-use pocketmine\network\protocol\Info;
-use pocketmine\network\protocol\SetEntityLinkPacket;
-use pocketmine\network\protocol\BlockEntityDataPacket;
-use pocketmine\network\protocol\EntityEventPacket;
-use pocketmine\network\protocol\ExplodePacket;
-use pocketmine\network\protocol\HurtArmorPacket;
-use pocketmine\network\protocol\Info as ProtocolInfo;
-use pocketmine\network\protocol\InteractPacket;
-use pocketmine\network\protocol\LevelEventPacket;
-use pocketmine\network\protocol\DisconnectPacket;
-use pocketmine\network\protocol\LoginPacket;
-use pocketmine\network\protocol\PlayStatusPacket;
-use pocketmine\network\protocol\TextPacket;
-use pocketmine\network\protocol\MoveEntityPacket;
-use pocketmine\network\protocol\MovePlayerPacket;
-use pocketmine\network\protocol\PlayerActionPacket;
-use pocketmine\network\protocol\MobArmorEquipmentPacket;
-use pocketmine\network\protocol\MobEquipmentPacket;
-use pocketmine\network\protocol\RemoveBlockPacket;
-use pocketmine\network\protocol\RemoveEntityPacket;
-use pocketmine\network\protocol\RemovePlayerPacket;
-use pocketmine\network\protocol\RespawnPacket;
-use pocketmine\network\protocol\SetDifficultyPacket;
-use pocketmine\network\protocol\SetEntityDataPacket;
-use pocketmine\network\protocol\SetEntityMotionPacket;
-use pocketmine\network\protocol\SetHealthPacket;
-use pocketmine\network\protocol\SetSpawnPositionPacket;
-use pocketmine\network\protocol\SetTimePacket;
-use pocketmine\network\protocol\StartGamePacket;
-use pocketmine\network\protocol\TakeItemEntityPacket;
-use pocketmine\network\protocol\BlockEventPacket;
-use pocketmine\network\protocol\UpdateBlockPacket;
-use pocketmine\network\protocol\UseItemPacket;
-use pocketmine\network\protocol\SetPlayerGameTypePacket;
-use pocketmine\network\protocol\PlayerListPacket;
-use pocketmine\Player;
-use pocketmine\Server;
-use pocketmine\utils\Binary;
-use pocketmine\utils\MainLogger;
+use ipocket\network\protocol\AddEntityPacket;
+use ipocket\network\protocol\AddItemEntityPacket;
+use ipocket\network\protocol\AddPaintingPacket;
+use ipocket\network\protocol\AddPlayerPacket;
+use ipocket\network\protocol\AdventureSettingsPacket;
+use ipocket\network\protocol\AnimatePacket;
+use ipocket\network\protocol\BatchPacket;
+use ipocket\network\protocol\ContainerClosePacket;
+use ipocket\network\protocol\ContainerOpenPacket;
+use ipocket\network\protocol\ContainerSetContentPacket;
+use ipocket\network\protocol\ContainerSetDataPacket;
+use ipocket\network\protocol\ContainerSetSlotPacket;
+use ipocket\network\protocol\CraftingDataPacket;
+use ipocket\network\protocol\CraftingEventPacket;
+use ipocket\network\protocol\DataPacket;
+use ipocket\network\protocol\DropItemPacket;
+use ipocket\network\protocol\FullChunkDataPacket;
+use ipocket\network\protocol\Info;
+use ipocket\network\protocol\SetEntityLinkPacket;
+use ipocket\network\protocol\BlockEntityDataPacket;
+use ipocket\network\protocol\EntityEventPacket;
+use ipocket\network\protocol\ExplodePacket;
+use ipocket\network\protocol\HurtArmorPacket;
+use ipocket\network\protocol\Info as ProtocolInfo;
+use ipocket\network\protocol\InteractPacket;
+use ipocket\network\protocol\LevelEventPacket;
+use ipocket\network\protocol\DisconnectPacket;
+use ipocket\network\protocol\LoginPacket;
+use ipocket\network\protocol\PlayStatusPacket;
+use ipocket\network\protocol\TextPacket;
+use ipocket\network\protocol\MoveEntityPacket;
+use ipocket\network\protocol\MovePlayerPacket;
+use ipocket\network\protocol\PlayerActionPacket;
+use ipocket\network\protocol\MobArmorEquipmentPacket;
+use ipocket\network\protocol\MobEquipmentPacket;
+use ipocket\network\protocol\RemoveBlockPacket;
+use ipocket\network\protocol\RemoveEntityPacket;
+use ipocket\network\protocol\RemovePlayerPacket;
+use ipocket\network\protocol\RespawnPacket;
+use ipocket\network\protocol\SetDifficultyPacket;
+use ipocket\network\protocol\SetEntityDataPacket;
+use ipocket\network\protocol\SetEntityMotionPacket;
+use ipocket\network\protocol\SetHealthPacket;
+use ipocket\network\protocol\SetSpawnPositionPacket;
+use ipocket\network\protocol\SetTimePacket;
+use ipocket\network\protocol\StartGamePacket;
+use ipocket\network\protocol\TakeItemEntityPacket;
+use ipocket\network\protocol\BlockEventPacket;
+use ipocket\network\protocol\UpdateBlockPacket;
+use ipocket\network\protocol\UseItemPacket;
+use ipocket\network\protocol\SetPlayerGameTypePacket;
+use ipocket\network\protocol\PlayerListPacket;
+use ipocket\Player;
+use ipocket\Server;
+use ipocket\utils\Binary;
+use ipocket\utils\MainLogger;
 
 class Network{
 
@@ -160,7 +160,7 @@ class Network{
 				$interface->process();
 			}catch(\Exception $e){
 				$logger = $this->server->getLogger();
-				if(\pocketmine\DEBUG > 1){
+				if(\ipocket\DEBUG > 1){
 					if($logger instanceof MainLogger){
 						$logger->logException($e);
 					}
@@ -168,7 +168,7 @@ class Network{
 
 				$interface->emergencyShutdown();
 				$this->unregisterInterface($interface);
-				$logger->critical($this->server->getLanguage()->translateString("pocketmine.server.networkError", [get_class($interface), $e->getMessage()]));
+				$logger->critical($this->server->getLanguage()->translateString("ipocket.server.networkError", [get_class($interface), $e->getMessage()]));
 			}
 		}
 	}
@@ -255,7 +255,7 @@ class Network{
 				}
 			}
 		}catch(\Exception $e){
-			if(\pocketmine\DEBUG > 1){
+			if(\ipocket\DEBUG > 1){
 				$logger = $this->server->getLogger();
 				if($logger instanceof MainLogger){
 					$logger->debug("BatchPacket " . " 0x" . bin2hex($packet->payload));

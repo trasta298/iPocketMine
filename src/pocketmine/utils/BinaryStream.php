@@ -2,24 +2,24 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
+ * @author iPocket Team
+ * @link http://ipocket.link/
+ *
  *
 */
 
-namespace pocketmine\utils;
+namespace ipocket\utils;
 
 #include <rules/DataPacket.h>
 
@@ -27,14 +27,14 @@ namespace pocketmine\utils;
 
 #endif
 
-use pocketmine\item\Item;
+use ipocket\item\Item;
 
 
 class BinaryStream extends \stdClass{
 
 	public $offset;
 	public $buffer;
-	
+
 	public function __construct($buffer = "", $offset = 0){
 		$this->buffer = $buffer;
 		$this->offset = $offset;
@@ -197,19 +197,19 @@ class BinaryStream extends \stdClass{
 
 	public function getSlot(){
 		$id = $this->getSignedShort();
-		
+
 		if($id <= 0){
 			return Item::get(0, 0, 0);
 		}
-		
+
 		$cnt = $this->getByte();
-		
+
 		$data = $this->getShort();
-		
+
 		$nbtLen = $this->getShort();
-		
+
 		$nbt = "";
-		
+
 		if($nbtLen > 0){
 			$nbt = $this->get($nbtLen);
 		}
@@ -227,14 +227,14 @@ class BinaryStream extends \stdClass{
 			$this->putShort(0);
 			return;
 		}
-		
+
 		$this->putShort($item->getId());
 		$this->putByte($item->getCount());
 		$this->putShort($item->getDamage() === null ? -1 : $item->getDamage());
 		$nbt = $item->getCompoundTag();
 		$this->putShort(strlen($nbt));
 		$this->put($nbt);
-		
+
 	}
 
 	public function getString(){

@@ -13,17 +13,17 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\generator\normal\biome;
+namespace ipocket\level\generator\normal\biome;
 
-use pocketmine\block\Sapling;
-use pocketmine\level\generator\populator\TallGrass;
-use pocketmine\level\generator\populator\Tree;
+use ipocket\block\Sapling;
+use ipocket\level\generator\populator\TallGrass;
+use ipocket\level\generator\populator\Tree;
 
 class TaigaBiome extends SnowyBiome{
 

@@ -13,16 +13,16 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\lang;
+namespace ipocket\lang;
 
-use pocketmine\event\TextContainer;
-use pocketmine\event\TranslationContainer;
+use ipocket\event\TextContainer;
+use ipocket\event\TranslationContainer;
 
 class BaseLang{
 
@@ -38,7 +38,7 @@ class BaseLang{
 		$this->langName = strtolower($lang);
 
 		if($path === null){
-			$path = \pocketmine\PATH . "src/pocketmine/lang/locale/";
+			$path = \ipocket\PATH . "src/ipocket/lang/locale/";
 		}
 
 		$this->loadLang($path . $this->langName . ".ini", $this->lang);

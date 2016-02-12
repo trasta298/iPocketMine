@@ -13,30 +13,30 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command\defaults;
+namespace ipocket\command\defaults;
 
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
-use pocketmine\event\TranslationContainer;
-use pocketmine\level\Level;
-use pocketmine\Player;
-use pocketmine\utils\TextFormat;
+use ipocket\command\Command;
+use ipocket\command\CommandSender;
+use ipocket\event\TranslationContainer;
+use ipocket\level\Level;
+use ipocket\Player;
+use ipocket\utils\TextFormat;
 
 class TimeCommand extends VanillaCommand{
 
 	public function __construct($name){
 		parent::__construct(
 			$name,
-			"%pocketmine.command.time.description",
-			"%pocketmine.command.time.usage"
+			"%ipocket.command.time.description",
+			"%ipocket.command.time.usage"
 		);
-		$this->setPermission("pocketmine.command.time.add;pocketmine.command.time.set;pocketmine.command.time.start;pocketmine.command.time.stop");
+		$this->setPermission("ipocket.command.time.add;ipocket.command.time.set;ipocket.command.time.start;ipocket.command.time.stop");
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
@@ -47,7 +47,7 @@ class TimeCommand extends VanillaCommand{
 		}
 
 		if($args[0] === "start"){
-			if(!$sender->hasPermission("pocketmine.command.time.start")){
+			if(!$sender->hasPermission("ipocket.command.time.start")){
 				$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.permission"));
 
 				return true;
@@ -60,7 +60,7 @@ class TimeCommand extends VanillaCommand{
 			Command::broadcastCommandMessage($sender, "Restarted the time");
 			return true;
 		}elseif($args[0] === "stop"){
-			if(!$sender->hasPermission("pocketmine.command.time.stop")){
+			if(!$sender->hasPermission("ipocket.command.time.stop")){
 				$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.permission"));
 
 				return true;
@@ -73,7 +73,7 @@ class TimeCommand extends VanillaCommand{
 			Command::broadcastCommandMessage($sender, "Stopped the time");
 			return true;
 		}elseif($args[0] === "query"){
-			if(!$sender->hasPermission("pocketmine.command.time.query")){
+			if(!$sender->hasPermission("ipocket.command.time.query")){
 				$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.permission"));
 
 				return true;
@@ -95,7 +95,7 @@ class TimeCommand extends VanillaCommand{
 		}
 
 		if($args[0] === "set"){
-			if(!$sender->hasPermission("pocketmine.command.time.set")){
+			if(!$sender->hasPermission("ipocket.command.time.set")){
 				$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.permission"));
 
 				return true;
@@ -116,7 +116,7 @@ class TimeCommand extends VanillaCommand{
 			}
 			Command::broadcastCommandMessage($sender, new TranslationContainer("commands.time.set", [$value]));
 		}elseif($args[0] === "add"){
-			if(!$sender->hasPermission("pocketmine.command.time.add")){
+			if(!$sender->hasPermission("ipocket.command.time.add")){
 				$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.permission"));
 
 				return true;

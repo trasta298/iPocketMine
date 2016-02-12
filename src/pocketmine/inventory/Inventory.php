@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
@@ -22,10 +22,10 @@
 /**
  * Handles the creation of virtual inventories or mapped to an InventoryHolder
  */
-namespace pocketmine\inventory;
+namespace ipocket\inventory;
 
-use pocketmine\item\Item;
-use pocketmine\Player;
+use ipocket\item\Item;
+use ipocket\Player;
 
 interface Inventory{
 	const MAX_STACK = 64;

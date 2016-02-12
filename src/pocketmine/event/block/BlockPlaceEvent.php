@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\block;
+namespace ipocket\event\block;
 
-use pocketmine\block\Block;
-use pocketmine\event\Cancellable;
-use pocketmine\item\Item;
-use pocketmine\Player;
+use ipocket\block\Block;
+use ipocket\event\Cancellable;
+use ipocket\item\Item;
+use ipocket\Player;
 
 /**
  * Called when a player places a block
@@ -32,10 +32,10 @@ use pocketmine\Player;
 class BlockPlaceEvent extends BlockEvent implements Cancellable{
 	public static $handlerList = null;
 
-	/** @var \pocketmine\Player */
+	/** @var \ipocket\Player */
 	protected $player;
 
-	/** @var \pocketmine\item\Item */
+	/** @var \ipocket\item\Item */
 	protected $item;
 
 

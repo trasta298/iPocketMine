@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
@@ -22,12 +22,12 @@
 /**
  * Player-only related events
  */
-namespace pocketmine\event\player;
+namespace ipocket\event\player;
 
-use pocketmine\event\Event;
+use ipocket\event\Event;
 
 abstract class PlayerEvent extends Event{
-	/** @var \pocketmine\Player */
+	/** @var \ipocket\Player */
 	protected $player;
 
 	public function getPlayer(){

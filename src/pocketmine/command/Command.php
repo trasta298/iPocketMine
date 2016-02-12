@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
@@ -22,13 +22,13 @@
 /**
  * Command handling related classes
  */
-namespace pocketmine\command;
+namespace ipocket\command;
 
-use pocketmine\event\TextContainer;
-use pocketmine\event\TimingsHandler;
-use pocketmine\event\TranslationContainer;
-use pocketmine\Server;
-use pocketmine\utils\TextFormat;
+use ipocket\event\TextContainer;
+use ipocket\event\TimingsHandler;
+use ipocket\event\TranslationContainer;
+use ipocket\Server;
+use ipocket\utils\TextFormat;
 
 abstract class Command{
 	/** @var string */

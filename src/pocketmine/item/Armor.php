@@ -13,14 +13,14 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
 
-namespace pocketmine\item;
+namespace ipocket\item;
 
 abstract class Armor extends Item{
 

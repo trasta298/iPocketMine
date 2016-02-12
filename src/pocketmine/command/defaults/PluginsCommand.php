@@ -13,28 +13,28 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command\defaults;
+namespace ipocket\command\defaults;
 
-use pocketmine\command\CommandSender;
-use pocketmine\event\TranslationContainer;
-use pocketmine\utils\TextFormat;
+use ipocket\command\CommandSender;
+use ipocket\event\TranslationContainer;
+use ipocket\utils\TextFormat;
 
 class PluginsCommand extends VanillaCommand{
 
 	public function __construct($name){
 		parent::__construct(
 			$name,
-			"%pocketmine.command.plugins.description",
-			"%pocketmine.command.plugins.usage",
+			"%ipocket.command.plugins.description",
+			"%ipocket.command.plugins.usage",
 			["pl"]
 		);
-		$this->setPermission("pocketmine.command.plugins");
+		$this->setPermission("ipocket.command.plugins");
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
@@ -55,6 +55,6 @@ class PluginsCommand extends VanillaCommand{
 			$list .= $plugin->getDescription()->getFullName();
 		}
 
-		$sender->sendMessage(new TranslationContainer("pocketmine.command.plugins.success", [count($plugins), $list]));
+		$sender->sendMessage(new TranslationContainer("ipocket.command.plugins.success", [count($plugins), $list]));
 	}
 }

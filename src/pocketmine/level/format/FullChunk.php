@@ -13,16 +13,16 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\format;
+namespace ipocket\level\format;
 
-use pocketmine\entity\Entity;
-use pocketmine\tile\Tile;
+use ipocket\entity\Entity;
+use ipocket\tile\Tile;
 
 interface FullChunk{
 
@@ -270,12 +270,12 @@ interface FullChunk{
 	public function removeTile(Tile $tile);
 
 	/**
-	 * @return \pocketmine\entity\Entity[]
+	 * @return \ipocket\entity\Entity[]
 	 */
 	public function getEntities();
 
 	/**
-	 * @return \pocketmine\tile\Tile[]
+	 * @return \ipocket\tile\Tile[]
 	 */
 	public function getTiles();
 

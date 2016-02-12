@@ -13,22 +13,22 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\event;
+namespace ipocket\event;
 
 
-use pocketmine\entity\Entity;
-use pocketmine\network\protocol\DataPacket;
-use pocketmine\Player;
-use pocketmine\plugin\PluginManager;
-use pocketmine\scheduler\PluginTask;
-use pocketmine\scheduler\TaskHandler;
-use pocketmine\tile\Tile;
+use ipocket\entity\Entity;
+use ipocket\network\protocol\DataPacket;
+use ipocket\Player;
+use ipocket\plugin\PluginManager;
+use ipocket\scheduler\PluginTask;
+use ipocket\scheduler\TaskHandler;
+use ipocket\tile\Tile;
 
 abstract class Timings{
 

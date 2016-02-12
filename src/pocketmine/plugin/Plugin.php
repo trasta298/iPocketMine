@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
@@ -22,9 +22,9 @@
 /**
  * Plugin related classes
  */
-namespace pocketmine\plugin;
+namespace ipocket\plugin;
 
-use pocketmine\command\CommandExecutor;
+use ipocket\command\CommandExecutor;
 
 
 /**
@@ -84,7 +84,7 @@ interface Plugin extends CommandExecutor{
 	public function getResources();
 
 	/**
-	 * @return \pocketmine\utils\Config
+	 * @return \ipocket\utils\Config
 	 */
 	public function getConfig();
 
@@ -95,7 +95,7 @@ interface Plugin extends CommandExecutor{
 	public function reloadConfig();
 
 	/**
-	 * @return \pocketmine\Server
+	 * @return \ipocket\Server
 	 */
 	public function getServer();
 

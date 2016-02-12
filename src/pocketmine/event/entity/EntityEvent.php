@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
@@ -22,12 +22,12 @@
 /**
  * Entity related Events, like spawn, inventory, attack...
  */
-namespace pocketmine\event\entity;
+namespace ipocket\event\entity;
 
-use pocketmine\event\Event;
+use ipocket\event\Event;
 
 abstract class EntityEvent extends Event{
-	/** @var \pocketmine\entity\Entity */
+	/** @var \ipocket\entity\Entity */
 	protected $entity;
 
 	public function getEntity(){

@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
@@ -22,8 +22,8 @@
 /**
  * Various Utilities used around the code
  */
-namespace pocketmine\utils;
-use pocketmine\entity\Entity;
+namespace ipocket\utils;
+use ipocket\entity\Entity;
 
 class Binary{
 	const BIG_ENDIAN = 0x00;

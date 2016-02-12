@@ -13,21 +13,21 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\network;
+namespace ipocket\network;
 
-use pocketmine\event\player\PlayerCreationEvent;
-use pocketmine\network\protocol\DataPacket;
-use pocketmine\network\protocol\Info as ProtocolInfo;
-use pocketmine\network\protocol\Info;
-use pocketmine\Player;
-use pocketmine\Server;
-use pocketmine\utils\MainLogger;
+use ipocket\event\player\PlayerCreationEvent;
+use ipocket\network\protocol\DataPacket;
+use ipocket\network\protocol\Info as ProtocolInfo;
+use ipocket\network\protocol\Info;
+use ipocket\Player;
+use ipocket\Server;
+use ipocket\utils\MainLogger;
 use raklib\protocol\EncapsulatedPacket;
 use raklib\RakLib;
 use raklib\server\RakLibServer;
@@ -141,7 +141,7 @@ class RakLibInterface implements ServerInstance, AdvancedSourceInterface{
 					}
 				}
 			}catch(\Exception $e){
-				if(\pocketmine\DEBUG > 1 and isset($pk)){
+				if(\ipocket\DEBUG > 1 and isset($pk)){
 					$logger = $this->server->getLogger();
 					if($logger instanceof MainLogger){
 						$logger->debug("Packet " . get_class($pk) . " 0x" . bin2hex($packet->buffer));
@@ -178,7 +178,7 @@ class RakLibInterface implements ServerInstance, AdvancedSourceInterface{
 		$this->interface->sendOption("name",
 			"MCPE;".addcslashes($name, ";") .";".
 			Info::CURRENT_PROTOCOL.";".
-			\pocketmine\MINECRAFT_VERSION_NETWORK.";".
+			\ipocket\MINECRAFT_VERSION_NETWORK.";".
 			$info->getPlayerCount().";".
 			$info->getMaxPlayerCount()
 		);

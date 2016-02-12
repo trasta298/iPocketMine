@@ -13,26 +13,26 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\plugin;
+namespace ipocket\plugin;
 
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
-use pocketmine\command\PluginIdentifiableCommand;
-use pocketmine\Server;
-use pocketmine\utils\Config;
+use ipocket\command\Command;
+use ipocket\command\CommandSender;
+use ipocket\command\PluginIdentifiableCommand;
+use ipocket\Server;
+use ipocket\utils\Config;
 
 abstract class PluginBase implements Plugin{
 
 	/** @var PluginLoader */
 	private $loader;
 
-	/** @var \pocketmine\Server */
+	/** @var \ipocket\Server */
 	private $server;
 
 	/** @var bool */

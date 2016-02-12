@@ -2,39 +2,39 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
+ * @author iPocket Team
+ * @link http://ipocket.link/
+ *
  *
 */
 
-namespace pocketmine\entity;
+namespace ipocket\entity;
 
-use pocketmine\inventory\InventoryHolder;
-use pocketmine\inventory\PlayerInventory;
-use pocketmine\item\Item as ItemItem;
-use pocketmine\utils\UUID;
-use pocketmine\nbt\NBT;
-use pocketmine\nbt\tag\Byte;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\nbt\tag\Enum;
-use pocketmine\nbt\tag\Short;
-use pocketmine\nbt\tag\String;
-use pocketmine\network\Network;
-use pocketmine\network\protocol\AddPlayerPacket;
-use pocketmine\network\protocol\RemovePlayerPacket;
-use pocketmine\Player;
+use ipocket\inventory\InventoryHolder;
+use ipocket\inventory\PlayerInventory;
+use ipocket\item\Item as ItemItem;
+use ipocket\utils\UUID;
+use ipocket\nbt\NBT;
+use ipocket\nbt\tag\Byte;
+use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\Short;
+use ipocket\nbt\tag\String;
+use ipocket\network\Network;
+use ipocket\network\protocol\AddPlayerPacket;
+use ipocket\network\protocol\RemovePlayerPacket;
+use ipocket\Player;
 
 class Human extends Creature implements ProjectileSource, InventoryHolder{
 

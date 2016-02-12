@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\plugin;
+namespace ipocket\plugin;
 
-use pocketmine\event\Cancellable;
-use pocketmine\event\Event;
-use pocketmine\event\Listener;
-use pocketmine\event\TimingsHandler;
+use ipocket\event\Cancellable;
+use ipocket\event\Event;
+use ipocket\event\Listener;
+use ipocket\event\TimingsHandler;
 
 class RegisteredListener{
 

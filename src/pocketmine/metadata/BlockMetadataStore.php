@@ -13,17 +13,17 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\metadata;
+namespace ipocket\metadata;
 
-use pocketmine\Block\Block;
-use pocketmine\level\Level;
-use pocketmine\plugin\Plugin;
+use ipocket\Block\Block;
+use ipocket\level\Level;
+use ipocket\plugin\Plugin;
 
 class BlockMetadataStore extends MetadataStore{
 	/** @var Level */

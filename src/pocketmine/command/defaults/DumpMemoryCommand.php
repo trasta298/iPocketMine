@@ -13,15 +13,15 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command\defaults;
+namespace ipocket\command\defaults;
 
-use pocketmine\command\CommandSender;
+use ipocket\command\CommandSender;
 
 
 class DumpMemoryCommand extends VanillaCommand{
@@ -34,7 +34,7 @@ class DumpMemoryCommand extends VanillaCommand{
 			"Dumps the memory",
 			"/$name <TOKEN (run once to get it)> [path]"
 		);
-		$this->setPermission("pocketmine.command.dumpmemory");
+		$this->setPermission("ipocket.command.dumpmemory");
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

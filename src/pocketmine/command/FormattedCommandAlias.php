@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command;
+namespace ipocket\command;
 
-use pocketmine\event\TranslationContainer;
-use pocketmine\Server;
-use pocketmine\utils\MainLogger;
-use pocketmine\utils\TextFormat;
+use ipocket\event\TranslationContainer;
+use ipocket\Server;
+use ipocket\utils\MainLogger;
+use ipocket\utils\TextFormat;
 
 class FormattedCommandAlias extends Command{
 	private $formatStrings = [];

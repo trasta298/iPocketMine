@@ -13,23 +13,23 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\format\generic;
+namespace ipocket\level\format\generic;
 
-use pocketmine\block\Block;
-use pocketmine\entity\Entity;
-use pocketmine\level\format\FullChunk;
-use pocketmine\level\format\LevelProvider;
-use pocketmine\level\generator\biome\Biome;
-use pocketmine\level\Level;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\Player;
-use pocketmine\tile\Tile;
+use ipocket\block\Block;
+use ipocket\entity\Entity;
+use ipocket\level\format\FullChunk;
+use ipocket\level\format\LevelProvider;
+use ipocket\level\generator\biome\Biome;
+use ipocket\level\Level;
+use ipocket\nbt\tag\Compound;
+use ipocket\Player;
+use ipocket\tile\Tile;
 
 
 abstract class BaseFullChunk implements FullChunk{

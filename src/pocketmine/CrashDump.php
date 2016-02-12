@@ -13,19 +13,19 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine;
+namespace ipocket;
 
-use pocketmine\network\protocol\Info;
-use pocketmine\plugin\PluginBase;
-use pocketmine\plugin\PluginLoadOrder;
-use pocketmine\utils\Utils;
-use pocketmine\utils\VersionString;
+use ipocket\network\protocol\Info;
+use ipocket\plugin\PluginBase;
+use ipocket\plugin\PluginLoadOrder;
+use ipocket\utils\Utils;
+use ipocket\utils\VersionString;
 use raklib\RakLib;
 
 class CrashDump{
@@ -83,7 +83,7 @@ class CrashDump{
 	}
 
 	private function pluginsData(){
-		if(class_exists("pocketmine\\plugin\\PluginManager", false)){
+		if(class_exists("ipocket\\plugin\\PluginManager", false)){
 			$this->addLine();
 			$this->addLine("Loaded plugins:");
 			$this->data["plugins"] = [];
@@ -113,9 +113,9 @@ class CrashDump{
 			$this->data["parameters"] = (array) $arguments;
 			$this->data["server.properties"] = @file_get_contents($this->server->getDataPath() . "server.properties");
 			$this->data["server.properties"] = preg_replace("#^rcon\\.password=(.*)$#m", "rcon.password=******", $this->data["server.properties"]);
-			$this->data["pocketmine.yml"] = @file_get_contents($this->server->getDataPath() . "pocketmine.yml");
+			$this->data["ipocket.yml"] = @file_get_contents($this->server->getDataPath() . "ipocket.yml");
 		}else{
-			$this->data["pocketmine.yml"] = "";
+			$this->data["ipocket.yml"] = "";
 			$this->data["server.properties"] = "";
 			$this->data["parameters"] = [];
 		}
@@ -178,7 +178,7 @@ class CrashDump{
 		$this->addLine("Line: " . $error["line"]);
 		$this->addLine("Type: " . $error["type"]);
 
-		if(strpos($error["file"], "src/pocketmine/") === false and strpos($error["file"], "src/raklib/") === false and file_exists($error["fullFile"])){
+		if(strpos($error["file"], "src/ipocket/") === false and strpos($error["file"], "src/raklib/") === false and file_exists($error["fullFile"])){
 			$this->addLine();
 			$this->addLine("THIS CRASH WAS CAUSED BY A PLUGIN");
 			$this->data["plugin"] = true;
@@ -187,7 +187,7 @@ class CrashDump{
 			$file = $reflection->getProperty("file");
 			$file->setAccessible(true);
 			foreach($this->server->getPluginManager()->getPlugins() as $plugin){
-				$filePath = \pocketmine\cleanPath($file->getValue($plugin));
+				$filePath = \ipocket\cleanPath($file->getValue($plugin));
 				if(strpos($error["file"], $filePath) === 0){
 					$this->data["plugin"] = $plugin->getName();
 					$this->addLine("BAD PLUGIN: " . $plugin->getDescription()->getFullName());
@@ -224,15 +224,15 @@ class CrashDump{
 		$this->data["general"]["version"] = $version->get(false);
 		$this->data["general"]["build"] = $version->getBuild();
 		$this->data["general"]["protocol"] = Info::CURRENT_PROTOCOL;
-		$this->data["general"]["api"] = \pocketmine\API_VERSION;
-		$this->data["general"]["git"] = \pocketmine\GIT_COMMIT;
+		$this->data["general"]["api"] = \ipocket\API_VERSION;
+		$this->data["general"]["git"] = \ipocket\GIT_COMMIT;
 		$this->data["general"]["raklib"] = RakLib::VERSION;
 		$this->data["general"]["uname"] = php_uname("a");
 		$this->data["general"]["php"] = phpversion();
 		$this->data["general"]["zend"] = zend_version();
 		$this->data["general"]["php_os"] = PHP_OS;
 		$this->data["general"]["os"] = Utils::getOS();
-		$this->addLine("PocketMine-MP version: " . $version->get(false) . " #" . $version->getBuild() . " [Protocol " . Info::CURRENT_PROTOCOL . "; API " . API_VERSION . "]");
+		$this->addLine("iPocket version: " . $version->get(false) . " #" . $version->getBuild() . " [Protocol " . Info::CURRENT_PROTOCOL . "; API " . API_VERSION . "]");
 		$this->addLine("Git commit: " . GIT_COMMIT);
 		$this->addLine("uname -a: " . php_uname("a"));
 		$this->addLine("PHP Version: " . phpversion());

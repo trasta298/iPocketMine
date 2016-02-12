@@ -2,20 +2,20 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
+ * @author iPocket Team
+ * @link http://ipocket.link/
+ *
  *
 */
 
@@ -23,10 +23,10 @@
  * Set-up wizard used on the first run
  * Can be disabled with --no-wizard
  */
-namespace pocketmine\wizard;
+namespace ipocket\wizard;
 
-use pocketmine\utils\Config;
-use pocketmine\utils\Utils;
+use ipocket\utils\Config;
+use ipocket\utils\Utils;
 
 class Installer{
 	const DEFAULT_NAME = "Minecraft: PE Server";
@@ -38,7 +38,7 @@ class Installer{
 	private $lang;
 
 	public function __construct(){
-		echo "[*] PocketMine-MP set-up wizard\n";
+		echo "[*] iPocket set-up wizard\n";
 		echo "[*] Please select a language:\n";
 		foreach(InstallerLang::$languages as $short => $native){
 			echo " $native => $short\n";
@@ -57,7 +57,7 @@ class Installer{
 		echo "[*] " . $this->lang->language_has_been_selected . "\n";
 
 		if(!$this->showLicense()){
-			\pocketmine\kill(getmypid());
+			\ipocket\kill(getmypid());
 			exit(-1);
 		}
 
@@ -104,7 +104,7 @@ LICENSE;
 	}
 
 	private function generateBaseConfig(){
-		$config = new Config(\pocketmine\DATA . "server.properties", Config::PROPERTIES);
+		$config = new Config(\ipocket\DATA . "server.properties", Config::PROPERTIES);
 		echo "[?] " . $this->lang->name_your_server . " (" . self::DEFAULT_NAME . "): ";
 		$config->set("server-name", $this->getInput(self::DEFAULT_NAME));
 		echo "[*] " . $this->lang->port_warning . "\n";
@@ -144,13 +144,13 @@ LICENSE;
 		if($op === ""){
 			echo "[!] " . $this->lang->op_warning . "\n";
 		}else{
-			$ops = new Config(\pocketmine\DATA . "ops.txt", Config::ENUM);
+			$ops = new Config(\ipocket\DATA . "ops.txt", Config::ENUM);
 			$ops->set($op, true);
 			$ops->save();
 		}
 		echo "[*] " . $this->lang->whitelist_info . "\n";
 		echo "[?] " . $this->lang->whitelist_enable . " (y/N): ";
-		$config = new Config(\pocketmine\DATA . "server.properties", Config::PROPERTIES);
+		$config = new Config(\ipocket\DATA . "server.properties", Config::PROPERTIES);
 		if(strtolower($this->getInput("n")) === "y"){
 			echo "[!] " . $this->lang->whitelist_warning . "\n";
 			$config->set("white-list", true);
@@ -161,7 +161,7 @@ LICENSE;
 	}
 
 	private function networkFunctions(){
-		$config = new Config(\pocketmine\DATA . "server.properties", Config::PROPERTIES);
+		$config = new Config(\ipocket\DATA . "server.properties", Config::PROPERTIES);
 		echo "[!] " . $this->lang->query_warning1 . "\n";
 		echo "[!] " . $this->lang->query_warning2 . "\n";
 		echo "[?] " . $this->lang->query_disable . " (y/N): ";

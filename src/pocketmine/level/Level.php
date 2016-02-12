@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
@@ -22,94 +22,94 @@
 /**
  * All Level related classes are here, like Generators, Populators, Noise, ...
  */
-namespace pocketmine\level;
+namespace ipocket\level;
 
-use pocketmine\block\Air;
-use pocketmine\block\Beetroot;
-use pocketmine\block\Block;
-use pocketmine\block\BrownMushroom;
-use pocketmine\block\Cactus;
-use pocketmine\block\Carrot;
-use pocketmine\block\Farmland;
-use pocketmine\block\Grass;
-use pocketmine\block\Ice;
-use pocketmine\block\Leaves;
-use pocketmine\block\Leaves2;
-use pocketmine\block\MelonStem;
-use pocketmine\block\Mycelium;
-use pocketmine\block\Potato;
-use pocketmine\block\PumpkinStem;
-use pocketmine\block\RedMushroom;
-use pocketmine\block\Sapling;
-use pocketmine\block\SnowLayer;
-use pocketmine\block\Sugarcane;
-use pocketmine\block\Wheat;
-use pocketmine\entity\Arrow;
-use pocketmine\entity\Entity;
-use pocketmine\entity\Item as DroppedItem;
-use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\block\BlockUpdateEvent;
-use pocketmine\event\level\ChunkLoadEvent;
-use pocketmine\event\level\ChunkPopulateEvent;
-use pocketmine\event\level\ChunkUnloadEvent;
-use pocketmine\event\level\LevelSaveEvent;
-use pocketmine\event\level\LevelUnloadEvent;
-use pocketmine\event\level\SpawnChangeEvent;
-use pocketmine\event\LevelTimings;
-use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\Timings;
-use pocketmine\inventory\InventoryHolder;
-use pocketmine\item\Item;
-use pocketmine\level\format\Chunk;
-use pocketmine\level\format\FullChunk;
-use pocketmine\level\format\generic\BaseLevelProvider;
-use pocketmine\level\format\generic\EmptyChunkSection;
-use pocketmine\level\format\LevelProvider;
-use pocketmine\level\generator\GenerationTask;
-use pocketmine\level\generator\Generator;
-use pocketmine\level\generator\GeneratorRegisterTask;
-use pocketmine\level\generator\GeneratorUnregisterTask;
-use pocketmine\level\generator\LightPopulationTask;
-use pocketmine\level\generator\PopulationTask;
-use pocketmine\math\AxisAlignedBB;
-use pocketmine\math\Math;
-use pocketmine\math\Vector2;
-use pocketmine\math\Vector3;
-use pocketmine\metadata\BlockMetadataStore;
-use pocketmine\metadata\Metadatable;
-use pocketmine\metadata\MetadataValue;
-use pocketmine\nbt\NBT;
+use ipocket\block\Air;
+use ipocket\block\Beetroot;
+use ipocket\block\Block;
+use ipocket\block\BrownMushroom;
+use ipocket\block\Cactus;
+use ipocket\block\Carrot;
+use ipocket\block\Farmland;
+use ipocket\block\Grass;
+use ipocket\block\Ice;
+use ipocket\block\Leaves;
+use ipocket\block\Leaves2;
+use ipocket\block\MelonStem;
+use ipocket\block\Mycelium;
+use ipocket\block\Potato;
+use ipocket\block\PumpkinStem;
+use ipocket\block\RedMushroom;
+use ipocket\block\Sapling;
+use ipocket\block\SnowLayer;
+use ipocket\block\Sugarcane;
+use ipocket\block\Wheat;
+use ipocket\entity\Arrow;
+use ipocket\entity\Entity;
+use ipocket\entity\Item as DroppedItem;
+use ipocket\event\block\BlockBreakEvent;
+use ipocket\event\block\BlockPlaceEvent;
+use ipocket\event\block\BlockUpdateEvent;
+use ipocket\event\level\ChunkLoadEvent;
+use ipocket\event\level\ChunkPopulateEvent;
+use ipocket\event\level\ChunkUnloadEvent;
+use ipocket\event\level\LevelSaveEvent;
+use ipocket\event\level\LevelUnloadEvent;
+use ipocket\event\level\SpawnChangeEvent;
+use ipocket\event\LevelTimings;
+use ipocket\event\player\PlayerInteractEvent;
+use ipocket\event\Timings;
+use ipocket\inventory\InventoryHolder;
+use ipocket\item\Item;
+use ipocket\level\format\Chunk;
+use ipocket\level\format\FullChunk;
+use ipocket\level\format\generic\BaseLevelProvider;
+use ipocket\level\format\generic\EmptyChunkSection;
+use ipocket\level\format\LevelProvider;
+use ipocket\level\generator\GenerationTask;
+use ipocket\level\generator\Generator;
+use ipocket\level\generator\GeneratorRegisterTask;
+use ipocket\level\generator\GeneratorUnregisterTask;
+use ipocket\level\generator\LightPopulationTask;
+use ipocket\level\generator\PopulationTask;
+use ipocket\math\AxisAlignedBB;
+use ipocket\math\Math;
+use ipocket\math\Vector2;
+use ipocket\math\Vector3;
+use ipocket\metadata\BlockMetadataStore;
+use ipocket\metadata\Metadatable;
+use ipocket\metadata\MetadataValue;
+use ipocket\nbt\NBT;
 
-use pocketmine\nbt\tag\Compound;
-use pocketmine\nbt\tag\Double;
-use pocketmine\nbt\tag\Enum;
-use pocketmine\nbt\tag\Float;
-use pocketmine\nbt\tag\Int;
-use pocketmine\nbt\tag\Short;
-use pocketmine\nbt\tag\String;
-use pocketmine\network\Network;
-use pocketmine\network\protocol\DataPacket;
-use pocketmine\network\protocol\FullChunkDataPacket;
-use pocketmine\network\protocol\LevelEventPacket;
-use pocketmine\network\protocol\MoveEntityPacket;
-use pocketmine\network\protocol\SetEntityMotionPacket;
-use pocketmine\network\protocol\SetTimePacket;
-use pocketmine\network\protocol\UpdateBlockPacket;
-use pocketmine\Player;
-use pocketmine\plugin\Plugin;
+use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\Double;
+use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\Float;
+use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\Short;
+use ipocket\nbt\tag\String;
+use ipocket\network\Network;
+use ipocket\network\protocol\DataPacket;
+use ipocket\network\protocol\FullChunkDataPacket;
+use ipocket\network\protocol\LevelEventPacket;
+use ipocket\network\protocol\MoveEntityPacket;
+use ipocket\network\protocol\SetEntityMotionPacket;
+use ipocket\network\protocol\SetTimePacket;
+use ipocket\network\protocol\UpdateBlockPacket;
+use ipocket\Player;
+use ipocket\plugin\Plugin;
 
-use pocketmine\Server;
-use pocketmine\tile\Chest;
-use pocketmine\tile\Tile;
-use pocketmine\utils\LevelException;
-use pocketmine\utils\MainLogger;
-use pocketmine\utils\Random;
-use pocketmine\utils\ReversePriorityQueue;
-use pocketmine\level\particle\Particle;
-use pocketmine\level\sound\Sound;
-use pocketmine\entity\Effect;
-use pocketmine\level\particle\DestroyBlockParticle;
+use ipocket\Server;
+use ipocket\tile\Chest;
+use ipocket\tile\Tile;
+use ipocket\utils\LevelException;
+use ipocket\utils\MainLogger;
+use ipocket\utils\Random;
+use ipocket\utils\ReversePriorityQueue;
+use ipocket\level\particle\Particle;
+use ipocket\level\sound\Sound;
+use ipocket\entity\Effect;
+use ipocket\level\particle\DestroyBlockParticle;
 
 #include <rules/Level.h>
 
@@ -342,7 +342,7 @@ class Level implements ChunkManager, Metadatable{
 		}else{
 			throw new LevelException("Provider is not a subclass of LevelProvider");
 		}
-		$this->server->getLogger()->info($this->server->getLanguage()->translateString("pocketmine.level.preparing", [$this->provider->getName()]));
+		$this->server->getLogger()->info($this->server->getLanguage()->translateString("ipocket.level.preparing", [$this->provider->getName()]));
 		$this->generator = Generator::getGenerator($this->provider->getGenerator());
 
 		$this->blockOrder = $provider::getProviderOrder();
@@ -449,7 +449,7 @@ class Level implements ChunkManager, Metadatable{
 		$this->blockCache = [];
 		$this->temporalPosition = null;
 	}
-	
+
 	public function addSound(Sound $sound, array $players = null){
 		$pk = $sound->encode();
 
@@ -470,10 +470,10 @@ class Level implements ChunkManager, Metadatable{
 				}else{
 					$this->server->batchPackets($players, $pk, false);
 				}
-			}	
+			}
 		}
 	}
-	
+
 	public function addParticle(Particle $particle, array $players = null){
 		$pk = $particle->encode();
 
@@ -533,7 +533,7 @@ class Level implements ChunkManager, Metadatable{
 			return false;
 		}
 
-		$this->server->getLogger()->info($this->server->getLanguage()->translateString("pocketmine.level.unloading", [$this->getName()]));
+		$this->server->getLogger()->info($this->server->getLanguage()->translateString("ipocket.level.unloading", [$this->getName()]));
 		$defaultLevel = $this->server->getDefaultLevel();
 		foreach($this->getPlayers() as $player){
 			if($this === $defaultLevel or $defaultLevel === null){
@@ -1079,7 +1079,7 @@ class Level implements ChunkManager, Metadatable{
 		$maxX = Math::ceilFloat($bb->maxX);
 		$maxY = Math::ceilFloat($bb->maxY);
 		$maxZ = Math::ceilFloat($bb->maxZ);
-		
+
 		$collides = [];
 
 		if($targetFirst){
@@ -1593,9 +1593,9 @@ class Level implements ChunkManager, Metadatable{
 
 			$this->addParticle(new DestroyBlockParticle($target->add(0.5), $target), $players);
 		}
-		
+
 		$target->onBreak($item);
-		
+
 		$tile = $this->getTile($target);
 		if($tile !== null){
 			if($tile instanceof InventoryHolder){
@@ -2609,7 +2609,7 @@ class Level implements ChunkManager, Metadatable{
 			$this->provider->unloadChunk($x, $z, $safe);
 		}catch(\Exception $e){
 			$logger = $this->server->getLogger();
-			$logger->error($this->server->getLanguage()->translateString("pocketmine.level.chunkUnloadError", [$e->getMessage()]));
+			$logger->error($this->server->getLanguage()->translateString("ipocket.level.chunkUnloadError", [$e->getMessage()]));
 			if($logger instanceof MainLogger){
 				$logger->logException($e);
 			}

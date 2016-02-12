@@ -13,30 +13,30 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command\defaults;
+namespace ipocket\command\defaults;
 
-use pocketmine\command\CommandSender;
-use pocketmine\event\TranslationContainer;
-use pocketmine\network\protocol\Info;
-use pocketmine\plugin\Plugin;
-use pocketmine\utils\TextFormat;
+use ipocket\command\CommandSender;
+use ipocket\event\TranslationContainer;
+use ipocket\network\protocol\Info;
+use ipocket\plugin\Plugin;
+use ipocket\utils\TextFormat;
 
 class VersionCommand extends VanillaCommand{
 
 	public function __construct($name){
 		parent::__construct(
 			$name,
-			"%pocketmine.command.version.description",
-			"%pocketmine.command.version.usage",
+			"%ipocket.command.version.description",
+			"%ipocket.command.version.usage",
 			["ver", "about"]
 		);
-		$this->setPermission("pocketmine.command.version");
+		$this->setPermission("ipocket.command.version");
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
@@ -45,7 +45,7 @@ class VersionCommand extends VanillaCommand{
 		}
 
 		if(count($args) === 0){
-			$sender->sendMessage(new TranslationContainer("pocketmine.server.info.extended", [
+			$sender->sendMessage(new TranslationContainer("ipocket.server.info.extended", [
 				$sender->getServer()->getName(),
 				$sender->getServer()->getPocketMineVersion(),
 				$sender->getServer()->getCodename(),
@@ -73,7 +73,7 @@ class VersionCommand extends VanillaCommand{
 			}
 
 			if(!$found){
-				$sender->sendMessage(new TranslationContainer("pocketmine.command.version.noSuchPlugin"));
+				$sender->sendMessage(new TranslationContainer("ipocket.command.version.noSuchPlugin"));
 			}
 		}
 

@@ -13,57 +13,57 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command;
+namespace ipocket\command;
 
-use pocketmine\command\defaults\BanCommand;
-use pocketmine\command\defaults\BanIpCommand;
-use pocketmine\command\defaults\BanListCommand;
-use pocketmine\command\defaults\DefaultGamemodeCommand;
-use pocketmine\command\defaults\DeopCommand;
-use pocketmine\command\defaults\DifficultyCommand;
-use pocketmine\command\defaults\DumpMemoryCommand;
-use pocketmine\command\defaults\EffectCommand;
-use pocketmine\command\defaults\EnchantCommand;
-use pocketmine\command\defaults\GamemodeCommand;
-use pocketmine\command\defaults\GarbageCollectorCommand;
-use pocketmine\command\defaults\GiveCommand;
-use pocketmine\command\defaults\HelpCommand;
-use pocketmine\command\defaults\KickCommand;
-use pocketmine\command\defaults\KillCommand;
-use pocketmine\command\defaults\ListCommand;
-use pocketmine\command\defaults\MeCommand;
-use pocketmine\command\defaults\OpCommand;
-use pocketmine\command\defaults\PardonCommand;
-use pocketmine\command\defaults\PardonIpCommand;
-use pocketmine\command\defaults\ParticleCommand;
-use pocketmine\command\defaults\PluginsCommand;
-use pocketmine\command\defaults\ReloadCommand;
-use pocketmine\command\defaults\SaveCommand;
-use pocketmine\command\defaults\SaveOffCommand;
-use pocketmine\command\defaults\SaveOnCommand;
-use pocketmine\command\defaults\SayCommand;
-use pocketmine\command\defaults\SeedCommand;
-use pocketmine\command\defaults\SetWorldSpawnCommand;
-use pocketmine\command\defaults\SpawnpointCommand;
-use pocketmine\command\defaults\StatusCommand;
-use pocketmine\command\defaults\StopCommand;
-use pocketmine\command\defaults\TeleportCommand;
-use pocketmine\command\defaults\TellCommand;
-use pocketmine\command\defaults\TimeCommand;
-use pocketmine\command\defaults\TimingsCommand;
-use pocketmine\command\defaults\VanillaCommand;
-use pocketmine\command\defaults\VersionCommand;
-use pocketmine\command\defaults\WhitelistCommand;
-use pocketmine\event\TranslationContainer;
-use pocketmine\Server;
-use pocketmine\utils\MainLogger;
-use pocketmine\utils\TextFormat;
+use ipocket\command\defaults\BanCommand;
+use ipocket\command\defaults\BanIpCommand;
+use ipocket\command\defaults\BanListCommand;
+use ipocket\command\defaults\DefaultGamemodeCommand;
+use ipocket\command\defaults\DeopCommand;
+use ipocket\command\defaults\DifficultyCommand;
+use ipocket\command\defaults\DumpMemoryCommand;
+use ipocket\command\defaults\EffectCommand;
+use ipocket\command\defaults\EnchantCommand;
+use ipocket\command\defaults\GamemodeCommand;
+use ipocket\command\defaults\GarbageCollectorCommand;
+use ipocket\command\defaults\GiveCommand;
+use ipocket\command\defaults\HelpCommand;
+use ipocket\command\defaults\KickCommand;
+use ipocket\command\defaults\KillCommand;
+use ipocket\command\defaults\ListCommand;
+use ipocket\command\defaults\MeCommand;
+use ipocket\command\defaults\OpCommand;
+use ipocket\command\defaults\PardonCommand;
+use ipocket\command\defaults\PardonIpCommand;
+use ipocket\command\defaults\ParticleCommand;
+use ipocket\command\defaults\PluginsCommand;
+use ipocket\command\defaults\ReloadCommand;
+use ipocket\command\defaults\SaveCommand;
+use ipocket\command\defaults\SaveOffCommand;
+use ipocket\command\defaults\SaveOnCommand;
+use ipocket\command\defaults\SayCommand;
+use ipocket\command\defaults\SeedCommand;
+use ipocket\command\defaults\SetWorldSpawnCommand;
+use ipocket\command\defaults\SpawnpointCommand;
+use ipocket\command\defaults\StatusCommand;
+use ipocket\command\defaults\StopCommand;
+use ipocket\command\defaults\TeleportCommand;
+use ipocket\command\defaults\TellCommand;
+use ipocket\command\defaults\TimeCommand;
+use ipocket\command\defaults\TimingsCommand;
+use ipocket\command\defaults\VanillaCommand;
+use ipocket\command\defaults\VersionCommand;
+use ipocket\command\defaults\WhitelistCommand;
+use ipocket\event\TranslationContainer;
+use ipocket\Server;
+use ipocket\utils\MainLogger;
+use ipocket\utils\TextFormat;
 
 class SimpleCommandMap implements CommandMap{
 
@@ -81,46 +81,46 @@ class SimpleCommandMap implements CommandMap{
 	}
 
 	private function setDefaultCommands(){
-		$this->register("pocketmine", new VersionCommand("version"));
-		$this->register("pocketmine", new PluginsCommand("plugins"));
-		$this->register("pocketmine", new SeedCommand("seed"));
-		$this->register("pocketmine", new HelpCommand("help"));
-		$this->register("pocketmine", new StopCommand("stop"));
-		$this->register("pocketmine", new TellCommand("tell"));
-		$this->register("pocketmine", new DefaultGamemodeCommand("defaultgamemode"));
-		$this->register("pocketmine", new BanCommand("ban"));
-		$this->register("pocketmine", new BanIpCommand("ban-ip"));
-		$this->register("pocketmine", new BanListCommand("banlist"));
-		$this->register("pocketmine", new PardonCommand("pardon"));
-		$this->register("pocketmine", new PardonIpCommand("pardon-ip"));
-		$this->register("pocketmine", new SayCommand("say"));
-		$this->register("pocketmine", new MeCommand("me"));
-		$this->register("pocketmine", new ListCommand("list"));
-		$this->register("pocketmine", new DifficultyCommand("difficulty"));
-		$this->register("pocketmine", new KickCommand("kick"));
-		$this->register("pocketmine", new OpCommand("op"));
-		$this->register("pocketmine", new DeopCommand("deop"));
-		$this->register("pocketmine", new WhitelistCommand("whitelist"));
-		$this->register("pocketmine", new SaveOnCommand("save-on"));
-		$this->register("pocketmine", new SaveOffCommand("save-off"));
-		$this->register("pocketmine", new SaveCommand("save-all"));
-		$this->register("pocketmine", new GiveCommand("give"));
-		$this->register("pocketmine", new EffectCommand("effect"));
-		$this->register("pocketmine", new EnchantCommand("enchant"));
-		$this->register("pocketmine", new ParticleCommand("particle"));
-		$this->register("pocketmine", new GamemodeCommand("gamemode"));
-		$this->register("pocketmine", new KillCommand("kill"));
-		$this->register("pocketmine", new SpawnpointCommand("spawnpoint"));
-		$this->register("pocketmine", new SetWorldSpawnCommand("setworldspawn"));
-		$this->register("pocketmine", new TeleportCommand("tp"));
-		$this->register("pocketmine", new TimeCommand("time"));
-		$this->register("pocketmine", new TimingsCommand("timings"));
-		$this->register("pocketmine", new ReloadCommand("reload"));
+		$this->register("ipocket", new VersionCommand("version"));
+		$this->register("ipocket", new PluginsCommand("plugins"));
+		$this->register("ipocket", new SeedCommand("seed"));
+		$this->register("ipocket", new HelpCommand("help"));
+		$this->register("ipocket", new StopCommand("stop"));
+		$this->register("ipocket", new TellCommand("tell"));
+		$this->register("ipocket", new DefaultGamemodeCommand("defaultgamemode"));
+		$this->register("ipocket", new BanCommand("ban"));
+		$this->register("ipocket", new BanIpCommand("ban-ip"));
+		$this->register("ipocket", new BanListCommand("banlist"));
+		$this->register("ipocket", new PardonCommand("pardon"));
+		$this->register("ipocket", new PardonIpCommand("pardon-ip"));
+		$this->register("ipocket", new SayCommand("say"));
+		$this->register("ipocket", new MeCommand("me"));
+		$this->register("ipocket", new ListCommand("list"));
+		$this->register("ipocket", new DifficultyCommand("difficulty"));
+		$this->register("ipocket", new KickCommand("kick"));
+		$this->register("ipocket", new OpCommand("op"));
+		$this->register("ipocket", new DeopCommand("deop"));
+		$this->register("ipocket", new WhitelistCommand("whitelist"));
+		$this->register("ipocket", new SaveOnCommand("save-on"));
+		$this->register("ipocket", new SaveOffCommand("save-off"));
+		$this->register("ipocket", new SaveCommand("save-all"));
+		$this->register("ipocket", new GiveCommand("give"));
+		$this->register("ipocket", new EffectCommand("effect"));
+		$this->register("ipocket", new EnchantCommand("enchant"));
+		$this->register("ipocket", new ParticleCommand("particle"));
+		$this->register("ipocket", new GamemodeCommand("gamemode"));
+		$this->register("ipocket", new KillCommand("kill"));
+		$this->register("ipocket", new SpawnpointCommand("spawnpoint"));
+		$this->register("ipocket", new SetWorldSpawnCommand("setworldspawn"));
+		$this->register("ipocket", new TeleportCommand("tp"));
+		$this->register("ipocket", new TimeCommand("time"));
+		$this->register("ipocket", new TimingsCommand("timings"));
+		$this->register("ipocket", new ReloadCommand("reload"));
 
 		if($this->server->getProperty("debug.commands", false)){
-			$this->register("pocketmine", new StatusCommand("status"));
-			$this->register("pocketmine", new GarbageCollectorCommand("gc"));
-			$this->register("pocketmine", new DumpMemoryCommand("dumpmemory"));
+			$this->register("ipocket", new StatusCommand("status"));
+			$this->register("ipocket", new GarbageCollectorCommand("gc"));
+			$this->register("ipocket", new DumpMemoryCommand("dumpmemory"));
 		}
 	}
 
@@ -195,7 +195,7 @@ class SimpleCommandMap implements CommandMap{
 			$target->execute($sender, $sentCommandLabel, $args);
 		}catch(\Exception $e){
 			$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.exception"));
-			$this->server->getLogger()->critical($this->server->getLanguage()->translateString("pocketmine.command.exception", [$commandLine, (string) $target, $e->getMessage()]));
+			$this->server->getLogger()->critical($this->server->getLanguage()->translateString("ipocket.command.exception", [$commandLine, (string) $target, $e->getMessage()]));
 			$logger = $sender->getServer()->getLogger();
 			if($logger instanceof MainLogger){
 				$logger->logException($e);
@@ -238,7 +238,7 @@ class SimpleCommandMap implements CommandMap{
 
 		foreach($values as $alias => $commandStrings){
 			if(strpos($alias, ":") !== false or strpos($alias, " ") !== false){
-				$this->server->getLogger()->warning($this->server->getLanguage()->translateString("pocketmine.command.alias.illegal", [$alias]));
+				$this->server->getLogger()->warning($this->server->getLanguage()->translateString("ipocket.command.alias.illegal", [$alias]));
 				continue;
 			}
 
@@ -260,7 +260,7 @@ class SimpleCommandMap implements CommandMap{
 			}
 
 			if(strlen($bad) > 0){
-				$this->server->getLogger()->warning($this->server->getLanguage()->translateString("pocketmine.command.alias.notFound", [$alias, $bad]));
+				$this->server->getLogger()->warning($this->server->getLanguage()->translateString("ipocket.command.alias.notFound", [$alias, $bad]));
 				continue;
 			}
 

@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
@@ -22,7 +22,7 @@
 /**
  * Network-related classes
  */
-namespace pocketmine\network;
+namespace ipocket\network;
 
 interface AdvancedSourceInterface extends SourceInterface{
 

@@ -13,31 +13,31 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command\defaults;
+namespace ipocket\command\defaults;
 
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
-use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\event\TranslationContainer;
-use pocketmine\Player;
-use pocketmine\utils\TextFormat;
+use ipocket\command\Command;
+use ipocket\command\CommandSender;
+use ipocket\event\entity\EntityDamageEvent;
+use ipocket\event\TranslationContainer;
+use ipocket\Player;
+use ipocket\utils\TextFormat;
 
 class KillCommand extends VanillaCommand{
 
 	public function __construct($name){
 		parent::__construct(
 			$name,
-			"%pocketmine.command.kill.description",
-			"%pocketmine.command.kill.usage",
+			"%ipocket.command.kill.description",
+			"%ipocket.command.kill.usage",
 			["suicide"]
 		);
-		$this->setPermission("pocketmine.command.kill.self;pocketmine.command.kill.other");
+		$this->setPermission("ipocket.command.kill.self;ipocket.command.kill.other");
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
@@ -52,7 +52,7 @@ class KillCommand extends VanillaCommand{
 		}
 
 		if(count($args) === 1){
-			if(!$sender->hasPermission("pocketmine.command.kill.other")){
+			if(!$sender->hasPermission("ipocket.command.kill.other")){
 				$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.permission"));
 
 				return true;
@@ -79,7 +79,7 @@ class KillCommand extends VanillaCommand{
 		}
 
 		if($sender instanceof Player){
-			if(!$sender->hasPermission("pocketmine.command.kill.self")){
+			if(!$sender->hasPermission("ipocket.command.kill.self")){
 				$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.permission"));
 
 				return true;

@@ -13,27 +13,27 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\inventory;
+namespace ipocket\inventory;
 
 
-use pocketmine\block\Planks;
-use pocketmine\block\Quartz;
-use pocketmine\block\Sandstone;
-use pocketmine\block\Slab;
-use pocketmine\block\Fence;
-use pocketmine\block\Stone;
-use pocketmine\block\StoneBricks;
-use pocketmine\block\StoneWall;
-use pocketmine\block\Wood;
-use pocketmine\block\Wood2;
-use pocketmine\item\Item;
-use pocketmine\utils\UUID;
+use ipocket\block\Planks;
+use ipocket\block\Quartz;
+use ipocket\block\Sandstone;
+use ipocket\block\Slab;
+use ipocket\block\Fence;
+use ipocket\block\Stone;
+use ipocket\block\StoneBricks;
+use ipocket\block\StoneWall;
+use ipocket\block\Wood;
+use ipocket\block\Wood2;
+use ipocket\item\Item;
+use ipocket\utils\UUID;
 
 class CraftingManager{
 
@@ -381,7 +381,7 @@ class CraftingManager{
 		$this->registerRecipe(new FurnaceRecipe(Item::get(Item::HARDENED_CLAY, 0, 1), Item::get(Item::CLAY_BLOCK, 0, 1)));
 	}
 
-	protected function registerStonecutter(){	
+	protected function registerStonecutter(){
 		$shapes = [
 			"slab" => [
 				"   ",
@@ -397,10 +397,10 @@ class CraftingManager{
 				"XXX",
 				"XXX",
 				"   "
-			],                   
+			],
 			"blockrecipe1" => [
 				"XX",
-				"XX"				
+				"XX"
 			],
 			"blockrecipe2X1" => [
 				"   ",
@@ -410,17 +410,17 @@ class CraftingManager{
 			"blockrecipe2X2" => [
 				"AB",
 				"BA"
-			],                    
+			],
 			"blockrecipe1X2" => [
 				"  ",
 				"AB"
-			]                          
-		];              
+			]
+		];
 
 		$buildRecipes = [];
 
-		// Single ingedient stone cutter recipes:                
-			$RESULT_ITEMID = 0;         $RESULT_META = 1;           $INGREDIENT_ITEMID = 2;     $INGREDIENT_META = 3; $RECIPE_SHAPE = 4;$RESULT_AMOUNT = 5;                
+		// Single ingedient stone cutter recipes:
+			$RESULT_ITEMID = 0;         $RESULT_META = 1;           $INGREDIENT_ITEMID = 2;     $INGREDIENT_META = 3; $RECIPE_SHAPE = 4;$RESULT_AMOUNT = 5;
 		$recipes = [
 			//RESULT_ITEM_ID            RESULT_META                 INGREDIENT_ITEMID           INGREDIENT_META     RECIPE_SHAPE        RESULT_AMOUNT
 			[Item::SLAB,                Slab::STONE,                Item::STONE,                Stone::NORMAL,      "slab",             6],
@@ -452,9 +452,9 @@ class CraftingManager{
 			[Item::QUARTZ_BLOCK,        Quartz::QUARTZ_CHISELED,    Item::SLAB,                 Slab::QUARTZ,       "blockrecipe2X1",   1],
 			[Item::SANDSTONE,           SandStone::CHISELED,        Item::SLAB,                 Slab::SANDSTONE,    "blockrecipe2X1",   1],
 			[Item::STONE_BRICK,         StoneBricks::CHISELED,      Item::SLAB,                 Slab::STONE_BRICK,  "blockrecipe2X1",   1],
-		]; 	
+		];
 		foreach ($recipes as $recipe){
-			$buildRecipes[] = $this->createOneIngedientRecipe($shapes[$recipe[$RECIPE_SHAPE]], $recipe[$RESULT_ITEMID], $recipe[$RESULT_META], $recipe[$RESULT_AMOUNT], $recipe[$INGREDIENT_ITEMID], $recipe[$INGREDIENT_META], "X", "Stonecutter");			                    
+			$buildRecipes[] = $this->createOneIngedientRecipe($shapes[$recipe[$RECIPE_SHAPE]], $recipe[$RESULT_ITEMID], $recipe[$RESULT_META], $recipe[$RESULT_AMOUNT], $recipe[$INGREDIENT_ITEMID], $recipe[$INGREDIENT_META], "X", "Stonecutter");
 		}
 
 		// Multi-ingredient stone recipes:
@@ -469,7 +469,7 @@ class CraftingManager{
 		))->setIngredient("A", Item::get(Item::COBBLESTONE, 0, 1))->setIngredient("B", Item::get(Item::STONE, Stone::DIORITE, 1)));
 		$buildRecipes[] = ((new StonecutterShapedRecipe(Item::get(Item::STONE_BRICK, StoneBricks::MOSSY, 1),
 			...$shapes["blockrecipe1X2"]
-		))->setIngredient("A", Item::get(Item::STONE_BRICK, StoneBricks::NORMAL, 1))->setIngredient("B", Item::get(Item::VINES, 0, 1)));                 
+		))->setIngredient("A", Item::get(Item::STONE_BRICK, StoneBricks::NORMAL, 1))->setIngredient("B", Item::get(Item::VINES, 0, 1)));
 
 		$this->sortAndAddRecipesArray($buildRecipes);
 	}
@@ -489,7 +489,7 @@ class CraftingManager{
 				}
 			}
 			$this->registerRecipe($current);
-		}            
+		}
 	}
 
 	private function createOneIngedientRecipe($recipeshape, $resultitem, $resultitemmeta, $resultitemamound, $ingedienttype, $ingredientmeta, $ingredientname, $inventoryType = ""){
@@ -500,18 +500,18 @@ class CraftingManager{
 			$height += 1;
 			$width = strlen($line);
 			$ingredientamount += substr_count($line, $ingredientname);
-		}		
+		}
 		$recipe = null;
 		if ($height < 3){
 			// Process small recipe
-			$fullClassName = "pocketmine\\inventory\\".$inventoryType."ShapedRecipe";// $ShapeClass."ShapedRecipe";
+			$fullClassName = "ipocket\\inventory\\".$inventoryType."ShapedRecipe";// $ShapeClass."ShapedRecipe";
 			$recipe = ((new $fullClassName(Item::get($resultitem, $resultitemmeta, $resultitemamound),
 				...$recipeshape
 			))->setIngredient($ingredientname, Item::get($ingedienttype, $ingredientmeta, $ingredientamount)));
 		}
 		else{
 			// Process big recipe
-			$fullClassName = "pocketmine\\inventory\\".$inventoryType."BigShapedRecipe";
+			$fullClassName = "ipocket\\inventory\\".$inventoryType."BigShapedRecipe";
 			$recipe = ((new $fullClassName(Item::get($resultitem, $resultitemmeta, $resultitemamound),
 				...$recipeshape
 			))->setIngredient($ingredientname, Item::get($ingedienttype, $ingredientmeta, $ingredientamount)));

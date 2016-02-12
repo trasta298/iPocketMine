@@ -13,13 +13,13 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine;
+namespace ipocket;
 
 /**
  * This class must be extended by all custom threading classes
@@ -42,9 +42,9 @@ abstract class Thread extends \Thread{
 
 	public function registerClassLoader(){
 		if(!interface_exists("ClassLoader", false)){
-			require(\pocketmine\PATH . "src/spl/ClassLoader.php");
-			require(\pocketmine\PATH . "src/spl/BaseClassLoader.php");
-			require(\pocketmine\PATH . "src/pocketmine/CompatibleClassLoader.php");
+			require(\ipocket\PATH . "src/spl/ClassLoader.php");
+			require(\ipocket\PATH . "src/spl/BaseClassLoader.php");
+			require(\ipocket\PATH . "src/ipocket/CompatibleClassLoader.php");
 		}
 		if($this->classLoader !== null){
 			$this->classLoader->register(true);

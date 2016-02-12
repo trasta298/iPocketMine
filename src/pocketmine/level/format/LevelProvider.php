@@ -13,16 +13,16 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\format;
+namespace ipocket\level\format;
 
-use pocketmine\level\Level;
-use pocketmine\math\Vector3;
+use ipocket\level\Level;
+use ipocket\math\Vector3;
 
 interface LevelProvider{
 
@@ -58,7 +58,7 @@ interface LevelProvider{
 	 * @param int $x
 	 * @param int $z
 	 *
-	 * @return \pocketmine\scheduler\AsyncTask|null
+	 * @return \ipocket\scheduler\AsyncTask|null
 	 */
 	public function requestChunkTask($x, $z);
 

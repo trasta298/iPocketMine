@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\generator\object;
+namespace ipocket\level\generator\object;
 
-use pocketmine\block\Block;
-use pocketmine\block\Wood;
-use pocketmine\level\ChunkManager;
-use pocketmine\utils\Random;
+use ipocket\block\Block;
+use ipocket\block\Wood;
+use ipocket\level\ChunkManager;
+use ipocket\utils\Random;
 
 class BirchTree extends Tree{
 

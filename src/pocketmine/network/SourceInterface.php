@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
@@ -22,10 +22,10 @@
 /**
  * Network-related classes
  */
-namespace pocketmine\network;
+namespace ipocket\network;
 
-use pocketmine\network\protocol\DataPacket;
-use pocketmine\Player;
+use ipocket\network\protocol\DataPacket;
+use ipocket\Player;
 
 /**
  * Classes that implement this interface will be able to be attached to players

@@ -13,15 +13,15 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level;
+namespace ipocket\level;
 
-use pocketmine\level\format\FullChunk;
+use ipocket\level\format\FullChunk;
 
 class SimpleChunkManager implements ChunkManager{
 

@@ -13,15 +13,15 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\generator\hell;
+namespace ipocket\level\generator\hell;
 
-use pocketmine\level\generator\biome\Biome;
+use ipocket\level\generator\biome\Biome;
 
 class HellBiome extends Biome{
 

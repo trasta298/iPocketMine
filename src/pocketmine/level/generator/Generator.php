@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
@@ -22,12 +22,12 @@
 /**
  * Noise classes used in Levels
  */
-namespace pocketmine\level\generator;
+namespace ipocket\level\generator;
 
-use pocketmine\level\ChunkManager;
-use pocketmine\level\generator\noise\Noise;
-use pocketmine\level\generator\normal\Normal;
-use pocketmine\utils\Random;
+use ipocket\level\ChunkManager;
+use ipocket\level\generator\noise\Noise;
+use ipocket\level\generator\normal\Normal;
+use ipocket\utils\Random;
 
 abstract class Generator{
 	private static $list = [];

@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\entity;
+namespace ipocket\event\entity;
 
-use pocketmine\entity\Entity;
-use pocketmine\Event;
-use pocketmine\event\Cancellable;
-use pocketmine\math\Vector3;
+use ipocket\entity\Entity;
+use ipocket\Event;
+use ipocket\event\Cancellable;
+use ipocket\math\Vector3;
 
 /**
  * @deprecated
@@ -32,7 +32,7 @@ use pocketmine\math\Vector3;
 class EntityMoveEvent extends EntityEvent implements Cancellable{
 	public static $handlerList = null;
 
-	/** @var \pocketmine\math\Vector3 */
+	/** @var \ipocket\math\Vector3 */
 	private $pos;
 
 	public function __construct(Entity $entity, Vector3 $pos){

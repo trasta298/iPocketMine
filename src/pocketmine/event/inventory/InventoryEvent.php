@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
@@ -22,10 +22,10 @@
 /**
  * Inventory related events
  */
-namespace pocketmine\event\inventory;
+namespace ipocket\event\inventory;
 
-use pocketmine\event\Event;
-use pocketmine\inventory\Inventory;
+use ipocket\event\Event;
+use ipocket\inventory\Inventory;
 
 abstract class InventoryEvent extends Event{
 
@@ -44,7 +44,7 @@ abstract class InventoryEvent extends Event{
 	}
 
 	/**
-	 * @return \pocketmine\entity\Human[]
+	 * @return \ipocket\entity\Human[]
 	 */
 	public function getViewers(){
 		return $this->inventory->getViewers();

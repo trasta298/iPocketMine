@@ -13,19 +13,19 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\particle;
+namespace ipocket\level\particle;
 
-use pocketmine\entity\Entity;
-use pocketmine\entity\Item as ItemEntity;
-use pocketmine\math\Vector3;
-use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\network\protocol\RemoveEntityPacket;
+use ipocket\entity\Entity;
+use ipocket\entity\Item as ItemEntity;
+use ipocket\math\Vector3;
+use ipocket\network\protocol\AddEntityPacket;
+use ipocket\network\protocol\RemoveEntityPacket;
 
 class FloatingTextParticle extends Particle{
 	//TODO: HACK!
@@ -53,11 +53,11 @@ class FloatingTextParticle extends Particle{
 	public function setTitle($title){
 		$this->title = $title;
 	}
-	
+
 	public function isInvisible(){
 		return $this->invisible;
 	}
-	
+
 	public function setInvisible($value = true){
 		$this->invisible = (bool) $value;
 	}
@@ -75,7 +75,7 @@ class FloatingTextParticle extends Particle{
 		}
 
 		if(!$this->invisible){
-			
+
 			$pk = new AddEntityPacket();
 			$pk->eid = $this->entityId;
 			$pk->type = ItemEntity::NETWORK_ID;
@@ -98,7 +98,7 @@ class FloatingTextParticle extends Particle{
 
 			$p[] = $pk;
 		}
-		
+
 		return $p;
 	}
 }

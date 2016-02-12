@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\inventory;
+namespace ipocket\inventory;
 
-use pocketmine\event\inventory\InventoryTransactionEvent;
-use pocketmine\item\Item;
-use pocketmine\Player;
-use pocketmine\Server;
+use ipocket\event\inventory\InventoryTransactionEvent;
+use ipocket\item\Item;
+use ipocket\Player;
+use ipocket\Server;
 
 /**
  * This TransactionGroup only allows doing Transaction between one / two inventories

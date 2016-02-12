@@ -13,20 +13,20 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\player;
+namespace ipocket\event\player;
 
-use pocketmine\block\Block;
-use pocketmine\event\Cancellable;
-use pocketmine\item\Item;
-use pocketmine\level\Position;
-use pocketmine\math\Vector3;
-use pocketmine\Player;
+use ipocket\block\Block;
+use ipocket\event\Cancellable;
+use ipocket\item\Item;
+use ipocket\level\Position;
+use ipocket\math\Vector3;
+use ipocket\Player;
 
 /**
  * Called when a player interacts or touches a block (including air?)
@@ -41,7 +41,7 @@ class PlayerInteractEvent extends PlayerEvent implements Cancellable{
 	const PHYSICAL = 4;
 
 	/**
-	 * @var \pocketmine\block\Block;
+	 * @var \ipocket\block\Block;
 	 */
 	protected $blockTouched;
 
@@ -50,9 +50,9 @@ class PlayerInteractEvent extends PlayerEvent implements Cancellable{
 	/** @var int */
 	protected $blockFace;
 
-	/** @var \pocketmine\item\Item */
+	/** @var \ipocket\item\Item */
 	protected $item;
-	
+
 	protected $action;
 
 	public function __construct(Player $player, Item $item, Vector3 $block, $face, $action = PlayerInteractEvent::RIGHT_CLICK_BLOCK){

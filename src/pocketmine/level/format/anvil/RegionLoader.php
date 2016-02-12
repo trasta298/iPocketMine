@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\format\anvil;
+namespace ipocket\level\format\anvil;
 
-use pocketmine\level\format\LevelProvider;
+use ipocket\level\format\LevelProvider;
 
 
-class RegionLoader extends \pocketmine\level\format\mcregion\RegionLoader{
+class RegionLoader extends \ipocket\level\format\mcregion\RegionLoader{
 
 	public function __construct(LevelProvider $level, $regionX, $regionZ){
 		$this->x = $regionX;

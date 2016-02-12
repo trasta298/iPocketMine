@@ -13,30 +13,30 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command\defaults;
+namespace ipocket\command\defaults;
 
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
-use pocketmine\event\TranslationContainer;
-use pocketmine\math\Vector3;
-use pocketmine\Player;
-use pocketmine\utils\TextFormat;
+use ipocket\command\Command;
+use ipocket\command\CommandSender;
+use ipocket\event\TranslationContainer;
+use ipocket\math\Vector3;
+use ipocket\Player;
+use ipocket\utils\TextFormat;
 
 class TeleportCommand extends VanillaCommand{
 
 	public function __construct($name){
 		parent::__construct(
 			$name,
-			"%pocketmine.command.tp.description",
+			"%ipocket.command.tp.description",
 			"%commands.tp.usage"
 		);
-		$this->setPermission("pocketmine.command.teleport");
+		$this->setPermission("ipocket.command.teleport");
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

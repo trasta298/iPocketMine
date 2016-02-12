@@ -13,16 +13,16 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\sound;
+namespace ipocket\level\sound;
 
-use pocketmine\math\Vector3;
-use pocketmine\network\protocol\LevelEventPacket;
+use ipocket\math\Vector3;
+use ipocket\network\protocol\LevelEventPacket;
 
 class AnvilUseSound extends GenericSound{
 	public function __construct(Vector3 $pos, $pitch = 0){

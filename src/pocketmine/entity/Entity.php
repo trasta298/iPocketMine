@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
@@ -22,44 +22,44 @@
 /**
  * All the entity classes
  */
-namespace pocketmine\entity;
+namespace ipocket\entity;
 
-use pocketmine\block\Block;
-use pocketmine\block\Water;
-use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\event\entity\EntityDespawnEvent;
-use pocketmine\event\entity\EntityLevelChangeEvent;
-use pocketmine\event\entity\EntityMotionEvent;
-use pocketmine\event\entity\EntityRegainHealthEvent;
-use pocketmine\event\entity\EntitySpawnEvent;
-use pocketmine\event\entity\EntityTeleportEvent;
-use pocketmine\event\Timings;
-use pocketmine\level\format\Chunk;
-use pocketmine\level\format\FullChunk;
-use pocketmine\level\Level;
-use pocketmine\level\Location;
-use pocketmine\level\Position;
-use pocketmine\math\AxisAlignedBB;
-use pocketmine\math\Math;
-use pocketmine\math\Vector2;
-use pocketmine\math\Vector3;
-use pocketmine\metadata\Metadatable;
-use pocketmine\metadata\MetadataValue;
-use pocketmine\nbt\tag\Byte;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\nbt\tag\Double;
-use pocketmine\nbt\tag\Enum;
-use pocketmine\nbt\tag\Float;
-use pocketmine\nbt\tag\Int;
-use pocketmine\nbt\tag\Short;
-use pocketmine\nbt\tag\String;
-use pocketmine\network\protocol\MobEffectPacket;
-use pocketmine\network\protocol\RemoveEntityPacket;
-use pocketmine\network\protocol\SetEntityDataPacket;
-use pocketmine\Player;
-use pocketmine\plugin\Plugin;
-use pocketmine\Server;
-use pocketmine\utils\ChunkException;
+use ipocket\block\Block;
+use ipocket\block\Water;
+use ipocket\event\entity\EntityDamageEvent;
+use ipocket\event\entity\EntityDespawnEvent;
+use ipocket\event\entity\EntityLevelChangeEvent;
+use ipocket\event\entity\EntityMotionEvent;
+use ipocket\event\entity\EntityRegainHealthEvent;
+use ipocket\event\entity\EntitySpawnEvent;
+use ipocket\event\entity\EntityTeleportEvent;
+use ipocket\event\Timings;
+use ipocket\level\format\Chunk;
+use ipocket\level\format\FullChunk;
+use ipocket\level\Level;
+use ipocket\level\Location;
+use ipocket\level\Position;
+use ipocket\math\AxisAlignedBB;
+use ipocket\math\Math;
+use ipocket\math\Vector2;
+use ipocket\math\Vector3;
+use ipocket\metadata\Metadatable;
+use ipocket\metadata\MetadataValue;
+use ipocket\nbt\tag\Byte;
+use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\Double;
+use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\Float;
+use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\Short;
+use ipocket\nbt\tag\String;
+use ipocket\network\protocol\MobEffectPacket;
+use ipocket\network\protocol\RemoveEntityPacket;
+use ipocket\network\protocol\SetEntityDataPacket;
+use ipocket\Player;
+use ipocket\plugin\Plugin;
+use ipocket\Server;
+use ipocket\utils\ChunkException;
 
 abstract class Entity extends Location implements Metadatable{
 
@@ -198,7 +198,7 @@ abstract class Entity extends Location implements Metadatable{
 
 	public $closed = false;
 
-	/** @var \pocketmine\event\TimingsHandler */
+	/** @var \ipocket\event\TimingsHandler */
 	protected $timings;
 	protected $isPlayer = false;
 

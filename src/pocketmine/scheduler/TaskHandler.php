@@ -13,15 +13,15 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\scheduler;
+namespace ipocket\scheduler;
 
-use pocketmine\event\Timings;
+use ipocket\event\Timings;
 
 class TaskHandler{
 
@@ -43,7 +43,7 @@ class TaskHandler{
 	/** @var bool */
 	protected $cancelled = false;
 
-	/** @var \pocketmine\event\TimingsHandler */
+	/** @var \ipocket\event\TimingsHandler */
 	public $timings;
 
 	public $timingName = null;

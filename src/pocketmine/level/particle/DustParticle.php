@@ -13,15 +13,15 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\particle;
+namespace ipocket\level\particle;
 
-use pocketmine\math\Vector3;
+use ipocket\math\Vector3;
 
 class DustParticle extends GenericParticle{
 	public function __construct(Vector3 $pos, $r, $g, $b, $a = 255){

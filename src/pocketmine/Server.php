@@ -13,121 +13,121 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
 /**
- * PocketMine-MP is the Minecraft: PE multiplayer server software
- * Homepage: http://www.pocketmine.net/
+ * iPocket is the Minecraft: PE multiplayer server software
+ * Homepage: http://ipocket.link/
  */
-namespace pocketmine;
+namespace ipocket;
 
-use pocketmine\block\Block;
-use pocketmine\command\CommandReader;
-use pocketmine\command\CommandSender;
-use pocketmine\command\ConsoleCommandSender;
-use pocketmine\command\PluginIdentifiableCommand;
-use pocketmine\command\SimpleCommandMap;
-use pocketmine\entity\Arrow;
-use pocketmine\entity\Attribute;
-use pocketmine\entity\Effect;
-use pocketmine\entity\Entity;
-use pocketmine\entity\FallingSand;
-use pocketmine\entity\Human;
-use pocketmine\entity\Item as DroppedItem;
-use pocketmine\entity\PrimedTNT;
-use pocketmine\entity\Snowball;
-use pocketmine\entity\Squid;
-use pocketmine\entity\Villager;
-use pocketmine\entity\Zombie;
-use pocketmine\event\HandlerList;
-use pocketmine\event\level\LevelInitEvent;
-use pocketmine\event\level\LevelLoadEvent;
-use pocketmine\event\server\QueryRegenerateEvent;
-use pocketmine\event\server\ServerCommandEvent;
-use pocketmine\event\Timings;
-use pocketmine\event\TimingsHandler;
-use pocketmine\event\TranslationContainer;
-use pocketmine\inventory\CraftingManager;
-use pocketmine\inventory\InventoryType;
-use pocketmine\inventory\Recipe;
-use pocketmine\inventory\ShapedRecipe;
-use pocketmine\inventory\ShapelessRecipe;
-use pocketmine\item\enchantment\Enchantment;
-use pocketmine\item\Item;
-use pocketmine\lang\BaseLang;
-use pocketmine\level\format\anvil\Anvil;
-use pocketmine\level\format\leveldb\LevelDB;
-use pocketmine\level\format\LevelProviderManager;
-use pocketmine\level\format\mcregion\McRegion;
-use pocketmine\level\generator\biome\Biome;
-use pocketmine\level\generator\Flat;
-use pocketmine\level\generator\Generator;
-use pocketmine\level\generator\hell\Nether;
-use pocketmine\level\generator\normal\Normal;
-use pocketmine\level\Level;
-use pocketmine\metadata\EntityMetadataStore;
-use pocketmine\metadata\LevelMetadataStore;
-use pocketmine\metadata\PlayerMetadataStore;
-use pocketmine\nbt\NBT;
-use pocketmine\nbt\tag\Byte;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\nbt\tag\Double;
-use pocketmine\nbt\tag\Enum;
-use pocketmine\nbt\tag\Float;
-use pocketmine\nbt\tag\Int;
-use pocketmine\nbt\tag\Long;
-use pocketmine\nbt\tag\Short;
-use pocketmine\nbt\tag\String;
-use pocketmine\network\CompressBatchedTask;
-use pocketmine\network\Network;
-use pocketmine\network\protocol\BatchPacket;
-use pocketmine\network\protocol\CraftingDataPacket;
-use pocketmine\network\protocol\DataPacket;
-use pocketmine\network\protocol\PlayerListPacket;
-use pocketmine\network\query\QueryHandler;
-use pocketmine\network\RakLibInterface;
-use pocketmine\network\rcon\RCON;
-use pocketmine\network\SourceInterface;
-use pocketmine\network\upnp\UPnP;
-use pocketmine\permission\BanList;
-use pocketmine\permission\DefaultPermissions;
-use pocketmine\plugin\PharPluginLoader;
-use pocketmine\plugin\Plugin;
-use pocketmine\plugin\PluginLoadOrder;
-use pocketmine\plugin\PluginManager;
-use pocketmine\plugin\ScriptPluginLoader;
-use pocketmine\scheduler\FileWriteTask;
-use pocketmine\scheduler\SendUsageTask;
-use pocketmine\scheduler\ServerScheduler;
-use pocketmine\tile\Chest;
-use pocketmine\tile\EnchantTable;
-use pocketmine\tile\Furnace;
-use pocketmine\tile\Sign;
-use pocketmine\tile\Tile;
-use pocketmine\updater\AutoUpdater;
-use pocketmine\utils\Binary;
-use pocketmine\utils\Config;
-use pocketmine\utils\LevelException;
-use pocketmine\utils\MainLogger;
-use pocketmine\utils\ServerException;
-use pocketmine\utils\ServerKiller;
-use pocketmine\utils\Terminal;
-use pocketmine\utils\TextFormat;
-use pocketmine\utils\TextWrapper;
-use pocketmine\utils\Utils;
-use pocketmine\utils\UUID;
-use pocketmine\utils\VersionString;
+use ipocket\block\Block;
+use ipocket\command\CommandReader;
+use ipocket\command\CommandSender;
+use ipocket\command\ConsoleCommandSender;
+use ipocket\command\PluginIdentifiableCommand;
+use ipocket\command\SimpleCommandMap;
+use ipocket\entity\Arrow;
+use ipocket\entity\Attribute;
+use ipocket\entity\Effect;
+use ipocket\entity\Entity;
+use ipocket\entity\FallingSand;
+use ipocket\entity\Human;
+use ipocket\entity\Item as DroppedItem;
+use ipocket\entity\PrimedTNT;
+use ipocket\entity\Snowball;
+use ipocket\entity\Squid;
+use ipocket\entity\Villager;
+use ipocket\entity\Zombie;
+use ipocket\event\HandlerList;
+use ipocket\event\level\LevelInitEvent;
+use ipocket\event\level\LevelLoadEvent;
+use ipocket\event\server\QueryRegenerateEvent;
+use ipocket\event\server\ServerCommandEvent;
+use ipocket\event\Timings;
+use ipocket\event\TimingsHandler;
+use ipocket\event\TranslationContainer;
+use ipocket\inventory\CraftingManager;
+use ipocket\inventory\InventoryType;
+use ipocket\inventory\Recipe;
+use ipocket\inventory\ShapedRecipe;
+use ipocket\inventory\ShapelessRecipe;
+use ipocket\item\enchantment\Enchantment;
+use ipocket\item\Item;
+use ipocket\lang\BaseLang;
+use ipocket\level\format\anvil\Anvil;
+use ipocket\level\format\leveldb\LevelDB;
+use ipocket\level\format\LevelProviderManager;
+use ipocket\level\format\mcregion\McRegion;
+use ipocket\level\generator\biome\Biome;
+use ipocket\level\generator\Flat;
+use ipocket\level\generator\Generator;
+use ipocket\level\generator\hell\Nether;
+use ipocket\level\generator\normal\Normal;
+use ipocket\level\Level;
+use ipocket\metadata\EntityMetadataStore;
+use ipocket\metadata\LevelMetadataStore;
+use ipocket\metadata\PlayerMetadataStore;
+use ipocket\nbt\NBT;
+use ipocket\nbt\tag\Byte;
+use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\Double;
+use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\Float;
+use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\Long;
+use ipocket\nbt\tag\Short;
+use ipocket\nbt\tag\String;
+use ipocket\network\CompressBatchedTask;
+use ipocket\network\Network;
+use ipocket\network\protocol\BatchPacket;
+use ipocket\network\protocol\CraftingDataPacket;
+use ipocket\network\protocol\DataPacket;
+use ipocket\network\protocol\PlayerListPacket;
+use ipocket\network\query\QueryHandler;
+use ipocket\network\RakLibInterface;
+use ipocket\network\rcon\RCON;
+use ipocket\network\SourceInterface;
+use ipocket\network\upnp\UPnP;
+use ipocket\permission\BanList;
+use ipocket\permission\DefaultPermissions;
+use ipocket\plugin\PharPluginLoader;
+use ipocket\plugin\Plugin;
+use ipocket\plugin\PluginLoadOrder;
+use ipocket\plugin\PluginManager;
+use ipocket\plugin\ScriptPluginLoader;
+use ipocket\scheduler\FileWriteTask;
+use ipocket\scheduler\SendUsageTask;
+use ipocket\scheduler\ServerScheduler;
+use ipocket\tile\Chest;
+use ipocket\tile\EnchantTable;
+use ipocket\tile\Furnace;
+use ipocket\tile\Sign;
+use ipocket\tile\Tile;
+use ipocket\updater\AutoUpdater;
+use ipocket\utils\Binary;
+use ipocket\utils\Config;
+use ipocket\utils\LevelException;
+use ipocket\utils\MainLogger;
+use ipocket\utils\ServerException;
+use ipocket\utils\ServerKiller;
+use ipocket\utils\Terminal;
+use ipocket\utils\TextFormat;
+use ipocket\utils\TextWrapper;
+use ipocket\utils\Utils;
+use ipocket\utils\UUID;
+use ipocket\utils\VersionString;
 
 /**
  * The class that manages everything
  */
 class Server{
-	const BROADCAST_CHANNEL_ADMINISTRATIVE = "pocketmine.broadcast.admin";
-	const BROADCAST_CHANNEL_USERS = "pocketmine.broadcast.user";
+	const BROADCAST_CHANNEL_ADMINISTRATIVE = "ipocket.broadcast.admin";
+	const BROADCAST_CHANNEL_USERS = "ipocket.broadcast.user";
 
 	/** @var Server */
 	private static $instance = null;
@@ -273,7 +273,7 @@ class Server{
 	 * @return string
 	 */
 	public function getName(){
-		return "PocketMine-MP";
+		return "iPocket";
 	}
 
 	/**
@@ -287,28 +287,28 @@ class Server{
 	 * @return string
 	 */
 	public function getPocketMineVersion(){
-		return \pocketmine\VERSION;
+		return \ipocket\VERSION;
 	}
 
 	/**
 	 * @return string
 	 */
 	public function getCodename(){
-		return \pocketmine\CODENAME;
+		return \ipocket\CODENAME;
 	}
 
 	/**
 	 * @return string
 	 */
 	public function getVersion(){
-		return \pocketmine\MINECRAFT_VERSION;
+		return \ipocket\MINECRAFT_VERSION;
 	}
 
 	/**
 	 * @return string
 	 */
 	public function getApiVersion(){
-		return \pocketmine\API_VERSION;
+		return \ipocket\API_VERSION;
 	}
 
 	/**
@@ -756,10 +756,10 @@ class Server{
 				return $nbt->getData();
 			}catch(\Exception $e){ //zlib decode error / corrupt data
 				rename($path . "$name.dat", $path . "$name.dat.bak");
-				$this->logger->notice($this->getLanguage()->translateString("pocketmine.data.playerCorrupted", [$name]));
+				$this->logger->notice($this->getLanguage()->translateString("ipocket.data.playerCorrupted", [$name]));
 			}
 		}else{
-			$this->logger->notice($this->getLanguage()->translateString("pocketmine.data.playerNotFound", [$name]));
+			$this->logger->notice($this->getLanguage()->translateString("ipocket.data.playerNotFound", [$name]));
 		}
 		$spawn = $this->getDefaultLevel()->getSafeSpawn();
 		$nbt = new Compound("", [
@@ -800,7 +800,7 @@ class Server{
 		$nbt->Motion->setTagType(NBT::TAG_Double);
 		$nbt->Rotation->setTagType(NBT::TAG_Float);
 
-		if(file_exists($path . "$name.yml")){ //Importing old PocketMine-MP files
+		if(file_exists($path . "$name.yml")){ //Importing old iPocket files
 			$data = new Config($path . "$name.yml", Config::YAML, []);
 			$nbt["playerGameType"] = (int) $data->get("gamemode");
 			$nbt["Level"] = $data->get("position")["level"];
@@ -811,7 +811,7 @@ class Server{
 			$nbt["SpawnX"] = (int) $data->get("spawn")["x"];
 			$nbt["SpawnY"] = (int) $data->get("spawn")["y"];
 			$nbt["SpawnZ"] = (int) $data->get("spawn")["z"];
-			$this->logger->notice($this->getLanguage()->translateString("pocketmine.data.playerOld", [$name]));
+			$this->logger->notice($this->getLanguage()->translateString("ipocket.data.playerOld", [$name]));
 			foreach($data->get("inventory") as $slot => $item){
 				if(count($item) === 3){
 					$nbt->Inventory[$slot + 9] = new Compound("", [
@@ -872,8 +872,8 @@ class Server{
 				file_put_contents($this->getDataPath() . "players/" . strtolower($name) . ".dat", $nbt->writeCompressed());
 			}
 		}catch(\Exception $e){
-			$this->logger->critical($this->getLanguage()->translateString("pocketmine.data.saveError", [$name, $e->getMessage()]));
-			if(\pocketmine\DEBUG > 1 and $this->logger instanceof MainLogger){
+			$this->logger->critical($this->getLanguage()->translateString("ipocket.data.saveError", [$name, $e->getMessage()]));
+			if(\ipocket\DEBUG > 1 and $this->logger instanceof MainLogger){
 				$this->logger->logException($e);
 			}
 		}
@@ -1059,7 +1059,7 @@ class Server{
 		if($this->isLevelLoaded($name)){
 			return true;
 		}elseif(!$this->isLevelGenerated($name)){
-			$this->logger->notice($this->getLanguage()->translateString("pocketmine.level.notFound", [$name]));
+			$this->logger->notice($this->getLanguage()->translateString("ipocket.level.notFound", [$name]));
 
 			return false;
 		}
@@ -1069,7 +1069,7 @@ class Server{
 		$provider = LevelProviderManager::getProvider($path);
 
 		if($provider === null){
-			$this->logger->error($this->getLanguage()->translateString("pocketmine.level.loadError", [$name, "Unknown provider"]));
+			$this->logger->error($this->getLanguage()->translateString("ipocket.level.loadError", [$name, "Unknown provider"]));
 
 			return false;
 		}
@@ -1082,7 +1082,7 @@ class Server{
 			$level = new Level($this, $name, $path, $provider);
 		}catch(\Exception $e){
 
-			$this->logger->error($this->getLanguage()->translateString("pocketmine.level.loadError", [$name, $e->getMessage()]));
+			$this->logger->error($this->getLanguage()->translateString("ipocket.level.loadError", [$name, $e->getMessage()]));
 			if($this->logger instanceof MainLogger){
 				$this->logger->logException($e);
 			}
@@ -1105,7 +1105,7 @@ class Server{
 	 *
 	 * @param string $name
 	 * @param int    $seed
-	 * @param string $generator Class name that extends pocketmine\level\generator\Noise
+	 * @param string $generator Class name that extends ipocket\level\generator\Noise
 	 * @param array  $options
 	 *
 	 * @return bool
@@ -1131,7 +1131,7 @@ class Server{
 
 		try{
 			$path = $this->getDataPath() . "worlds/" . $name . "/";
-			/** @var \pocketmine\level\format\LevelProvider $provider */
+			/** @var \ipocket\level\format\LevelProvider $provider */
 			$provider::generate($path, $name, $seed, $generator, $options);
 
 			$level = new Level($this, $name, $path, $provider);
@@ -1141,7 +1141,7 @@ class Server{
 
 			$level->setTickRate($this->baseTickRate);
 		}catch(\Exception $e){
-			$this->logger->error($this->getLanguage()->translateString("pocketmine.level.generateError", [$name, $e->getMessage()]));
+			$this->logger->error($this->getLanguage()->translateString("ipocket.level.generateError", [$name, $e->getMessage()]));
 			if($this->logger instanceof MainLogger){
 				$this->logger->logException($e);
 			}
@@ -1152,7 +1152,7 @@ class Server{
 
 		$this->getPluginManager()->callEvent(new LevelLoadEvent($level));
 
-		$this->getLogger()->notice($this->getLanguage()->translateString("pocketmine.level.backgroundGeneration", [$name]));
+		$this->getLogger()->notice($this->getLanguage()->translateString("ipocket.level.backgroundGeneration", [$name]));
 
 		$centerX = $level->getSpawnLocation()->getX() >> 4;
 		$centerZ = $level->getSpawnLocation()->getZ() >> 4;
@@ -1472,15 +1472,15 @@ class Server{
 
 		$version = new VersionString($this->getPocketMineVersion());
 
-		$this->logger->info("Loading pocketmine.yml...");
-		if(!file_exists($this->dataPath . "pocketmine.yml")){
-			$content = file_get_contents($this->filePath . "src/pocketmine/resources/pocketmine.yml");
+		$this->logger->info("Loading ipocket.yml...");
+		if(!file_exists($this->dataPath . "ipocket.yml")){
+			$content = file_get_contents($this->filePath . "src/ipocket/resources/ipocket.yml");
 			if($version->isDev()){
 				$content = str_replace("preferred-channel: stable", "preferred-channel: beta", $content);
 			}
-			@file_put_contents($this->dataPath . "pocketmine.yml", $content);
+			@file_put_contents($this->dataPath . "ipocket.yml", $content);
 		}
-		$this->config = new Config($this->dataPath . "pocketmine.yml", Config::YAML, []);
+		$this->config = new Config($this->dataPath . "ipocket.yml", Config::YAML, []);
 
 		$this->logger->info("Loading server properties...");
 		$this->properties = new Config($this->dataPath . "server.properties", Config::PROPERTIES, [
@@ -1514,7 +1514,7 @@ class Server{
 
 		$this->memoryManager = new MemoryManager($this);
 
-		$this->logger->info($this->getLanguage()->translateString("pocketmine.server.start", [TextFormat::AQUA . $this->getVersion()]));
+		$this->logger->info($this->getLanguage()->translateString("ipocket.server.start", [TextFormat::AQUA . $this->getVersion()]));
 
 		if(($poolSize = $this->getProperty("settings.async-workers", "auto")) === "auto"){
 			$poolSize = ServerScheduler::$WORKERS;
@@ -1569,16 +1569,16 @@ class Server{
 			$this->setConfigInt("difficulty", 3);
 		}
 
-		define("pocketmine\\DEBUG", (int) $this->getProperty("debug.level", 1));
+		define("ipocket\\DEBUG", (int) $this->getProperty("debug.level", 1));
 		if($this->logger instanceof MainLogger){
-			$this->logger->setLogDebug(\pocketmine\DEBUG > 1);
+			$this->logger->setLogDebug(\ipocket\DEBUG > 1);
 		}
 
-		if(\pocketmine\DEBUG >= 0){
+		if(\ipocket\DEBUG >= 0){
 			@cli_set_process_title($this->getName() . " " . $this->getPocketMineVersion());
 		}
 
-		$this->logger->info($this->getLanguage()->translateString("pocketmine.server.networkStart", [$this->getIp() === "" ? "*" : $this->getIp(), $this->getPort()]));
+		$this->logger->info($this->getLanguage()->translateString("ipocket.server.networkStart", [$this->getIp() === "" ? "*" : $this->getIp(), $this->getPort()]));
 		define("BOOTUP_RANDOM", @Utils::getRandomBytes(16));
 		$this->serverID = Utils::getMachineUniqueId($this->getIp() . $this->getPort());
 
@@ -1589,13 +1589,13 @@ class Server{
 		$this->network->setName($this->getMotd());
 
 
-		$this->logger->info($this->getLanguage()->translateString("pocketmine.server.info", [
+		$this->logger->info($this->getLanguage()->translateString("ipocket.server.info", [
 			$this->getName(),
 			($version->isDev() ? TextFormat::YELLOW : "") . $version->get(true) . TextFormat::WHITE,
 			$this->getCodename(),
 			$this->getApiVersion()
 		]));
-		$this->logger->info($this->getLanguage()->translateString("pocketmine.server.license", [$this->getName()]));
+		$this->logger->info($this->getLanguage()->translateString("ipocket.server.license", [$this->getName()]));
 
 		Timings::init();
 
@@ -1632,14 +1632,14 @@ class Server{
 
 		$this->pluginManager->loadPlugins($this->pluginPath);
 
-		$this->updater = new AutoUpdater($this, $this->getProperty("auto-updater.host", "www.pocketmine.net"));
+		$this->updater = new AutoUpdater($this, $this->getProperty("auto-updater.host", "ipocket.link"));
 
 		$this->enablePlugins(PluginLoadOrder::STARTUP);
 
 		LevelProviderManager::addProvider($this, Anvil::class);
 		LevelProviderManager::addProvider($this, McRegion::class);
 		if(extension_loaded("leveldb")){
-			$this->logger->debug($this->getLanguage()->translateString("pocketmine.debug.enable"));
+			$this->logger->debug($this->getLanguage()->translateString("ipocket.debug.enable"));
 			LevelProviderManager::addProvider($this, LevelDB::class);
 		}
 
@@ -1686,7 +1686,7 @@ class Server{
 		$this->properties->save(true);
 
 		if(!($this->getDefaultLevel() instanceof Level)){
-			$this->getLogger()->emergency($this->getLanguage()->translateString("pocketmine.level.defaultError"));
+			$this->getLogger()->emergency($this->getLanguage()->translateString("ipocket.level.defaultError"));
 			$this->forceShutdown();
 
 			return;
@@ -1745,7 +1745,7 @@ class Server{
 
 		return count($recipients);
 	}
-	
+
 	/**
 	 * @param string        $popup
 	 * @param Player[]|null $recipients
@@ -1763,7 +1763,7 @@ class Server{
 				}
 			}
 		}
-		
+
 		/** @var Player[] $recipients */
 		foreach($recipients as $recipient){
 			$recipient->sendPopup($popup);
@@ -2062,7 +2062,7 @@ class Server{
 	}
 
 	/**
-	 * Starts the PocketMine-MP server and starts processing ticks and packets
+	 * Starts the iPocket server and starts processing ticks and packets
 	 */
 	public function start(){
 		if($this->getConfigBoolean("enable-query", true) === true){
@@ -2093,9 +2093,9 @@ class Server{
 			$this->dispatchSignals = true;
 		}
 
-		$this->logger->info($this->getLanguage()->translateString("pocketmine.server.defaultGameMode", [self::getGamemodeString($this->getGamemode())]));
+		$this->logger->info($this->getLanguage()->translateString("ipocket.server.defaultGameMode", [self::getGamemodeString($this->getGamemode())]));
 
-		$this->logger->info($this->getLanguage()->translateString("pocketmine.server.startFinished", [round(microtime(true) - \pocketmine\START_TIME, 3)]));
+		$this->logger->info($this->getLanguage()->translateString("ipocket.server.startFinished", [round(microtime(true) - \ipocket\START_TIME, 3)]));
 
 		$this->tickProcessor();
 		$this->forceShutdown();
@@ -2161,15 +2161,15 @@ class Server{
 
 		ini_set("error_reporting", 0);
 		ini_set("memory_limit", -1); //Fix error dump not dumped on memory problems
-		$this->logger->emergency($this->getLanguage()->translateString("pocketmine.crash.create"));
+		$this->logger->emergency($this->getLanguage()->translateString("ipocket.crash.create"));
 		try{
 			$dump = new CrashDump($this);
 		}catch(\Exception $e){
-			$this->logger->critical($this->getLanguage()->translateString("pocketmine.crash.error", $e->getMessage()));
+			$this->logger->critical($this->getLanguage()->translateString("ipocket.crash.error", $e->getMessage()));
 			return;
 		}
 
-		$this->logger->emergency($this->getLanguage()->translateString("pocketmine.crash.submit", [$dump->getPath()]));
+		$this->logger->emergency($this->getLanguage()->translateString("ipocket.crash.submit", [$dump->getPath()]));
 
 
 		if($this->getProperty("auto-report.enabled", true) !== false){
@@ -2188,17 +2188,17 @@ class Server{
 			}
 
 			if($report){
-				$reply = Utils::postURL("http://" . $this->getProperty("auto-report.host", "crash.pocketmine.net") . "/submit/api", [
+				$reply = Utils::postURL("http://" . $this->getProperty("auto-report.host", "crash.ipocket.net") . "/submit/api", [
 					"report" => "yes",
 					"name" => $this->getName() . " " . $this->getPocketMineVersion(),
-					"email" => "crash@pocketmine.net",
+					"email" => "crash@ipocket.net",
 					"reportPaste" => base64_encode($dump->getEncodedData())
 				]);
 
 				if(($data = json_decode($reply)) !== false and isset($data->crashId)){
 					$reportId = $data->crashId;
 					$reportUrl = $data->crashUrl;
-					$this->logger->emergency($this->getLanguage()->translateString("pocketmine.crash.archive", [$reportUrl, $reportId]));
+					$this->logger->emergency($this->getLanguage()->translateString("ipocket.crash.archive", [$reportUrl, $reportId]));
 				}
 			}
 		}
@@ -2344,8 +2344,8 @@ class Server{
 					}
 				}
 			}catch(\Exception $e){
-				$this->logger->critical($this->getLanguage()->translateString("pocketmine.level.tickError", [$level->getName(), $e->getMessage()]));
-				if(\pocketmine\DEBUG > 1 and $this->logger instanceof MainLogger){
+				$this->logger->critical($this->getLanguage()->translateString("ipocket.level.tickError", [$level->getName(), $e->getMessage()]));
+				if(\ipocket\DEBUG > 1 and $this->logger instanceof MainLogger){
 					$this->logger->logException($e);
 				}
 			}
@@ -2410,7 +2410,7 @@ class Server{
 		}
 
 		$d = Utils::getRealMemoryUsage();
-		
+
 		$u = Utils::getMemoryUsage(true);
 		$usage = round(($u[0] / 1024) / 1024, 2) . "/" . round(($d[0] / 1024) / 1024, 2) . "/" . round(($u[1] / 1024) / 1024, 2) . "/".round(($u[2] / 1024) / 1024, 2)." MB @ " . Utils::getThreadCount() . " threads";
 
@@ -2439,7 +2439,7 @@ class Server{
 				$this->queryHandler->handle($address, $port, $payload);
 			}
 		}catch(\Exception $e){
-			if(\pocketmine\DEBUG > 1){
+			if(\ipocket\DEBUG > 1){
 				if($this->logger instanceof MainLogger){
 					$this->logger->logException($e);
 				}
@@ -2522,7 +2522,7 @@ class Server{
 			}
 
 			if($this->getTicksPerSecondAverage() < 12){
-				$this->logger->warning($this->getLanguage()->translateString("pocketmine.server.tickOverload"));
+				$this->logger->warning($this->getLanguage()->translateString("ipocket.server.tickOverload"));
 			}
 		}
 

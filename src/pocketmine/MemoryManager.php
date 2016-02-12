@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine;
+namespace ipocket;
 
-use pocketmine\event\server\LowMemoryEvent;
-use pocketmine\event\Timings;
-use pocketmine\scheduler\GarbageCollectionTask;
-use pocketmine\utils\Utils;
+use ipocket\event\server\LowMemoryEvent;
+use ipocket\event\Timings;
+use ipocket\scheduler\GarbageCollectionTask;
+use ipocket\utils\Utils;
 
 
 class MemoryManager{

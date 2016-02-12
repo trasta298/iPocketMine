@@ -13,19 +13,19 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\inventory;
+namespace ipocket\event\inventory;
 
-use pocketmine\event\Cancellable;
-use pocketmine\event\Event;
-use pocketmine\inventory\Recipe;
-use pocketmine\item\Item;
-use pocketmine\Player;
+use ipocket\event\Cancellable;
+use ipocket\event\Event;
+use ipocket\inventory\Recipe;
+use ipocket\item\Item;
+use ipocket\Player;
 
 class CraftItemEvent extends Event implements Cancellable{
 	public static $handlerList = null;
@@ -34,12 +34,12 @@ class CraftItemEvent extends Event implements Cancellable{
 	private $input = [];
 	/** @var Recipe */
 	private $recipe;
-	/** @var \pocketmine\Player */
+	/** @var \ipocket\Player */
 	private $player;
 
 
 	/**
-	 * @param \pocketmine\Player $player
+	 * @param \ipocket\Player $player
 	 * @param Item[] $input
 	 * @param Recipe $recipe
 	 */

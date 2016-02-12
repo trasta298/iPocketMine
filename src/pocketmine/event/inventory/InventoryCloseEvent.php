@@ -13,16 +13,16 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\inventory;
+namespace ipocket\event\inventory;
 
-use pocketmine\inventory\Inventory;
-use pocketmine\Player;
+use ipocket\inventory\Inventory;
+use ipocket\Player;
 
 class InventoryCloseEvent extends InventoryEvent{
 	public static $handlerList = null;

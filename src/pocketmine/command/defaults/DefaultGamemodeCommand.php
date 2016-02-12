@@ -13,17 +13,17 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command\defaults;
+namespace ipocket\command\defaults;
 
-use pocketmine\command\CommandSender;
-use pocketmine\event\TranslationContainer;
-use pocketmine\Server;
+use ipocket\command\CommandSender;
+use ipocket\event\TranslationContainer;
+use ipocket\Server;
 
 
 class DefaultGamemodeCommand extends VanillaCommand{
@@ -31,10 +31,10 @@ class DefaultGamemodeCommand extends VanillaCommand{
 	public function __construct($name){
 		parent::__construct(
 			$name,
-			"%pocketmine.command.defaultgamemode.description",
+			"%ipocket.command.defaultgamemode.description",
 			"%commands.defaultgamemode.usage"
 		);
-		$this->setPermission("pocketmine.command.defaultgamemode");
+		$this->setPermission("ipocket.command.defaultgamemode");
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

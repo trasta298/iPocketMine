@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\inventory;
+namespace ipocket\event\inventory;
 
-use pocketmine\event\block\BlockEvent;
-use pocketmine\event\Cancellable;
-use pocketmine\item\Item;
-use pocketmine\tile\Furnace;
+use ipocket\event\block\BlockEvent;
+use ipocket\event\Cancellable;
+use ipocket\item\Item;
+use ipocket\tile\Furnace;
 
 class FurnaceSmeltEvent extends BlockEvent implements Cancellable{
 	public static $handlerList = null;

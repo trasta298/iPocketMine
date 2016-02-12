@@ -13,28 +13,28 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\format\anvil;
+namespace ipocket\level\format\anvil;
 
-use pocketmine\level\format\generic\BaseChunk;
-use pocketmine\level\format\generic\EmptyChunkSection;
-use pocketmine\level\format\LevelProvider;
-use pocketmine\nbt\NBT;
-use pocketmine\nbt\tag\Byte;
-use pocketmine\nbt\tag\ByteArray;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\nbt\tag\Enum;
-use pocketmine\nbt\tag\Int;
-use pocketmine\nbt\tag\IntArray;
-use pocketmine\nbt\tag\Long;
-use pocketmine\Player;
-use pocketmine\utils\Binary;
-use pocketmine\utils\BinaryStream;
+use ipocket\level\format\generic\BaseChunk;
+use ipocket\level\format\generic\EmptyChunkSection;
+use ipocket\level\format\LevelProvider;
+use ipocket\nbt\NBT;
+use ipocket\nbt\tag\Byte;
+use ipocket\nbt\tag\ByteArray;
+use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\IntArray;
+use ipocket\nbt\tag\Long;
+use ipocket\Player;
+use ipocket\utils\Binary;
+use ipocket\utils\BinaryStream;
 
 class Chunk extends BaseChunk{
 

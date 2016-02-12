@@ -13,19 +13,19 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\particle;
+namespace ipocket\level\particle;
 
-use pocketmine\network\protocol\LevelEventPacket;
-use pocketmine\math\Vector3;
+use ipocket\network\protocol\LevelEventPacket;
+use ipocket\math\Vector3;
 
 class GenericParticle extends Particle{
-	
+
 	protected $id;
 	protected $data;
 
@@ -34,7 +34,7 @@ class GenericParticle extends Particle{
 		$this->id = $id & 0xFFF;
 		$this->data = $data;
 	}
-	
+
 	public function encode(){
 		$pk = new LevelEventPacket;
 		$pk->evid = LevelEventPacket::EVENT_ADD_PARTICLE_MASK | $this->id;
@@ -42,7 +42,7 @@ class GenericParticle extends Particle{
 		$pk->y = $this->y;
 		$pk->z = $this->z;
 		$pk->data = $this->data;
-		
+
 		return $pk;
 	}
 }

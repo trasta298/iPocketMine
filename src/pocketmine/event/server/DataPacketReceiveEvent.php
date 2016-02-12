@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\server;
+namespace ipocket\event\server;
 
-use pocketmine\event;
-use pocketmine\event\Cancellable;
-use pocketmine\network\protocol\DataPacket;
-use pocketmine\Player;
+use ipocket\event;
+use ipocket\event\Cancellable;
+use ipocket\network\protocol\DataPacket;
+use ipocket\Player;
 
 class DataPacketReceiveEvent extends ServerEvent implements Cancellable{
 	public static $handlerList = null;

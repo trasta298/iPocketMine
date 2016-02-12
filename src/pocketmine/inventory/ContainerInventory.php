@@ -13,19 +13,19 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\inventory;
+namespace ipocket\inventory;
 
-use pocketmine\math\Vector3;
-use pocketmine\network\Network;
-use pocketmine\network\protocol\ContainerClosePacket;
-use pocketmine\network\protocol\ContainerOpenPacket;
-use pocketmine\Player;
+use ipocket\math\Vector3;
+use ipocket\network\Network;
+use ipocket\network\protocol\ContainerClosePacket;
+use ipocket\network\protocol\ContainerOpenPacket;
+use ipocket\Player;
 
 abstract class ContainerInventory extends BaseInventory{
 	public function onOpen(Player $who){

@@ -13,17 +13,17 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\inventory;
+namespace ipocket\event\inventory;
 
-use pocketmine\entity\Item;
-use pocketmine\event\Cancellable;
-use pocketmine\inventory\Inventory;
+use ipocket\entity\Item;
+use ipocket\event\Cancellable;
+use ipocket\inventory\Inventory;
 
 class InventoryPickupItemEvent extends InventoryEvent implements Cancellable{
 	public static $handlerList = null;

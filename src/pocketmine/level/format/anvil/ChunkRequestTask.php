@@ -13,19 +13,19 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\format\anvil;
+namespace ipocket\level\format\anvil;
 
-use pocketmine\level\Level;
-use pocketmine\nbt\NBT;
-use pocketmine\scheduler\AsyncTask;
-use pocketmine\Server;
-use pocketmine\tile\Spawnable;
+use ipocket\level\Level;
+use ipocket\nbt\NBT;
+use ipocket\scheduler\AsyncTask;
+use ipocket\Server;
+use ipocket\tile\Spawnable;
 
 
 class ChunkRequestTask extends AsyncTask{

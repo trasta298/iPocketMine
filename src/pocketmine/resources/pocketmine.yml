@@ -1,4 +1,4 @@
-# Main configuration file for PocketMine-MP
+# Main configuration file for iPocket
 # These settings are the ones that cannot be included in server.properties
 # Some of these settings are safe, others can break your server if modified incorrectly
 # New settings/defaults won't appear automatically on this file when upgrading.
@@ -146,12 +146,12 @@ auto-report:
  send-code: true
  send-settings: true
  send-phpinfo: false
- host: crash.pocketmine.net
+ host: crash.ipocket.net
 
 anonymous-statistics:
  #Sends anonymous statistics for data aggregation, plugin usage tracking
  enabled: true
- host: stats.pocketmine.net
+ host: stats.ipocket.net
 
 auto-updater:
  enabled: true
@@ -162,7 +162,7 @@ auto-updater:
  preferred-channel: stable
  #If using a development version, it will suggest changing the channel
  suggest-channels: true
- host: www.pocketmine.net
+ host: ipocket.link
 
 aliases:
  #Examples:

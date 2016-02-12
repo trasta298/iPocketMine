@@ -13,28 +13,28 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\format\mcregion;
+namespace ipocket\level\format\mcregion;
 
-use pocketmine\level\format\FullChunk;
-use pocketmine\level\format\generic\BaseLevelProvider;
-use pocketmine\level\generator\Generator;
-use pocketmine\level\Level;
-use pocketmine\nbt\NBT;
-use pocketmine\nbt\tag\Byte;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\nbt\tag\Int;
-use pocketmine\nbt\tag\Long;
-use pocketmine\nbt\tag\String;
-use pocketmine\tile\Spawnable;
+use ipocket\level\format\FullChunk;
+use ipocket\level\format\generic\BaseLevelProvider;
+use ipocket\level\generator\Generator;
+use ipocket\level\Level;
+use ipocket\nbt\NBT;
+use ipocket\nbt\tag\Byte;
+use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\Long;
+use ipocket\nbt\tag\String;
+use ipocket\tile\Spawnable;
 
-use pocketmine\utils\BinaryStream;
-use pocketmine\utils\ChunkException;
+use ipocket\utils\BinaryStream;
+use ipocket\utils\ChunkException;
 
 class McRegion extends BaseLevelProvider{
 

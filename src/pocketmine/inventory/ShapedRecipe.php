@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\inventory;
+namespace ipocket\inventory;
 
-use pocketmine\item\Item;
-use pocketmine\Server;
-use pocketmine\utils\UUID;
-use pocketmine\math\Vector2;
+use ipocket\item\Item;
+use ipocket\Server;
+use ipocket\utils\UUID;
+use ipocket\math\Vector2;
 
 class ShapedRecipe implements Recipe{
 	/** @var Item */

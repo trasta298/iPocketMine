@@ -13,16 +13,16 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\server;
+namespace ipocket\event\server;
 
-use pocketmine\command\CommandSender;
-use pocketmine\event\Cancellable;
+use ipocket\command\CommandSender;
+use ipocket\event\Cancellable;
 
 /**
  * Called when the console runs a command, early in the process

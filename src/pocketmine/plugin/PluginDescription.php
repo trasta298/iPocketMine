@@ -13,16 +13,16 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\plugin;
+namespace ipocket\plugin;
 
-use pocketmine\permission\Permission;
-use pocketmine\utils\PluginException;
+use ipocket\permission\Permission;
+use ipocket\utils\PluginException;
 
 class PluginDescription{
 	private $name;
@@ -65,8 +65,8 @@ class PluginDescription{
 		$this->version = $plugin["version"];
 		$this->main = $plugin["main"];
 		$this->api = !is_array($plugin["api"]) ? [$plugin["api"]] : $plugin["api"];
-		if(stripos($this->main, "pocketmine\\") === 0){
-			throw new PluginException("Invalid PluginDescription main, cannot start within the PocketMine namespace");
+		if(stripos($this->main, "ipocket\\") === 0){
+			throw new PluginException("Invalid PluginDescription main, cannot start within the iPocket namespace");
 		}
 
 		if(isset($plugin["commands"]) and is_array($plugin["commands"])){

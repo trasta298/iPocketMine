@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command;
+namespace ipocket\command;
 
 interface PluginIdentifiableCommand{
 
 	/**
-	 * @return \pocketmine\plugin\Plugin
+	 * @return \ipocket\plugin\Plugin
 	 */
 	public function getPlugin();
 }

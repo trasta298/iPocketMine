@@ -13,20 +13,20 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\scheduler;
+namespace ipocket\scheduler;
 
-use pocketmine\Server;
+use ipocket\Server;
 
 /**
  * Class used to run async tasks in other threads.
  *
- * WARNING: Do not call PocketMine-MP API methods, or save objects from/on other Threads!!
+ * WARNING: Do not call iPocket API methods, or save objects from/on other Threads!!
  */
 abstract class AsyncTask extends \Collectable{
 

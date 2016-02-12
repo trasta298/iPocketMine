@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
@@ -22,24 +22,24 @@
 /**
  * All the Item classes
  */
-namespace pocketmine\item;
+namespace ipocket\item;
 
-use pocketmine\block\Block;
-use pocketmine\block\Fence;
-use pocketmine\block\Flower;
-use pocketmine\entity\Entity;
-use pocketmine\entity\Squid;
-use pocketmine\entity\Villager;
-use pocketmine\entity\Zombie;
-use pocketmine\inventory\Fuel;
-use pocketmine\item\enchantment\Enchantment;
-use pocketmine\level\Level;
-use pocketmine\nbt\tag\Enum;
-use pocketmine\nbt\tag\Short;
-use pocketmine\nbt\tag\String;
-use pocketmine\Player;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\nbt\NBT;
+use ipocket\block\Block;
+use ipocket\block\Fence;
+use ipocket\block\Flower;
+use ipocket\entity\Entity;
+use ipocket\entity\Squid;
+use ipocket\entity\Villager;
+use ipocket\entity\Zombie;
+use ipocket\inventory\Fuel;
+use ipocket\item\enchantment\Enchantment;
+use ipocket\level\Level;
+use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\Short;
+use ipocket\nbt\tag\String;
+use ipocket\Player;
+use ipocket\nbt\tag\Compound;
+use ipocket\nbt\NBT;
 
 class Item{
 

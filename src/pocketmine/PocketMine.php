@@ -2,20 +2,20 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
+ * @author iPocket Team
+ * @link http://ipocket.link/
+ *
  *
 */
 
@@ -64,13 +64,13 @@ namespace {
 	}
 }
 
-namespace pocketmine {
-	use pocketmine\utils\Binary;
-	use pocketmine\utils\MainLogger;
-	use pocketmine\utils\ServerKiller;
-	use pocketmine\utils\Terminal;
-	use pocketmine\utils\Utils;
-	use pocketmine\wizard\Installer;
+namespace ipocket {
+	use ipocket\utils\Binary;
+	use ipocket\utils\MainLogger;
+	use ipocket\utils\ServerKiller;
+	use ipocket\utils\Terminal;
+	use ipocket\utils\Utils;
+	use ipocket\wizard\Installer;
 
 	const VERSION = "1.6dev";
 	const API_VERSION = "1.13.1";
@@ -86,9 +86,9 @@ namespace pocketmine {
 	 */
 
 	if(\Phar::running(true) !== ""){
-		@define("pocketmine\\PATH", \Phar::running(true) . "/");
+		@define("ipocket\\PATH", \Phar::running(true) . "/");
 	}else{
-		@define("pocketmine\\PATH", \getcwd() . DIRECTORY_SEPARATOR);
+		@define("ipocket\\PATH", \getcwd() . DIRECTORY_SEPARATOR);
 	}
 
 	if(!extension_loaded("pthreads")){
@@ -98,15 +98,15 @@ namespace pocketmine {
 	}
 
 	if(!class_exists("ClassLoader", false)){
-		require_once(\pocketmine\PATH . "src/spl/ThreadedFactory.php");
-		require_once(\pocketmine\PATH . "src/spl/ClassLoader.php");
-		require_once(\pocketmine\PATH . "src/spl/BaseClassLoader.php");
-		require_once(\pocketmine\PATH . "src/pocketmine/CompatibleClassLoader.php");
+		require_once(\ipocket\PATH . "src/spl/ThreadedFactory.php");
+		require_once(\ipocket\PATH . "src/spl/ClassLoader.php");
+		require_once(\ipocket\PATH . "src/spl/BaseClassLoader.php");
+		require_once(\ipocket\PATH . "src/ipocket/CompatibleClassLoader.php");
 	}
 
 	$autoloader = new CompatibleClassLoader();
-	$autoloader->addPath(\pocketmine\PATH . "src");
-	$autoloader->addPath(\pocketmine\PATH . "src" . DIRECTORY_SEPARATOR . "spl");
+	$autoloader->addPath(\ipocket\PATH . "src");
+	$autoloader->addPath(\ipocket\PATH . "src" . DIRECTORY_SEPARATOR . "spl");
 	$autoloader->register(true);
 
 
@@ -120,24 +120,24 @@ namespace pocketmine {
 	ini_set("default_charset", "utf-8");
 
 	ini_set("memory_limit", -1);
-	define("pocketmine\\START_TIME", microtime(true));
+	define("ipocket\\START_TIME", microtime(true));
 
 	$opts = getopt("", ["data:", "plugins:", "no-wizard", "enable-profiler"]);
 
-	define("pocketmine\\DATA", isset($opts["data"]) ? $opts["data"] . DIRECTORY_SEPARATOR : \getcwd() . DIRECTORY_SEPARATOR);
-	define("pocketmine\\PLUGIN_PATH", isset($opts["plugins"]) ? $opts["plugins"] . DIRECTORY_SEPARATOR : \getcwd() . DIRECTORY_SEPARATOR . "plugins" . DIRECTORY_SEPARATOR);
+	define("ipocket\\DATA", isset($opts["data"]) ? $opts["data"] . DIRECTORY_SEPARATOR : \getcwd() . DIRECTORY_SEPARATOR);
+	define("ipocket\\PLUGIN_PATH", isset($opts["plugins"]) ? $opts["plugins"] . DIRECTORY_SEPARATOR : \getcwd() . DIRECTORY_SEPARATOR . "plugins" . DIRECTORY_SEPARATOR);
 
 	Terminal::init();
 
-	define("pocketmine\\ANSI", Terminal::hasFormattingCodes());
+	define("ipocket\\ANSI", Terminal::hasFormattingCodes());
 
-	if(!file_exists(\pocketmine\DATA)){
-		mkdir(\pocketmine\DATA, 0777, true);
+	if(!file_exists(\ipocket\DATA)){
+		mkdir(\ipocket\DATA, 0777, true);
 	}
 
 	//Logger has a dependency on timezone, so we'll set it to UTC until we can get the actual timezone.
 	date_default_timezone_set("UTC");
-	$logger = new MainLogger(\pocketmine\DATA . "server.log", \pocketmine\ANSI);
+	$logger = new MainLogger(\ipocket\DATA . "server.log", \ipocket\ANSI);
 
 	if(!ini_get("date.timezone")){
 		if(($timezone = detect_system_timezone()) and date_default_timezone_set($timezone)){
@@ -367,7 +367,7 @@ namespace pocketmine {
 	}
 
 	function cleanPath($path){
-		return rtrim(str_replace(["\\", ".php", "phar://", rtrim(str_replace(["\\", "phar://"], ["/", ""], \pocketmine\PATH), "/"), rtrim(str_replace(["\\", "phar://"], ["/", ""], \pocketmine\PLUGIN_PATH), "/")], ["/", "", "", "", ""], $path), "/");
+		return rtrim(str_replace(["\\", ".php", "phar://", rtrim(str_replace(["\\", "phar://"], ["/", ""], \ipocket\PATH), "/"), rtrim(str_replace(["\\", "phar://"], ["/", ""], \ipocket\PLUGIN_PATH), "/")], ["/", "", "", "", ""], $path), "/");
 	}
 
 	set_error_handler([\ExceptionHandler::class, "handler"], -1);
@@ -380,7 +380,7 @@ namespace pocketmine {
 	}
 
 	if(php_sapi_name() !== "cli"){
-		$logger->critical("You must run PocketMine-MP using the CLI.");
+		$logger->critical("You must run iPocket using the CLI.");
 		++$errors;
 	}
 
@@ -402,12 +402,12 @@ namespace pocketmine {
 		//$logger->notice("Couldn't find the uopz extension. Some functions may be limited");
 	}
 
-	if(extension_loaded("pocketmine")){
-		if(version_compare(phpversion("pocketmine"), "0.0.1") < 0){
-			$logger->critical("You have the native PocketMine extension, but your version is lower than 0.0.1.");
+	if(extension_loaded("ipocket")){
+		if(version_compare(phpversion("ipocket"), "0.0.1") < 0){
+			$logger->critical("You have the native iPocket extension, but your version is lower than 0.0.1.");
 			++$errors;
-		}elseif(version_compare(phpversion("pocketmine"), "0.0.4") > 0){
-			$logger->critical("You have the native PocketMine extension, but your version is higher than 0.0.4.");
+		}elseif(version_compare(phpversion("ipocket"), "0.0.4") > 0){
+			$logger->critical("You have the native iPocket extension, but your version is higher than 0.0.4.");
 			++$errors;
 		}
 	}
@@ -444,26 +444,26 @@ namespace pocketmine {
 		exit(1); //Exit with error
 	}
 
-	if(file_exists(\pocketmine\PATH . ".git/refs/heads/master")){ //Found Git information!
-		define("pocketmine\\GIT_COMMIT", strtolower(trim(file_get_contents(\pocketmine\PATH . ".git/refs/heads/master"))));
+	if(file_exists(\ipocket\PATH . ".git/refs/heads/master")){ //Found Git information!
+		define("ipocket\\GIT_COMMIT", strtolower(trim(file_get_contents(\ipocket\PATH . ".git/refs/heads/master"))));
 	}else{ //Unknown :(
-		define("pocketmine\\GIT_COMMIT", str_repeat("00", 20));
+		define("ipocket\\GIT_COMMIT", str_repeat("00", 20));
 	}
 
 	@define("ENDIANNESS", (pack("d", 1) === "\77\360\0\0\0\0\0\0" ? Binary::BIG_ENDIAN : Binary::LITTLE_ENDIAN));
 	@define("INT32_MASK", is_int(0xffffffff) ? 0xffffffff : -1);
 	@ini_set("opcache.mmap_base", bin2hex(Utils::getRandomBytes(8, false))); //Fix OPCache address errors
 
-	if(!file_exists(\pocketmine\DATA . "server.properties") and !isset($opts["no-wizard"])){
+	if(!file_exists(\ipocket\DATA . "server.properties") and !isset($opts["no-wizard"])){
 		new Installer();
 	}
 
 	if(\Phar::running(true) === ""){
-		$logger->warning("Non-packaged PocketMine-MP installation detected, do not use on production.");
+		$logger->warning("Non-packaged iPocket installation detected, do not use on production.");
 	}
 
 	ThreadManager::init();
-	$server = new Server($autoloader, $logger, \pocketmine\PATH, \pocketmine\DATA, \pocketmine\PLUGIN_PATH);
+	$server = new Server($autoloader, $logger, \ipocket\PATH, \ipocket\DATA, \ipocket\PLUGIN_PATH);
 
 	$logger->info("Stopping other threads");
 

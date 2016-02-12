@@ -13,16 +13,16 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\generator\object;
+namespace ipocket\level\generator\object;
 
-use pocketmine\block\Block;
-use pocketmine\block\Wood;
+use ipocket\block\Block;
+use ipocket\block\Wood;
 
 class JungleTree extends Tree{
 

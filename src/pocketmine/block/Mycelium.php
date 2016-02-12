@@ -13,20 +13,20 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
+ * @author iPocket Team
+ * @link http://ipocket.link/
+ *
  *
 */
 
-namespace pocketmine\block;
+namespace ipocket\block;
 
-use pocketmine\event\block\BlockSpreadEvent;
-use pocketmine\item\Item;
-use pocketmine\item\Tool;
-use pocketmine\level\Level;
-use pocketmine\math\Vector3;
-use pocketmine\Server;
+use ipocket\event\block\BlockSpreadEvent;
+use ipocket\item\Item;
+use ipocket\item\Tool;
+use ipocket\level\Level;
+use ipocket\math\Vector3;
+use ipocket\Server;
 
 class Mycelium extends Solid{
 

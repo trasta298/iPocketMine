@@ -13,15 +13,15 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command;
+namespace ipocket\command;
 
-use pocketmine\permission\Permissible;
+use ipocket\permission\Permissible;
 
 interface CommandSender extends Permissible{
 
@@ -31,7 +31,7 @@ interface CommandSender extends Permissible{
 	public function sendMessage($message);
 
 	/**
-	 * @return \pocketmine\Server
+	 * @return \ipocket\Server
 	 */
 	public function getServer();
 

@@ -13,28 +13,28 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\plugin;
+namespace ipocket\plugin;
 
-use pocketmine\command\defaults\TimingsCommand;
-use pocketmine\command\PluginCommand;
-use pocketmine\command\SimpleCommandMap;
-use pocketmine\event\Event;
-use pocketmine\event\EventPriority;
-use pocketmine\event\HandlerList;
-use pocketmine\event\Listener;
-use pocketmine\event\Timings;
-use pocketmine\event\TimingsHandler;
-use pocketmine\permission\Permissible;
-use pocketmine\permission\Permission;
-use pocketmine\Server;
-use pocketmine\utils\MainLogger;
-use pocketmine\utils\PluginException;
+use ipocket\command\defaults\TimingsCommand;
+use ipocket\command\PluginCommand;
+use ipocket\command\SimpleCommandMap;
+use ipocket\event\Event;
+use ipocket\event\EventPriority;
+use ipocket\event\HandlerList;
+use ipocket\event\Listener;
+use ipocket\event\Timings;
+use ipocket\event\TimingsHandler;
+use ipocket\permission\Permissible;
+use ipocket\permission\Permission;
+use ipocket\Server;
+use ipocket\utils\MainLogger;
+use ipocket\utils\PluginException;
 
 /**
  * Manages all the plugins, Permissions and Permissibles
@@ -200,15 +200,15 @@ class PluginManager{
 						$description = $loader->getPluginDescription($file);
 						if($description instanceof PluginDescription){
 							$name = $description->getName();
-							if(stripos($name, "pocketmine") !== false or stripos($name, "minecraft") !== false or stripos($name, "mojang") !== false){
-								$this->server->getLogger()->error($this->server->getLanguage()->translateString("pocketmine.plugin.loadError", [$name, "%pocketmine.plugin.restrictedName"]));
+							if(stripos($name, "ipocket") !== false or stripos($name, "minecraft") !== false or stripos($name, "mojang") !== false){
+								$this->server->getLogger()->error($this->server->getLanguage()->translateString("ipocket.plugin.loadError", [$name, "%ipocket.plugin.restrictedName"]));
 								continue;
 							}elseif(strpos($name, " ") !== false){
-								$this->server->getLogger()->warning($this->server->getLanguage()->translateString("pocketmine.plugin.spacesDiscouraged", [$name]));
+								$this->server->getLogger()->warning($this->server->getLanguage()->translateString("ipocket.plugin.spacesDiscouraged", [$name]));
 							}
 
 							if(isset($plugins[$name]) or $this->getPlugin($name) instanceof Plugin){
-								$this->server->getLogger()->error($this->server->getLanguage()->translateString("pocketmine.plugin.duplicateError", [$name]));
+								$this->server->getLogger()->error($this->server->getLanguage()->translateString("ipocket.plugin.duplicateError", [$name]));
 								continue;
 							}
 
@@ -232,7 +232,7 @@ class PluginManager{
 							}
 
 							if($compatible === false){
-								$this->server->getLogger()->error($this->server->getLanguage()->translateString("pocketmine.plugin.loadError", [$name, "%pocketmine.plugin.incompatibleAPI"]));
+								$this->server->getLogger()->error($this->server->getLanguage()->translateString("ipocket.plugin.loadError", [$name, "%ipocket.plugin.incompatibleAPI"]));
 								continue;
 							}
 
@@ -250,7 +250,7 @@ class PluginManager{
 							}
 						}
 					}catch(\Exception $e){
-						$this->server->getLogger()->error($this->server->getLanguage()->translateString("pocketmine.plugin.fileError", [$file, $directory, $e->getMessage()]));
+						$this->server->getLogger()->error($this->server->getLanguage()->translateString("ipocket.plugin.fileError", [$file, $directory, $e->getMessage()]));
 						$logger = $this->server->getLogger();
 						if($logger instanceof MainLogger){
 							$logger->logException($e);
@@ -268,7 +268,7 @@ class PluginManager{
 							if(isset($loadedPlugins[$dependency]) or $this->getPlugin($dependency) instanceof Plugin){
 								unset($dependencies[$name][$key]);
 							}elseif(!isset($plugins[$dependency])){
-								$this->server->getLogger()->critical($this->server->getLanguage()->translateString("pocketmine.plugin.loadError", [$name, "%pocketmine.plugin.unknownDependency"]));
+								$this->server->getLogger()->critical($this->server->getLanguage()->translateString("ipocket.plugin.loadError", [$name, "%ipocket.plugin.unknownDependency"]));
 								break;
 							}
 						}
@@ -296,7 +296,7 @@ class PluginManager{
 						if($plugin = $this->loadPlugin($file, $loaders) and $plugin instanceof Plugin){
 							$loadedPlugins[$name] = $plugin;
 						}else{
-							$this->server->getLogger()->critical($this->server->getLanguage()->translateString("pocketmine.plugin.genericLoadError", [$name]));
+							$this->server->getLogger()->critical($this->server->getLanguage()->translateString("ipocket.plugin.genericLoadError", [$name]));
 						}
 					}
 				}
@@ -310,7 +310,7 @@ class PluginManager{
 							if($plugin = $this->loadPlugin($file, $loaders) and $plugin instanceof Plugin){
 								$loadedPlugins[$name] = $plugin;
 							}else{
-								$this->server->getLogger()->critical($this->server->getLanguage()->translateString("pocketmine.plugin.genericLoadError", [$name]));
+								$this->server->getLogger()->critical($this->server->getLanguage()->translateString("ipocket.plugin.genericLoadError", [$name]));
 							}
 						}
 					}
@@ -318,7 +318,7 @@ class PluginManager{
 					//No plugins loaded :(
 					if($missingDependency === true){
 						foreach($plugins as $name => $file){
-							$this->server->getLogger()->critical($this->server->getLanguage()->translateString("pocketmine.plugin.loadError", [$name, "%pocketmine.plugin.circularDependency"]));
+							$this->server->getLogger()->critical($this->server->getLanguage()->translateString("ipocket.plugin.loadError", [$name, "%ipocket.plugin.circularDependency"]));
 						}
 						$plugins = [];
 					}
@@ -580,7 +580,7 @@ class PluginManager{
 
 		foreach($plugin->getDescription()->getCommands() as $key => $data){
 			if(strpos($key, ":") !== false){
-				$this->server->getLogger()->critical($this->server->getLanguage()->translateString("pocketmine.plugin.commandError", [$key, $plugin->getDescription()->getFullName()]));
+				$this->server->getLogger()->critical($this->server->getLanguage()->translateString("ipocket.plugin.commandError", [$key, $plugin->getDescription()->getFullName()]));
 				continue;
 			}
 			if(is_array($data)){
@@ -597,7 +597,7 @@ class PluginManager{
 					$aliasList = [];
 					foreach($data["aliases"] as $alias){
 						if(strpos($alias, ":") !== false){
-							$this->server->getLogger()->critical($this->server->getLanguage()->translateString("pocketmine.plugin.aliasError", [$alias, $plugin->getDescription()->getFullName()]));
+							$this->server->getLogger()->critical($this->server->getLanguage()->translateString("ipocket.plugin.aliasError", [$alias, $plugin->getDescription()->getFullName()]));
 							continue;
 						}
 						$aliasList[] = $alias;
@@ -673,7 +673,7 @@ class PluginManager{
 				$registration->callEvent($event);
 			}catch(\Exception $e){
 				$this->server->getLogger()->critical(
-					$this->server->getLanguage()->translateString("pocketmine.plugin.eventError", [
+					$this->server->getLanguage()->translateString("ipocket.plugin.eventError", [
 						$event->getEventName(),
 						$registration->getPlugin()->getDescription()->getFullName(),
 						$e->getMessage(),
@@ -725,7 +725,7 @@ class PluginManager{
 					$class = $parameters[0]->getClass()->getName();
 					$reflection = new \ReflectionClass($class);
 					if(strpos((string) $reflection->getDocComment(), "@deprecated") !== false and $this->server->getProperty("settings.deprecated-verbose", true)){
-						$this->server->getLogger()->warning($this->server->getLanguage()->translateString("pocketmine.plugin.deprecatedEvent", [
+						$this->server->getLogger()->warning($this->server->getLanguage()->translateString("ipocket.plugin.deprecatedEvent", [
 							$plugin->getName(),
 							$class,
 							get_class($listener) . "->" . $method->getName() . "()"

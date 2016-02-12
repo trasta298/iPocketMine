@@ -13,27 +13,27 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command\defaults;
+namespace ipocket\command\defaults;
 
-use pocketmine\command\CommandSender;
-use pocketmine\utils\TextFormat;
-use pocketmine\utils\Utils;
+use ipocket\command\CommandSender;
+use ipocket\utils\TextFormat;
+use ipocket\utils\Utils;
 
 class StatusCommand extends VanillaCommand{
 
 	public function __construct($name){
 		parent::__construct(
 			$name,
-			"%pocketmine.command.status.description",
-			"%pocketmine.command.status.usage"
+			"%ipocket.command.status.description",
+			"%ipocket.command.status.usage"
 		);
-		$this->setPermission("pocketmine.command.status");
+		$this->setPermission("ipocket.command.status");
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
@@ -47,7 +47,7 @@ class StatusCommand extends VanillaCommand{
 		$server = $sender->getServer();
 		$sender->sendMessage(TextFormat::GREEN . "---- " . TextFormat::WHITE . "Server status" . TextFormat::GREEN . " ----");
 
-		$time = microtime(true) - \pocketmine\START_TIME;
+		$time = microtime(true) - \ipocket\START_TIME;
 
 		$seconds = floor($time % 60);
 		$minutes = null;

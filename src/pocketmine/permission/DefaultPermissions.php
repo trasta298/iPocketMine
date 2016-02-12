@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\permission;
+namespace ipocket\permission;
 
-use pocketmine\Server;
+use ipocket\Server;
 
 abstract class DefaultPermissions{
-	const ROOT = "pocketmine";
+	const ROOT = "ipocket";
 
 	/**
 	 * @param Permission $perm
@@ -44,7 +44,7 @@ abstract class DefaultPermissions{
 	}
 
 	public static function registerCorePermissions(){
-		$parent = self::registerPermission(new Permission(self::ROOT, "Allows using all PocketMine commands and utilities"));
+		$parent = self::registerPermission(new Permission(self::ROOT, "Allows using all iPocket commands and utilities"));
 
 		$broadcasts = self::registerPermission(new Permission(self::ROOT . ".broadcast", "Allows the user to receive all broadcast messages"), $parent);
 
@@ -53,7 +53,7 @@ abstract class DefaultPermissions{
 
 		$broadcasts->recalculatePermissibles();
 
-		$commands = self::registerPermission(new Permission(self::ROOT . ".command", "Allows using all PocketMine commands"), $parent);
+		$commands = self::registerPermission(new Permission(self::ROOT . ".command", "Allows using all iPocket commands"), $parent);
 
 		$whitelist = self::registerPermission(new Permission(self::ROOT . ".command.whitelist", "Allows the user to modify the server whitelist", Permission::DEFAULT_OP), $commands);
 		self::registerPermission(new Permission(self::ROOT . ".command.whitelist.add", "Allows the user to add a player to the server whitelist"), $whitelist);

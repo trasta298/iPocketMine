@@ -13,17 +13,17 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\player;
+namespace ipocket\event\player;
 
-use pocketmine\event\Event;
-use pocketmine\network\SourceInterface;
-use pocketmine\Player;
+use ipocket\event\Event;
+use ipocket\network\SourceInterface;
+use ipocket\Player;
 
 /**
  * Allows the creation of players overriding the base Player class

@@ -13,17 +13,17 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\block;
+namespace ipocket\event\block;
 
-use pocketmine\block\Block;
-use pocketmine\event\Cancellable;
-use pocketmine\Player;
+use ipocket\block\Block;
+use ipocket\event\Cancellable;
+use ipocket\Player;
 
 /**
  * Called when a sign is changed by a player.
@@ -31,7 +31,7 @@ use pocketmine\Player;
 class SignChangeEvent extends BlockEvent implements Cancellable{
 	public static $handlerList = null;
 
-	/** @var \pocketmine\Player */
+	/** @var \ipocket\Player */
 	private $player;
 	/** @var string[] */
 	private $lines = [];

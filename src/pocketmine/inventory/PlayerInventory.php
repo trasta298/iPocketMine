@@ -13,26 +13,26 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\inventory;
+namespace ipocket\inventory;
 
-use pocketmine\entity\Human;
-use pocketmine\event\entity\EntityArmorChangeEvent;
-use pocketmine\event\entity\EntityInventoryChangeEvent;
-use pocketmine\event\player\PlayerItemHeldEvent;
-use pocketmine\item\Item;
-use pocketmine\network\Network;
-use pocketmine\network\protocol\ContainerSetContentPacket;
-use pocketmine\network\protocol\ContainerSetSlotPacket;
-use pocketmine\network\protocol\MobArmorEquipmentPacket;
-use pocketmine\network\protocol\MobEquipmentPacket;
-use pocketmine\Player;
-use pocketmine\Server;
+use ipocket\entity\Human;
+use ipocket\event\entity\EntityArmorChangeEvent;
+use ipocket\event\entity\EntityInventoryChangeEvent;
+use ipocket\event\player\PlayerItemHeldEvent;
+use ipocket\item\Item;
+use ipocket\network\Network;
+use ipocket\network\protocol\ContainerSetContentPacket;
+use ipocket\network\protocol\ContainerSetSlotPacket;
+use ipocket\network\protocol\MobArmorEquipmentPacket;
+use ipocket\network\protocol\MobEquipmentPacket;
+use ipocket\Player;
+use ipocket\Server;
 
 class PlayerInventory extends BaseInventory{
 

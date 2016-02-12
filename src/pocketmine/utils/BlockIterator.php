@@ -13,17 +13,17 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\utils;
+namespace ipocket\utils;
 
-use pocketmine\block\Block;
-use pocketmine\level\Level;
-use pocketmine\math\Vector3;
+use ipocket\block\Block;
+use ipocket\level\Level;
+use ipocket\math\Vector3;
 
 /**
  * This class performs ray tracing and iterates along blocks on a line

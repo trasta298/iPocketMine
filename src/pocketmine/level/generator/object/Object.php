@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
@@ -22,7 +22,7 @@
 /**
  * All the different object classes used in populators
  */
-namespace pocketmine\level\generator\object;
+namespace ipocket\level\generator\object;
 
 
 abstract class Object{

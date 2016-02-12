@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
@@ -22,9 +22,9 @@
 /**
  * Events related to the server core, like networking, stop, level loading
  */
-namespace pocketmine\event\server;
+namespace ipocket\event\server;
 
-use pocketmine\event\Event;
+use ipocket\event\Event;
 
 abstract class ServerEvent extends Event{
 

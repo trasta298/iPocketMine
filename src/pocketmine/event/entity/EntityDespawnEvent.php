@@ -13,20 +13,20 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\entity;
+namespace ipocket\event\entity;
 
-use pocketmine\entity\Creature;
-use pocketmine\entity\Entity;
-use pocketmine\entity\Human;
-use pocketmine\entity\Item;
-use pocketmine\entity\Projectile;
-use pocketmine\entity\Vehicle;
+use ipocket\entity\Creature;
+use ipocket\entity\Entity;
+use ipocket\entity\Human;
+use ipocket\entity\Item;
+use ipocket\entity\Projectile;
+use ipocket\entity\Vehicle;
 
 /**
  * Called when a entity is despawned

@@ -13,22 +13,22 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\generator;
+namespace ipocket\level\generator;
 
-use pocketmine\block\Block;
+use ipocket\block\Block;
 
-use pocketmine\level\generator\biome\Biome;
-use pocketmine\level\Level;
-use pocketmine\level\SimpleChunkManager;
-use pocketmine\scheduler\AsyncTask;
+use ipocket\level\generator\biome\Biome;
+use ipocket\level\Level;
+use ipocket\level\SimpleChunkManager;
+use ipocket\scheduler\AsyncTask;
 
-use pocketmine\utils\Random;
+use ipocket\utils\Random;
 
 class GeneratorRegisterTask extends AsyncTask{
 

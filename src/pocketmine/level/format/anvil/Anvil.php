@@ -13,25 +13,25 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\format\anvil;
+namespace ipocket\level\format\anvil;
 
-use pocketmine\level\format\FullChunk;
-use pocketmine\level\format\mcregion\McRegion;
-use pocketmine\level\Level;
-use pocketmine\nbt\NBT;
-use pocketmine\nbt\tag\Byte;
-use pocketmine\nbt\tag\ByteArray;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\network\protocol\FullChunkDataPacket;
-use pocketmine\tile\Spawnable;
-use pocketmine\utils\BinaryStream;
-use pocketmine\utils\ChunkException;
+use ipocket\level\format\FullChunk;
+use ipocket\level\format\mcregion\McRegion;
+use ipocket\level\Level;
+use ipocket\nbt\NBT;
+use ipocket\nbt\tag\Byte;
+use ipocket\nbt\tag\ByteArray;
+use ipocket\nbt\tag\Compound;
+use ipocket\network\protocol\FullChunkDataPacket;
+use ipocket\tile\Spawnable;
+use ipocket\utils\BinaryStream;
+use ipocket\utils\ChunkException;
 
 
 class Anvil extends McRegion{

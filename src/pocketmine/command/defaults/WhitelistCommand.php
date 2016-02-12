@@ -13,28 +13,28 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command\defaults;
+namespace ipocket\command\defaults;
 
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
-use pocketmine\event\TranslationContainer;
-use pocketmine\utils\TextFormat;
+use ipocket\command\Command;
+use ipocket\command\CommandSender;
+use ipocket\event\TranslationContainer;
+use ipocket\utils\TextFormat;
 
 class WhitelistCommand extends VanillaCommand{
 
 	public function __construct($name){
 		parent::__construct(
 			$name,
-			"%pocketmine.command.whitelist.description",
+			"%ipocket.command.whitelist.description",
 			"%commands.whitelist.usage"
 		);
-		$this->setPermission("pocketmine.command.whitelist.reload;pocketmine.command.whitelist.enable;pocketmine.command.whitelist.disable;pocketmine.command.whitelist.list;pocketmine.command.whitelist.add;pocketmine.command.whitelist.remove");
+		$this->setPermission("ipocket.command.whitelist.reload;ipocket.command.whitelist.enable;ipocket.command.whitelist.disable;ipocket.command.whitelist.list;ipocket.command.whitelist.add;ipocket.command.whitelist.remove");
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
@@ -109,7 +109,7 @@ class WhitelistCommand extends VanillaCommand{
 	}
 
 	private function badPerm(CommandSender $sender, $perm){
-		if(!$sender->hasPermission("pocketmine.command.whitelist.$perm")){
+		if(!$sender->hasPermission("ipocket.command.whitelist.$perm")){
 			$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.permission"));
 
 			return true;

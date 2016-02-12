@@ -2,42 +2,42 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
+ * @author iPocket Team
+ * @link http://ipocket.link/
+ *
  *
 */
 
 /**
  * All Block classes are in here
  */
-namespace pocketmine\block;
+namespace ipocket\block;
 
-use pocketmine\entity\Entity;
+use ipocket\entity\Entity;
 
 
-use pocketmine\item\Item;
-use pocketmine\item\Tool;
-use pocketmine\level\Level;
-use pocketmine\level\MovingObjectPosition;
-use pocketmine\level\Position;
-use pocketmine\math\AxisAlignedBB;
-use pocketmine\math\Vector3;
-use pocketmine\metadata\Metadatable;
-use pocketmine\metadata\MetadataValue;
-use pocketmine\Player;
-use pocketmine\plugin\Plugin;
+use ipocket\item\Item;
+use ipocket\item\Tool;
+use ipocket\level\Level;
+use ipocket\level\MovingObjectPosition;
+use ipocket\level\Position;
+use ipocket\math\AxisAlignedBB;
+use ipocket\math\Vector3;
+use ipocket\metadata\Metadatable;
+use ipocket\metadata\MetadataValue;
+use ipocket\Player;
+use ipocket\plugin\Plugin;
 
 
 class Block extends Position implements Metadatable{

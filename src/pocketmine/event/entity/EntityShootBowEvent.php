@@ -13,19 +13,19 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\entity;
+namespace ipocket\event\entity;
 
-use pocketmine\entity\Entity;
-use pocketmine\entity\Living;
-use pocketmine\entity\Projectile;
-use pocketmine\event\Cancellable;
-use pocketmine\item\Item;
+use ipocket\entity\Entity;
+use ipocket\entity\Living;
+use ipocket\entity\Projectile;
+use ipocket\event\Cancellable;
+use ipocket\item\Item;
 
 class EntityShootBowEvent extends EntityEvent implements Cancellable{
 	public static $handlerList = null;

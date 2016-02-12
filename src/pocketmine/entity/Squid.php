@@ -2,35 +2,35 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
+ * @author iPocket Team
+ * @link http://ipocket.link/
+ *
  *
 */
 
-namespace pocketmine\entity;
+namespace ipocket\entity;
 
 
-use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\item\Item as ItemItem;
-use pocketmine\math\Vector3;
-use pocketmine\network\Network;
-use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\network\protocol\EntityEventPacket;
-use pocketmine\Player;
-use pocketmine\Server;
+use ipocket\event\entity\EntityDamageByEntityEvent;
+use ipocket\event\entity\EntityDamageEvent;
+use ipocket\item\Item as ItemItem;
+use ipocket\math\Vector3;
+use ipocket\network\Network;
+use ipocket\network\protocol\AddEntityPacket;
+use ipocket\network\protocol\EntityEventPacket;
+use ipocket\Player;
+use ipocket\Server;
 
 class Squid extends WaterAnimal implements Ageable{
 	const NETWORK_ID = 17;

@@ -13,20 +13,20 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\format\generic;
+namespace ipocket\level\format\generic;
 
-use pocketmine\level\format\Chunk;
-use pocketmine\level\format\ChunkSection;
-use pocketmine\level\format\LevelProvider;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\utils\Binary;
-use pocketmine\utils\ChunkException;
+use ipocket\level\format\Chunk;
+use ipocket\level\format\ChunkSection;
+use ipocket\level\format\LevelProvider;
+use ipocket\nbt\tag\Compound;
+use ipocket\utils\Binary;
+use ipocket\utils\ChunkException;
 
 abstract class BaseChunk extends BaseFullChunk implements Chunk{
 

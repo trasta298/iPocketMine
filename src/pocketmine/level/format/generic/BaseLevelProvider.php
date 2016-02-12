@@ -13,23 +13,23 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\format\generic;
+namespace ipocket\level\format\generic;
 
-use pocketmine\level\format\LevelProvider;
-use pocketmine\level\generator\Generator;
-use pocketmine\level\Level;
-use pocketmine\math\Vector3;
-use pocketmine\nbt\NBT;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\nbt\tag\Int;
-use pocketmine\nbt\tag\String;
-use pocketmine\utils\LevelException;
+use ipocket\level\format\LevelProvider;
+use ipocket\level\generator\Generator;
+use ipocket\level\Level;
+use ipocket\math\Vector3;
+use ipocket\nbt\NBT;
+use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\String;
+use ipocket\utils\LevelException;
 
 abstract class BaseLevelProvider implements LevelProvider{
 	/** @var Level */

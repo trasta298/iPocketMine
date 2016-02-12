@@ -13,17 +13,17 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\server;
+namespace ipocket\event\server;
 
-use pocketmine\event;
-use pocketmine\Server;
-use pocketmine\utils\Binary;
+use ipocket\event;
+use ipocket\Server;
+use ipocket\utils\Binary;
 
 class QueryRegenerateEvent extends ServerEvent{
 	public static $handlerList = null;
@@ -33,9 +33,9 @@ class QueryRegenerateEvent extends ServerEvent{
 	private $timeout;
 	private $serverName;
 	private $listPlugins;
-	/** @var \pocketmine\plugin\Plugin[] */
+	/** @var \ipocket\plugin\Plugin[] */
 	private $plugins;
-	/** @var \pocketmine\Player[] */
+	/** @var \ipocket\Player[] */
 	private $players;
 
 	private $gametype;
@@ -105,28 +105,28 @@ class QueryRegenerateEvent extends ServerEvent{
 	}
 
 	/**
-	 * @return \pocketmine\plugin\Plugin[]
+	 * @return \ipocket\plugin\Plugin[]
 	 */
 	public function getPlugins(){
 		return $this->plugins;
 	}
 
 	/**
-	 * @param \pocketmine\plugin\Plugin[] $plugins
+	 * @param \ipocket\plugin\Plugin[] $plugins
 	 */
 	public function setPlugins(array $plugins){
 		$this->plugins = $plugins;
 	}
 
 	/**
-	 * @return \pocketmine\Player[]
+	 * @return \ipocket\Player[]
 	 */
 	public function getPlayerList(){
 		return $this->players;
 	}
 
 	/**
-	 * @param \pocketmine\Player[] $players
+	 * @param \ipocket\Player[] $players
 	 */
 	public function setPlayerList(array $players){
 		$this->players = $players;

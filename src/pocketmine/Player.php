@@ -13,126 +13,126 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine;
+namespace ipocket;
 
-use pocketmine\block\Block;
-use pocketmine\command\CommandSender;
-use pocketmine\entity\Arrow;
-use pocketmine\entity\Effect;
-use pocketmine\entity\Entity;
-use pocketmine\entity\Human;
-use pocketmine\entity\Item as DroppedItem;
-use pocketmine\entity\Living;
-use pocketmine\entity\Projectile;
-use pocketmine\event\block\SignChangeEvent;
-use pocketmine\event\entity\EntityDamageByBlockEvent;
-use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\event\entity\EntityRegainHealthEvent;
-use pocketmine\event\entity\EntityShootBowEvent;
-use pocketmine\event\entity\ProjectileLaunchEvent;
-use pocketmine\event\inventory\CraftItemEvent;
-use pocketmine\event\inventory\InventoryCloseEvent;
-use pocketmine\event\inventory\InventoryPickupArrowEvent;
-use pocketmine\event\inventory\InventoryPickupItemEvent;
-use pocketmine\event\player\PlayerAchievementAwardedEvent;
-use pocketmine\event\player\PlayerAnimationEvent;
-use pocketmine\event\player\PlayerBedEnterEvent;
-use pocketmine\event\player\PlayerBedLeaveEvent;
-use pocketmine\event\player\PlayerChatEvent;
-use pocketmine\event\player\PlayerCommandPreprocessEvent;
-use pocketmine\event\player\PlayerDeathEvent;
-use pocketmine\event\player\PlayerDropItemEvent;
-use pocketmine\event\player\PlayerGameModeChangeEvent;
-use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\event\player\PlayerItemConsumeEvent;
-use pocketmine\event\player\PlayerJoinEvent;
-use pocketmine\event\player\PlayerKickEvent;
-use pocketmine\event\player\PlayerLoginEvent;
-use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\event\player\PlayerPreLoginEvent;
-use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\event\player\PlayerRespawnEvent;
-use pocketmine\event\player\PlayerToggleSneakEvent;
-use pocketmine\event\player\PlayerToggleSprintEvent;
-use pocketmine\event\server\DataPacketReceiveEvent;
-use pocketmine\event\server\DataPacketSendEvent;
-use pocketmine\event\TextContainer;
-use pocketmine\event\Timings;
-use pocketmine\event\TranslationContainer;
-use pocketmine\inventory\BaseTransaction;
-use pocketmine\inventory\BigShapedRecipe;
-use pocketmine\inventory\BigShapelessRecipe;
-use pocketmine\inventory\FurnaceInventory;
-use pocketmine\inventory\Inventory;
-use pocketmine\inventory\InventoryHolder;
-use pocketmine\inventory\PlayerInventory;
-use pocketmine\inventory\ShapedRecipe;
-use pocketmine\inventory\ShapelessRecipe;
-use pocketmine\inventory\SimpleTransactionGroup;
+use ipocket\block\Block;
+use ipocket\command\CommandSender;
+use ipocket\entity\Arrow;
+use ipocket\entity\Effect;
+use ipocket\entity\Entity;
+use ipocket\entity\Human;
+use ipocket\entity\Item as DroppedItem;
+use ipocket\entity\Living;
+use ipocket\entity\Projectile;
+use ipocket\event\block\SignChangeEvent;
+use ipocket\event\entity\EntityDamageByBlockEvent;
+use ipocket\event\entity\EntityDamageByEntityEvent;
+use ipocket\event\entity\EntityDamageEvent;
+use ipocket\event\entity\EntityRegainHealthEvent;
+use ipocket\event\entity\EntityShootBowEvent;
+use ipocket\event\entity\ProjectileLaunchEvent;
+use ipocket\event\inventory\CraftItemEvent;
+use ipocket\event\inventory\InventoryCloseEvent;
+use ipocket\event\inventory\InventoryPickupArrowEvent;
+use ipocket\event\inventory\InventoryPickupItemEvent;
+use ipocket\event\player\PlayerAchievementAwardedEvent;
+use ipocket\event\player\PlayerAnimationEvent;
+use ipocket\event\player\PlayerBedEnterEvent;
+use ipocket\event\player\PlayerBedLeaveEvent;
+use ipocket\event\player\PlayerChatEvent;
+use ipocket\event\player\PlayerCommandPreprocessEvent;
+use ipocket\event\player\PlayerDeathEvent;
+use ipocket\event\player\PlayerDropItemEvent;
+use ipocket\event\player\PlayerGameModeChangeEvent;
+use ipocket\event\player\PlayerInteractEvent;
+use ipocket\event\player\PlayerItemConsumeEvent;
+use ipocket\event\player\PlayerJoinEvent;
+use ipocket\event\player\PlayerKickEvent;
+use ipocket\event\player\PlayerLoginEvent;
+use ipocket\event\player\PlayerMoveEvent;
+use ipocket\event\player\PlayerPreLoginEvent;
+use ipocket\event\player\PlayerQuitEvent;
+use ipocket\event\player\PlayerRespawnEvent;
+use ipocket\event\player\PlayerToggleSneakEvent;
+use ipocket\event\player\PlayerToggleSprintEvent;
+use ipocket\event\server\DataPacketReceiveEvent;
+use ipocket\event\server\DataPacketSendEvent;
+use ipocket\event\TextContainer;
+use ipocket\event\Timings;
+use ipocket\event\TranslationContainer;
+use ipocket\inventory\BaseTransaction;
+use ipocket\inventory\BigShapedRecipe;
+use ipocket\inventory\BigShapelessRecipe;
+use ipocket\inventory\FurnaceInventory;
+use ipocket\inventory\Inventory;
+use ipocket\inventory\InventoryHolder;
+use ipocket\inventory\PlayerInventory;
+use ipocket\inventory\ShapedRecipe;
+use ipocket\inventory\ShapelessRecipe;
+use ipocket\inventory\SimpleTransactionGroup;
 
-use pocketmine\item\Item;
-use pocketmine\level\ChunkLoader;
-use pocketmine\level\format\FullChunk;
-use pocketmine\level\format\LevelProvider;
-use pocketmine\level\Level;
-use pocketmine\level\Location;
-use pocketmine\level\Position;
-use pocketmine\level\sound\LaunchSound;
-use pocketmine\math\AxisAlignedBB;
-use pocketmine\math\Vector2;
-use pocketmine\math\Vector3;
-use pocketmine\metadata\MetadataValue;
-use pocketmine\nbt\NBT;
-use pocketmine\nbt\tag\Byte;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\nbt\tag\Double;
-use pocketmine\nbt\tag\Enum;
-use pocketmine\nbt\tag\Float;
-use pocketmine\nbt\tag\Int;
-use pocketmine\nbt\tag\Long;
-use pocketmine\nbt\tag\Short;
-use pocketmine\nbt\tag\String;
-use pocketmine\network\Network;
-use pocketmine\network\protocol\AdventureSettingsPacket;
-use pocketmine\network\protocol\AnimatePacket;
-use pocketmine\network\protocol\BatchPacket;
-use pocketmine\network\protocol\ContainerClosePacket;
-use pocketmine\network\protocol\ContainerSetContentPacket;
-use pocketmine\network\protocol\DataPacket;
-use pocketmine\network\protocol\DisconnectPacket;
-use pocketmine\network\protocol\EntityEventPacket;
-use pocketmine\network\protocol\FullChunkDataPacket;
-use pocketmine\network\protocol\Info as ProtocolInfo;
-use pocketmine\network\protocol\PlayerActionPacket;
-use pocketmine\network\protocol\PlayStatusPacket;
-use pocketmine\network\protocol\RespawnPacket;
-use pocketmine\network\protocol\SetPlayerGameTypePacket;
-use pocketmine\network\protocol\TextPacket;
+use ipocket\item\Item;
+use ipocket\level\ChunkLoader;
+use ipocket\level\format\FullChunk;
+use ipocket\level\format\LevelProvider;
+use ipocket\level\Level;
+use ipocket\level\Location;
+use ipocket\level\Position;
+use ipocket\level\sound\LaunchSound;
+use ipocket\math\AxisAlignedBB;
+use ipocket\math\Vector2;
+use ipocket\math\Vector3;
+use ipocket\metadata\MetadataValue;
+use ipocket\nbt\NBT;
+use ipocket\nbt\tag\Byte;
+use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\Double;
+use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\Float;
+use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\Long;
+use ipocket\nbt\tag\Short;
+use ipocket\nbt\tag\String;
+use ipocket\network\Network;
+use ipocket\network\protocol\AdventureSettingsPacket;
+use ipocket\network\protocol\AnimatePacket;
+use ipocket\network\protocol\BatchPacket;
+use ipocket\network\protocol\ContainerClosePacket;
+use ipocket\network\protocol\ContainerSetContentPacket;
+use ipocket\network\protocol\DataPacket;
+use ipocket\network\protocol\DisconnectPacket;
+use ipocket\network\protocol\EntityEventPacket;
+use ipocket\network\protocol\FullChunkDataPacket;
+use ipocket\network\protocol\Info as ProtocolInfo;
+use ipocket\network\protocol\PlayerActionPacket;
+use ipocket\network\protocol\PlayStatusPacket;
+use ipocket\network\protocol\RespawnPacket;
+use ipocket\network\protocol\SetPlayerGameTypePacket;
+use ipocket\network\protocol\TextPacket;
 
-use pocketmine\network\protocol\MovePlayerPacket;
-use pocketmine\network\protocol\SetDifficultyPacket;
-use pocketmine\network\protocol\SetEntityMotionPacket;
-use pocketmine\network\protocol\SetHealthPacket;
-use pocketmine\network\protocol\SetSpawnPositionPacket;
-use pocketmine\network\protocol\SetTimePacket;
-use pocketmine\network\protocol\StartGamePacket;
-use pocketmine\network\protocol\TakeItemEntityPacket;
-use pocketmine\network\protocol\UpdateBlockPacket;
-use pocketmine\network\SourceInterface;
-use pocketmine\permission\PermissibleBase;
-use pocketmine\permission\PermissionAttachment;
-use pocketmine\plugin\Plugin;
-use pocketmine\tile\Sign;
-use pocketmine\tile\Spawnable;
-use pocketmine\tile\Tile;
-use pocketmine\utils\TextFormat;
+use ipocket\network\protocol\MovePlayerPacket;
+use ipocket\network\protocol\SetDifficultyPacket;
+use ipocket\network\protocol\SetEntityMotionPacket;
+use ipocket\network\protocol\SetHealthPacket;
+use ipocket\network\protocol\SetSpawnPositionPacket;
+use ipocket\network\protocol\SetTimePacket;
+use ipocket\network\protocol\StartGamePacket;
+use ipocket\network\protocol\TakeItemEntityPacket;
+use ipocket\network\protocol\UpdateBlockPacket;
+use ipocket\network\SourceInterface;
+use ipocket\permission\PermissibleBase;
+use ipocket\permission\PermissionAttachment;
+use ipocket\plugin\Plugin;
+use ipocket\tile\Sign;
+use ipocket\tile\Spawnable;
+use ipocket\tile\Tile;
+use ipocket\utils\TextFormat;
 
 
 use raklib\Binary;
@@ -1376,7 +1376,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				if(!$revert and !$this->isSleeping()){
 					if($diff > 0.0625){
 						$revert = true;
-						$this->server->getLogger()->warning($this->getServer()->getLanguage()->translateString("pocketmine.player.invalidMove", [$this->getName()]));
+						$this->server->getLogger()->warning($this->getServer()->getLanguage()->translateString("ipocket.player.invalidMove", [$this->getName()]));
 					}
 				}
 			}
@@ -1725,7 +1725,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$pk->difficulty = $this->server->getDifficulty();
 		$this->dataPacket($pk);
 
-		$this->server->getLogger()->info($this->getServer()->getLanguage()->translateString("pocketmine.player.logIn", [
+		$this->server->getLogger()->info($this->getServer()->getLanguage()->translateString("ipocket.player.logIn", [
 			TextFormat::AQUA . $this->username . TextFormat::WHITE,
 			$this->ip,
 			$this->port,
@@ -2332,7 +2332,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				if($target instanceof Entity and $this->getGamemode() !== Player::VIEW and $this->isAlive() and $target->isAlive()){
 					if($target instanceof DroppedItem or $target instanceof Arrow){
 						$this->kick("Attempting to attack an invalid entity");
-						$this->server->getLogger()->warning($this->getServer()->getLanguage()->translateString("pocketmine.player.invalidEntity", [$this->getName()]));
+						$this->server->getLogger()->warning($this->getServer()->getLanguage()->translateString("ipocket.player.invalidEntity", [$this->getName()]));
 						break;
 					}
 
@@ -2959,9 +2959,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$pk = new TextPacket();
 		if(!$this->server->isLanguageForced()){
 			$pk->type = TextPacket::TYPE_TRANSLATION;
-			$pk->message = $this->server->getLanguage()->translateString($message, $parameters, "pocketmine.");
+			$pk->message = $this->server->getLanguage()->translateString($message, $parameters, "ipocket.");
 			foreach($parameters as $i => $p){
-				$parameters[$i] = $this->server->getLanguage()->translateString($p, $parameters, "pocketmine.");
+				$parameters[$i] = $this->server->getLanguage()->translateString($p, $parameters, "ipocket.");
 			}
 			$pk->parameters = $parameters;
 		}else{
@@ -3044,7 +3044,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 			$this->server->getPluginManager()->unsubscribeFromPermission(Server::BROADCAST_CHANNEL_USERS, $this);
 			$this->spawned = false;
-			$this->server->getLogger()->info($this->getServer()->getLanguage()->translateString("pocketmine.player.logOut", [
+			$this->server->getLogger()->info($this->getServer()->getLanguage()->translateString("ipocket.player.logOut", [
 				TextFormat::AQUA . $this->getName() . TextFormat::WHITE,
 				$this->ip,
 				$this->port,

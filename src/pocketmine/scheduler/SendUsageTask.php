@@ -13,19 +13,19 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\scheduler;
+namespace ipocket\scheduler;
 
-use pocketmine\network\protocol\Info;
-use pocketmine\Server;
-use pocketmine\utils\Utils;
-use pocketmine\utils\VersionString;
-use pocketmine\utils\UUID;
+use ipocket\network\protocol\Info;
+use ipocket\Server;
+use ipocket\utils\Utils;
+use ipocket\utils\VersionString;
+use ipocket\utils\UUID;
 
 class SendUsageTask extends AsyncTask{
 
@@ -37,7 +37,7 @@ class SendUsageTask extends AsyncTask{
 	public $data;
 
 	public function __construct(Server $server, $type, $playerList = []){
-		$endpoint = "http://" . $server->getProperty("anonymous-statistics.host", "stats.pocketmine.net") . "/";
+		$endpoint = "http://" . $server->getProperty("anonymous-statistics.host", "stats.ipocket.net") . "/";
 
 		$data = [];
 		$data["uniqueServerId"] = $server->getServerUniqueId()->toString();

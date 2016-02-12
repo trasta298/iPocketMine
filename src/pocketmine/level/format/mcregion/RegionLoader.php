@@ -13,21 +13,21 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\format\mcregion;
+namespace ipocket\level\format\mcregion;
 
-use pocketmine\level\format\FullChunk;
-use pocketmine\level\format\LevelProvider;
+use ipocket\level\format\FullChunk;
+use ipocket\level\format\LevelProvider;
 
 
-use pocketmine\utils\Binary;
-use pocketmine\utils\ChunkException;
-use pocketmine\utils\MainLogger;
+use ipocket\utils\Binary;
+use ipocket\utils\ChunkException;
+use ipocket\utils\MainLogger;
 
 class RegionLoader{
 	const VERSION = 1;

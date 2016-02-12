@@ -13,20 +13,20 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\inventory;
+namespace ipocket\inventory;
 
-use pocketmine\utils\UUID;
+use ipocket\utils\UUID;
 
 interface Recipe{
 
 	/**
-	 * @return \pocketmine\item\Item
+	 * @return \ipocket\item\Item
 	 */
 	public function getResult();
 

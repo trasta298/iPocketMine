@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\player;
+namespace ipocket\event\player;
 
-use pocketmine\block\Block;
-use pocketmine\event\Cancellable;
-use pocketmine\item\Item;
-use pocketmine\Player;
+use ipocket\block\Block;
+use ipocket\event\Cancellable;
+use ipocket\item\Item;
+use ipocket\Player;
 
 abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable{
 

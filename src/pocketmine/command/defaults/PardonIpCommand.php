@@ -13,17 +13,17 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command\defaults;
+namespace ipocket\command\defaults;
 
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
-use pocketmine\event\TranslationContainer;
+use ipocket\command\Command;
+use ipocket\command\CommandSender;
+use ipocket\event\TranslationContainer;
 
 
 class PardonIpCommand extends VanillaCommand{
@@ -31,10 +31,10 @@ class PardonIpCommand extends VanillaCommand{
 	public function __construct($name){
 		parent::__construct(
 			$name,
-			"%pocketmine.command.unban.ip.description",
+			"%ipocket.command.unban.ip.description",
 			"%commands.unbanip.usage"
 		);
-		$this->setPermission("pocketmine.command.unban.ip");
+		$this->setPermission("ipocket.command.unban.ip");
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

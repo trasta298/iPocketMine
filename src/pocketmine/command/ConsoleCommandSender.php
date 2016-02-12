@@ -13,20 +13,20 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command;
+namespace ipocket\command;
 
-use pocketmine\event\TextContainer;
-use pocketmine\permission\PermissibleBase;
-use pocketmine\permission\PermissionAttachment;
-use pocketmine\plugin\Plugin;
-use pocketmine\Server;
-use pocketmine\utils\MainLogger;
+use ipocket\event\TextContainer;
+use ipocket\permission\PermissibleBase;
+use ipocket\permission\PermissionAttachment;
+use ipocket\plugin\Plugin;
+use ipocket\Server;
+use ipocket\utils\MainLogger;
 
 class ConsoleCommandSender implements CommandSender{
 
@@ -37,7 +37,7 @@ class ConsoleCommandSender implements CommandSender{
 	}
 
 	/**
-	 * @param \pocketmine\permission\Permission|string $name
+	 * @param \ipocket\permission\Permission|string $name
 	 *
 	 * @return bool
 	 */
@@ -46,7 +46,7 @@ class ConsoleCommandSender implements CommandSender{
 	}
 
 	/**
-	 * @param \pocketmine\permission\Permission|string $name
+	 * @param \ipocket\permission\Permission|string $name
 	 *
 	 * @return bool
 	 */
@@ -59,7 +59,7 @@ class ConsoleCommandSender implements CommandSender{
 	 * @param string $name
 	 * @param bool   $value
 	 *
-	 * @return \pocketmine\permission\PermissionAttachment
+	 * @return \ipocket\permission\PermissionAttachment
 	 */
 	public function addAttachment(Plugin $plugin, $name = null, $value = null){
 		return $this->perm->addAttachment($plugin, $name, $value);
@@ -79,7 +79,7 @@ class ConsoleCommandSender implements CommandSender{
 	}
 
 	/**
-	 * @return \pocketmine\permission\PermissionAttachmentInfo[]
+	 * @return \ipocket\permission\PermissionAttachmentInfo[]
 	 */
 	public function getEffectivePermissions(){
 		return $this->perm->getEffectivePermissions();
@@ -93,7 +93,7 @@ class ConsoleCommandSender implements CommandSender{
 	}
 
 	/**
-	 * @return \pocketmine\Server
+	 * @return \ipocket\Server
 	 */
 	public function getServer(){
 		return Server::getInstance();

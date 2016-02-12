@@ -13,27 +13,27 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\format\mcregion;
+namespace ipocket\level\format\mcregion;
 
-use pocketmine\level\format\generic\BaseFullChunk;
-use pocketmine\level\format\LevelProvider;
-use pocketmine\nbt\NBT;
-use pocketmine\nbt\tag\Byte;
-use pocketmine\nbt\tag\ByteArray;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\nbt\tag\Enum;
-use pocketmine\nbt\tag\Int;
-use pocketmine\nbt\tag\IntArray;
-use pocketmine\nbt\tag\Long;
-use pocketmine\Player;
-use pocketmine\utils\Binary;
-use pocketmine\utils\BinaryStream;
+use ipocket\level\format\generic\BaseFullChunk;
+use ipocket\level\format\LevelProvider;
+use ipocket\nbt\NBT;
+use ipocket\nbt\tag\Byte;
+use ipocket\nbt\tag\ByteArray;
+use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\IntArray;
+use ipocket\nbt\tag\Long;
+use ipocket\Player;
+use ipocket\utils\Binary;
+use ipocket\utils\BinaryStream;
 
 class Chunk extends BaseFullChunk{
 
@@ -46,7 +46,7 @@ class Chunk extends BaseFullChunk{
 			$this->nbt = new Compound("Level", []);
 			return;
 		}
-		
+
 		$this->nbt = $nbt;
 
 		if(isset($this->nbt->Entities) and $this->nbt->Entities instanceof Enum){
@@ -319,7 +319,7 @@ class Chunk extends BaseFullChunk{
 			return null;
 		}
 	}
-	
+
 	public static function fromFastBinary($data, LevelProvider $provider = null){
 
 		try{
@@ -357,7 +357,7 @@ class Chunk extends BaseFullChunk{
 			return null;
 		}
 	}
-	
+
 	public function toFastBinary(){
 		return
 			Binary::writeInt($this->x) .

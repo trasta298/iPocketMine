@@ -13,16 +13,16 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command\defaults;
+namespace ipocket\command\defaults;
 
-use pocketmine\command\CommandSender;
-use pocketmine\event\TranslationContainer;
+use ipocket\command\CommandSender;
+use ipocket\event\TranslationContainer;
 
 
 class BanListCommand extends VanillaCommand{
@@ -30,10 +30,10 @@ class BanListCommand extends VanillaCommand{
 	public function __construct($name){
 		parent::__construct(
 			$name,
-			"%pocketmine.command.banlist.description",
+			"%ipocket.command.banlist.description",
 			"%commands.banlist.usage"
 		);
-		$this->setPermission("pocketmine.command.ban.list");
+		$this->setPermission("ipocket.command.ban.list");
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

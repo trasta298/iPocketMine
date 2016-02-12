@@ -13,18 +13,18 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\level\generator;
+namespace ipocket\level\generator;
 
 
-use pocketmine\level\Level;
+use ipocket\level\Level;
 
-use pocketmine\scheduler\AsyncTask;
+use ipocket\scheduler\AsyncTask;
 
 
 class GeneratorUnregisterTask extends AsyncTask{

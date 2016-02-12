@@ -13,28 +13,28 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command\defaults;
+namespace ipocket\command\defaults;
 
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
-use pocketmine\event\TranslationContainer;
-use pocketmine\utils\TextFormat;
+use ipocket\command\Command;
+use ipocket\command\CommandSender;
+use ipocket\event\TranslationContainer;
+use ipocket\utils\TextFormat;
 
 class ReloadCommand extends VanillaCommand{
 
 	public function __construct($name){
 		parent::__construct(
 			$name,
-			"%pocketmine.command.reload.description",
-			"%pocketmine.command.reload.usage"
+			"%ipocket.command.reload.description",
+			"%ipocket.command.reload.usage"
 		);
-		$this->setPermission("pocketmine.command.reload");
+		$this->setPermission("ipocket.command.reload");
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
@@ -42,10 +42,10 @@ class ReloadCommand extends VanillaCommand{
 			return true;
 		}
 
-		Command::broadcastCommandMessage($sender, new TranslationContainer(TextFormat::YELLOW . "%pocketmine.command.reload.reloading"));
+		Command::broadcastCommandMessage($sender, new TranslationContainer(TextFormat::YELLOW . "%ipocket.command.reload.reloading"));
 
 		$sender->getServer()->reload();
-		Command::broadcastCommandMessage($sender, new TranslationContainer(TextFormat::YELLOW . "%pocketmine.command.reload.reloaded"));
+		Command::broadcastCommandMessage($sender, new TranslationContainer(TextFormat::YELLOW . "%ipocket.command.reload.reloaded"));
 
 		return true;
 	}

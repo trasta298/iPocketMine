@@ -2,37 +2,37 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
+ * @author iPocket Team
+ * @link http://ipocket.link/
+ *
  *
 */
 
 /**
  * All the Tile classes and related classes
  */
-namespace pocketmine\tile;
+namespace ipocket\tile;
 
-use pocketmine\event\Timings;
-use pocketmine\level\format\Chunk;
-use pocketmine\level\format\FullChunk;
-use pocketmine\level\Level;
-use pocketmine\level\Position;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\nbt\tag\Int;
-use pocketmine\nbt\tag\String;
-use pocketmine\utils\ChunkException;
+use ipocket\event\Timings;
+use ipocket\level\format\Chunk;
+use ipocket\level\format\FullChunk;
+use ipocket\level\Level;
+use ipocket\level\Position;
+use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\String;
+use ipocket\utils\ChunkException;
 
 abstract class Tile extends Position{
 	const SIGN = "Sign";
@@ -64,7 +64,7 @@ abstract class Tile extends Position{
 	protected $server;
 	protected $timings;
 
-	/** @var \pocketmine\event\TimingsHandler */
+	/** @var \ipocket\event\TimingsHandler */
 	public $tickTimer;
 
 	/**
@@ -144,7 +144,7 @@ abstract class Tile extends Position{
 	}
 
 	/**
-	 * @return \pocketmine\block\Block
+	 * @return \ipocket\block\Block
 	 */
 	public function getBlock(){
 		return $this->level->getBlock($this);

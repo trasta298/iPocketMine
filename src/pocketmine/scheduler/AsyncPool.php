@@ -13,16 +13,16 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\scheduler;
+namespace ipocket\scheduler;
 
-use pocketmine\event\Timings;
-use pocketmine\Server;
+use ipocket\event\Timings;
+use ipocket\Server;
 
 class AsyncPool{
 

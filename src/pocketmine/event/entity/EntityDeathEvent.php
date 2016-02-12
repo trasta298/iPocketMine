@@ -13,16 +13,16 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\entity;
+namespace ipocket\event\entity;
 
-use pocketmine\entity\Living;
-use pocketmine\item\Item;
+use ipocket\entity\Living;
+use ipocket\item\Item;
 
 class EntityDeathEvent extends EntityEvent{
 	public static $handlerList = null;
@@ -48,7 +48,7 @@ class EntityDeathEvent extends EntityEvent{
 	}
 
 	/**
-	 * @return \pocketmine\item\Item[]
+	 * @return \ipocket\item\Item[]
 	 */
 	public function getDrops(){
 		return $this->drops;

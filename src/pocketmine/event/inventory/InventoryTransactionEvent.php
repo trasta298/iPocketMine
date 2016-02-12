@@ -13,17 +13,17 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link   http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link   http://ipocket.link/
  *
  *
  */
 
-namespace pocketmine\event\inventory;
+namespace ipocket\event\inventory;
 
-use pocketmine\event\Cancellable;
-use pocketmine\event\Event;
-use pocketmine\inventory\TransactionGroup;
+use ipocket\event\Cancellable;
+use ipocket\event\Event;
+use ipocket\inventory\TransactionGroup;
 
 /**
  * Called when there is a transaction between two Inventory objects.

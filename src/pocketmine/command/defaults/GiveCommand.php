@@ -13,32 +13,32 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\command\defaults;
+namespace ipocket\command\defaults;
 
-use pocketmine\command\Command;
-use pocketmine\command\CommandSender;
-use pocketmine\event\TranslationContainer;
-use pocketmine\item\Item;
-use pocketmine\nbt\NBT;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\Player;
-use pocketmine\utils\TextFormat;
+use ipocket\command\Command;
+use ipocket\command\CommandSender;
+use ipocket\event\TranslationContainer;
+use ipocket\item\Item;
+use ipocket\nbt\NBT;
+use ipocket\nbt\tag\Compound;
+use ipocket\Player;
+use ipocket\utils\TextFormat;
 
 class GiveCommand extends VanillaCommand{
 
 	public function __construct($name){
 		parent::__construct(
 			$name,
-			"%pocketmine.command.give.description",
-			"%pocketmine.command.give.usage"
+			"%ipocket.command.give.description",
+			"%ipocket.command.give.usage"
 		);
-		$this->setPermission("pocketmine.command.give");
+		$this->setPermission("ipocket.command.give");
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){

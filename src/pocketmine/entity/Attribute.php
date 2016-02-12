@@ -13,19 +13,19 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\entity;
+namespace ipocket\entity;
 
-use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\event\entity\EntityRegainHealthEvent;
-use pocketmine\network\Network;
-use pocketmine\network\protocol\MobEffectPacket;
-use pocketmine\Player;
+use ipocket\event\entity\EntityDamageEvent;
+use ipocket\event\entity\EntityRegainHealthEvent;
+use ipocket\network\Network;
+use ipocket\network\protocol\MobEffectPacket;
+use ipocket\Player;
 
 
 class Attribute{
@@ -88,7 +88,7 @@ class Attribute{
 				return clone $a;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -106,7 +106,7 @@ class Attribute{
 	public function getMinValue(){
 		return $this->minValue;
 	}
-	
+
 	public function setMinValue($minValue){
 		if($minValue > $this->getMaxValue()){
 			throw new \InvalidArgumentException("Value $minValue is bigger than the maxValue!");

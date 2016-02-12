@@ -13,16 +13,16 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://ipocket.link/
  *
  *
 */
 
-namespace pocketmine\network;
+namespace ipocket\network;
 
-use pocketmine\scheduler\AsyncTask;
-use pocketmine\Server;
+use ipocket\scheduler\AsyncTask;
+use ipocket\Server;
 
 class CompressBatchedTask extends AsyncTask{
 

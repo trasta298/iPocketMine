@@ -2,47 +2,47 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____  
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
- * 
+ * @author iPocket Team
+ * @link http://ipocket.link/
+ *
  *
 */
 
 /**
  * Named Binary Tag handling classes
  */
-namespace pocketmine\nbt;
+namespace ipocket\nbt;
 
-use pocketmine\item\Item;
-use pocketmine\nbt\tag\Byte;
-use pocketmine\nbt\tag\ByteArray;
-use pocketmine\nbt\tag\Compound;
-use pocketmine\nbt\tag\Double;
-use pocketmine\nbt\tag\End;
-use pocketmine\nbt\tag\Enum;
-use pocketmine\nbt\tag\Float;
-use pocketmine\nbt\tag\Int;
-use pocketmine\nbt\tag\IntArray;
-use pocketmine\nbt\tag\Long;
-use pocketmine\nbt\tag\NamedTAG;
-use pocketmine\nbt\tag\Short;
-use pocketmine\nbt\tag\String;
-use pocketmine\nbt\tag\Tag;
-use pocketmine\utils\Utils;
+use ipocket\item\Item;
+use ipocket\nbt\tag\Byte;
+use ipocket\nbt\tag\ByteArray;
+use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\Double;
+use ipocket\nbt\tag\End;
+use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\Float;
+use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\IntArray;
+use ipocket\nbt\tag\Long;
+use ipocket\nbt\tag\NamedTAG;
+use ipocket\nbt\tag\Short;
+use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\Tag;
+use ipocket\utils\Utils;
 
 #ifndef COMPILE
-use pocketmine\utils\Binary;
+use ipocket\utils\Binary;
 
 #endif
 
@@ -109,7 +109,7 @@ class NBT{
 		}
 
 		$item = Item::get($tag->id->getValue(), !isset($tag->Damage) ? 0 : $tag->Damage->getValue(), $tag->Count->getValue());
-		
+
 		if(isset($tag->tag) and $tag->tag instanceof Compound){
 			$item->setNamedTag($tag->tag);
 		}
