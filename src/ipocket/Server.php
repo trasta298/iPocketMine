@@ -1461,6 +1461,10 @@ class Server{
 			mkdir($dataPath . "players/", 0777);
 		}
 
+		if(!file_exists($dataPath . "CrashDumps/")){
+			mkdir($dataPath . "CrashDumps/", 0777);
+		}
+
 		if(!file_exists($pluginPath)){
 			mkdir($pluginPath, 0777);
 		}
@@ -2109,33 +2113,26 @@ class Server{
 		}
 	}
 
-	public function exceptionHandler(\Exception $e, $trace = null){
+	public function exceptionHandler(\Throwable $e, $trace = null){
 		if($e === null){
 			return;
 		}
-
 		global $lastError;
-
 		if($trace === null){
 			$trace = $e->getTrace();
 		}
-
 		$errstr = $e->getMessage();
 		$errfile = $e->getFile();
 		$errno = $e->getCode();
 		$errline = $e->getLine();
-
 		$type = ($errno === E_ERROR or $errno === E_USER_ERROR) ? \LogLevel::ERROR : (($errno === E_USER_WARNING or $errno === E_WARNING) ? \LogLevel::WARNING : \LogLevel::NOTICE);
 		if(($pos = strpos($errstr, "\n")) !== false){
 			$errstr = substr($errstr, 0, $pos);
 		}
-
 		$errfile = cleanPath($errfile);
-
 		if($this->logger instanceof MainLogger){
 			$this->logger->logException($e, $trace);
 		}
-
 		$lastError = [
 			"type" => $type,
 			"message" => $errstr,
@@ -2144,7 +2141,6 @@ class Server{
 			"line" => $errline,
 			"trace" => @getTrace(1, $trace)
 		];
-
 		global $lastExceptionError, $lastError;
 		$lastExceptionError = $lastError;
 		$this->crashDump();

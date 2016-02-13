@@ -77,7 +77,7 @@ class RCON{
 		$this->threads = 0;
 	}
 
-	public function check(){
+		public function check(){
 		for($n = 0; $n < $this->threads; ++$n){
 			if($this->workers[$n]->isTerminated() === true){
 				$this->workers[$n] = new RCONInstance($this->socket, $this->password, $this->clientsPerThread);
@@ -88,16 +88,12 @@ class RCON{
 						$thread->notify();
 					}, $this->workers[$n]);
 				}else{
-
 					$response = new RemoteConsoleCommandSender();
 					$command = $this->workers[$n]->cmd;
-
 					$this->server->getPluginManager()->callEvent($ev = new RemoteServerCommandEvent($response, $command));
-
 					if(!$ev->isCancelled()){
 						$this->server->dispatchCommand($ev->getSender(), $ev->getCommand());
 					}
-
 					$this->workers[$n]->response = TextFormat::clean($response->getMessage());
 					$this->workers[$n]->synchronized(function (RCONInstance $thread){
 						$thread->notify();

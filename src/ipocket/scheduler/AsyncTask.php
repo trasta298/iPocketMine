@@ -1,5 +1,4 @@
 <?php
-
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
@@ -13,49 +12,59 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author iPocket Team
+ * @author PocketMine Team
  * @link http://ipocket.link/
  *
  *
 */
-
 namespace ipocket\scheduler;
-
 use ipocket\Server;
-
 /**
  * Class used to run async tasks in other threads.
  *
- * WARNING: Do not call iPocket API methods, or save objects from/on other Threads!!
+ * WARNING: Do not call PocketMine-MP API methods, or save objects from/on other Threads!!
  */
-abstract class AsyncTask extends \Collectable{
-
+abstract class AsyncTask extends \Threaded implements \Collectable{
 	/** @var AsyncWorker $worker */
 	public $worker = null;
-
 	private $result = null;
 	private $serialized = false;
 	private $cancelRun = false;
 	/** @var int */
 	private $taskId = null;
+	private $crashed = false;
+	private $isGarbage = false;
+	private $isFinished = false;
+
+	public function isGarbage() : bool{
+		return $this->isGarbage;
+	}
+
+	public function setGarbage(){
+		$this->isGarbage = true;
+	}
+
+	public function isFinished() : bool{
+		return $this->isFinished;
+	}
 
 	public function run(){
 		$this->result = null;
-
+		$this->isGarbage = false;
 		if($this->cancelRun !== true){
-			$this->onRun();
+			try{
+				$this->onRun();
+			}catch(\Throwable $e){
+				$this->crashed = true;
+				$this->worker->handleException($e);
+			}
 		}
-
-		$this->setGarbage();
+		$this->isFinished = true;
+		//$this->setGarbage();
 	}
 
-	/**
-	 * @deprecated
-	 *
-	 * @return bool
-	 */
-	public function isFinished(){
-		return $this->isGarbage();
+	public function isCrashed(){
+		return $this->crashed;
 	}
 
 	/**
@@ -129,7 +138,6 @@ abstract class AsyncTask extends \Collectable{
 	 * @return void
 	 */
 	public abstract function onRun();
-
 	/**
 	 * Actions to execute when completed (on main thread)
 	 * Implement this if you want to handle the data in your AsyncTask after it has been processed
@@ -139,13 +147,13 @@ abstract class AsyncTask extends \Collectable{
 	 * @return void
 	 */
 	public function onCompletion(Server $server){
-
 	}
 
 	public function cleanObject(){
 		foreach($this as $p => $v){
-			$this->{$p} = null;
+			if(!($v instanceof \Threaded)){
+				$this->{$p} = null;
+			}
 		}
 	}
-
 }

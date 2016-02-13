@@ -47,29 +47,25 @@ class RakLibServer extends \Thread{
         if($port < 1 or $port > 65536){
             throw new \Exception("Invalid port range");
         }
-
         $this->interface = $interface;
         $this->logger = $logger;
         $this->loader = $loader;
         $loadPaths = [];
         $this->addDependency($loadPaths, new \ReflectionClass($logger));
         $this->addDependency($loadPaths, new \ReflectionClass($loader));
-        $this->loadPaths = array_reverse($loadPaths);
+        //$this->loadPaths = array_reverse($loadPaths);
         $this->shutdown = false;
-
-        $this->externalQueue = \ThreadedFactory::create();
-        $this->internalQueue = \ThreadedFactory::create();
-
-	    if(\Phar::running(true) !== ""){
-		    $this->mainPath = \Phar::running(true);
-	    }else{
-		    $this->mainPath = \getcwd() . DIRECTORY_SEPARATOR;
-	    }
-
-        $this->start(PTHREADS_INHERIT_NONE);
+        $this->externalQueue = new \Threaded;
+        $this->internalQueue = new \Threaded;
+        if(\Phar::running(true) !== ""){
+            $this->mainPath = \Phar::running(true);
+        }else{
+            $this->mainPath = \getcwd() . DIRECTORY_SEPARATOR;
+        }
+        $this->start();
     }
 
-    protected function addDependency(array &$loadPaths, \ReflectionClass $dep){
+    protected function addDependency(array $loadPaths, \ReflectionClass $dep) : array{
         if($dep->getFileName() !== false){
             $loadPaths[$dep->getName()] = $dep->getFileName();
         }
@@ -81,9 +77,10 @@ class RakLibServer extends \Thread{
         foreach($dep->getInterfaces() as $interface){
             $this->addDependency($loadPaths, $interface);
         }
+        return $loadPaths;
     }
 
-    public function isShutdown(){
+    public function isShutdown() : bool{
         return $this->shutdown === true;
     }
 
