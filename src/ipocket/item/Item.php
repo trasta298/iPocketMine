@@ -36,7 +36,7 @@ use ipocket\item\enchantment\Enchantment;
 use ipocket\level\Level;
 use ipocket\nbt\tag\Enum;
 use ipocket\nbt\tag\Short;
-use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\StringTag;
 use ipocket\Player;
 use ipocket\nbt\tag\Compound;
 use ipocket\nbt\NBT;
@@ -1319,7 +1319,7 @@ class Item{
 		$tag = $this->getNamedTag();
 		if(isset($tag->display)){
 			$tag = $tag->display;
-			if($tag instanceof Compound and isset($tag->Name) and $tag->Name instanceof String){
+			if($tag instanceof Compound and isset($tag->Name) and $tag->Name instanceof StringTag){
 				return true;
 			}
 		}
@@ -1335,7 +1335,7 @@ class Item{
 		$tag = $this->getNamedTag();
 		if(isset($tag->display)){
 			$tag = $tag->display;
-			if($tag instanceof Compound and isset($tag->Name) and $tag->Name instanceof String){
+			if($tag instanceof Compound and isset($tag->Name) and $tag->Name instanceof StringTag){
 				return $tag->Name->getValue();
 			}
 		}
@@ -1355,10 +1355,10 @@ class Item{
 		}
 
 		if(isset($tag->display) and $tag->display instanceof Compound){
-			$tag->display->Name = new String("Name", $name);
+			$tag->display->Name = new StringTag("Name", $name);
 		}else{
 			$tag->display = new Compound("display", [
-				"Name" => new String("Name", $name)
+				"Name" => new StringTag("Name", $name)
 			]);
 		}
 

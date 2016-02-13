@@ -49,10 +49,10 @@ use ipocket\nbt\tag\Byte;
 use ipocket\nbt\tag\Compound;
 use ipocket\nbt\tag\Double;
 use ipocket\nbt\tag\Enum;
-use ipocket\nbt\tag\Float;
-use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\FloatTag;
+use ipocket\nbt\tag\IntTag;
 use ipocket\nbt\tag\Short;
-use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\StringTag;
 use ipocket\network\protocol\MobEffectPacket;
 use ipocket\network\protocol\RemoveEntityPacket;
 use ipocket\network\protocol\SetEntityDataPacket;
@@ -239,7 +239,7 @@ abstract class Entity extends Location implements Metadatable{
 		$this->setMotion($this->temporalVector->setComponents($this->namedtag["Motion"][0], $this->namedtag["Motion"][1], $this->namedtag["Motion"][2]));
 
 		if(!isset($this->namedtag->FallDistance)){
-			$this->namedtag->FallDistance = new Float("FallDistance", 0);
+			$this->namedtag->FallDistance = new FloatTag("FallDistance", 0);
 		}
 		$this->fallDistance = $this->namedtag["FallDistance"];
 
@@ -447,10 +447,10 @@ abstract class Entity extends Location implements Metadatable{
 
 	public function saveNBT(){
 		if(!($this instanceof Player)){
-			$this->namedtag->id = new String("id", $this->getSaveId());
+			$this->namedtag->id = new StringTag("id", $this->getSaveId());
 			if($this->getNameTag() !== ""){
-				$this->namedtag->CustomName = new String("CustomName", $this->getNameTag());
-				$this->namedtag->CustomNameVisible = new String("CustomNameVisible", $this->isNameTagVisible());
+				$this->namedtag->CustomName = new StringTag("CustomName", $this->getNameTag());
+				$this->namedtag->CustomNameVisible = new StringTag("CustomNameVisible", $this->isNameTagVisible());
 			}else{
 				unset($this->namedtag->CustomName);
 				unset($this->namedtag->CustomNameVisible);
@@ -470,11 +470,11 @@ abstract class Entity extends Location implements Metadatable{
 		]);
 
 		$this->namedtag->Rotation = new Enum("Rotation", [
-			new Float(0, $this->yaw),
-			new Float(1, $this->pitch)
+			new FloatTag(0, $this->yaw),
+			new FloatTag(1, $this->pitch)
 		]);
 
-		$this->namedtag->FallDistance = new Float("FallDistance", $this->fallDistance);
+		$this->namedtag->FallDistance = new FloatTag("FallDistance", $this->fallDistance);
 		$this->namedtag->Fire = new Short("Fire", $this->fireTicks);
 		$this->namedtag->Air = new Short("Air", $this->getDataProperty(self::DATA_AIR));
 		$this->namedtag->OnGround = new Byte("OnGround", $this->onGround == true ? 1 : 0);
@@ -486,7 +486,7 @@ abstract class Entity extends Location implements Metadatable{
 				$effects[$effect->getId()] = new Compound($effect->getId(), [
 					"Id" => new Byte("Id", $effect->getId()),
 					"Amplifier" => new Byte("Amplifier", $effect->getAmplifier()),
-					"Duration" => new Int("Duration", $effect->getDuration()),
+					"Duration" => new IntTag("Duration", $effect->getDuration()),
 					"Ambient" => new Byte("Ambient", 0),
 					"ShowParticles" => new Byte("ShowParticles", $effect->isVisible() ? 1 : 0)
 				]);

@@ -29,8 +29,8 @@ use ipocket\nbt\tag\Byte;
 use ipocket\nbt\tag\Compound;
 use ipocket\nbt\tag\Double;
 use ipocket\nbt\tag\Enum;
-use ipocket\nbt\tag\Float;
-use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\FloatTag;
+use ipocket\nbt\tag\IntTag;
 use ipocket\Player;
 
 abstract class Fallable extends Solid{
@@ -57,10 +57,10 @@ abstract class Fallable extends Solid{
 						new Double("", 0)
 					]),
 					"Rotation" => new Enum("Rotation", [
-						new Float("", 0),
-						new Float("", 0)
+						new FloatTag("", 0),
+						new FloatTag("", 0)
 					]),
-					"TileID" => new Int("TileID", $this->getId()),
+					"TileID" => new IntTag("TileID", $this->getId()),
 					"Data" => new Byte("Data", $this->getDamage()),
 				]));
 

@@ -27,7 +27,7 @@ use ipocket\nbt\tag\Byte;
 use ipocket\nbt\tag\Compound;
 use ipocket\nbt\tag\Double;
 use ipocket\nbt\tag\Enum;
-use ipocket\nbt\tag\Float;
+use ipocket\nbt\tag\FloatTag;
 use ipocket\Player;
 use ipocket\utils\Random;
 
@@ -69,8 +69,8 @@ class TNT extends Solid{
 					new Double("", -cos($mot) * 0.02)
 				]),
 				"Rotation" => new Enum("Rotation", [
-					new Float("", 0),
-					new Float("", 0)
+					new FloatTag("", 0),
+					new FloatTag("", 0)
 				]),
 				"Fuse" => new Byte("Fuse", 80)
 			]));

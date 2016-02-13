@@ -22,8 +22,8 @@
 namespace ipocket\tile;
 
 use ipocket\nbt\tag\Compound;
-use ipocket\nbt\tag\Int;
-use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\IntTag;
+use ipocket\nbt\tag\StringTag;
 
 class EnchantTable extends Spawnable implements Nameable{
 
@@ -42,15 +42,15 @@ class EnchantTable extends Spawnable implements Nameable{
 			return;
 		}
 
-		$this->namedtag->CustomName = new String("CustomName", $str);
+		$this->namedtag->CustomName = new StringTag("CustomName", $str);
 	}
 
 	public function getSpawnCompound(){
 		$c = new Compound("", [
-				new String("id", Tile::ENCHANT_TABLE),
-				new Int("x", (int) $this->x),
-				new Int("y", (int) $this->y),
-				new Int("z", (int) $this->z)
+				new StringTag("id", Tile::ENCHANT_TABLE),
+				new IntTag("x", (int) $this->x),
+				new IntTag("y", (int) $this->y),
+				new IntTag("z", (int) $this->z)
 		]);
 
 		if($this->hasName()){

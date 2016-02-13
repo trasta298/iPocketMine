@@ -28,8 +28,8 @@ use ipocket\level\Level;
 use ipocket\nbt\tag\Compound;
 use ipocket\nbt\tag\Double;
 use ipocket\nbt\tag\Enum;
-use ipocket\nbt\tag\Float;
-use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\FloatTag;
+use ipocket\nbt\tag\StringTag;
 use ipocket\Player;
 
 class SpawnEgg extends Item{
@@ -61,13 +61,13 @@ class SpawnEgg extends Item{
 				new Double("", 0)
 			]),
 			"Rotation" => new Enum("Rotation", [
-				new Float("", lcg_value() * 360),
-				new Float("", 0)
+				new FloatTag("", lcg_value() * 360),
+				new FloatTag("", 0)
 			]),
 		]);
 
 		if($this->hasCustomName()){
-			$nbt->CustomName = new String("CustomName", $this->getCustomName());
+			$nbt->CustomName = new StringTag("CustomName", $this->getCustomName());
 		}
 
 		$entity = Entity::createEntity($this->meta, $chunk, $nbt);

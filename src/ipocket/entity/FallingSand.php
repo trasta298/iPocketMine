@@ -31,7 +31,7 @@ use ipocket\event\entity\EntityDamageEvent;
 use ipocket\item\Item as ItemItem;
 use ipocket\math\Vector3;
 use ipocket\nbt\tag\Byte;
-use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\IntTag;
 use ipocket\network\Network;
 use ipocket\network\protocol\AddEntityPacket;
 use ipocket\Player;
@@ -58,7 +58,7 @@ class FallingSand extends Entity{
 			$this->blockId = $this->namedtag["TileID"];
 		}elseif(isset($this->namedtag->Tile)){
 			$this->blockId = $this->namedtag["Tile"];
-			$this->namedtag["TileID"] = new Int("TileID", $this->blockId);
+			$this->namedtag["TileID"] = new IntTag("TileID", $this->blockId);
 		}
 
 		if(isset($this->namedtag->Data)){
@@ -153,7 +153,7 @@ class FallingSand extends Entity{
 	}
 
 	public function saveNBT(){
-		$this->namedtag->TileID = new Int("TileID", $this->blockId);
+		$this->namedtag->TileID = new IntTag("TileID", $this->blockId);
 		$this->namedtag->Data = new Byte("Data", $this->damage);
 	}
 

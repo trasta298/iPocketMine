@@ -29,7 +29,7 @@ use ipocket\nbt\tag\Byte;
 use ipocket\nbt\tag\ByteArray;
 use ipocket\nbt\tag\Compound;
 use ipocket\nbt\tag\Enum;
-use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\IntTag;
 use ipocket\nbt\tag\IntArray;
 use ipocket\nbt\tag\Long;
 use ipocket\Player;
@@ -211,8 +211,8 @@ class Chunk extends BaseChunk{
 	public function toFastBinary(){
 		$nbt = clone $this->getNBT();
 
-		$nbt->xPos = new Int("xPos", $this->x);
-		$nbt->zPos = new Int("zPos", $this->z);
+		$nbt->xPos = new IntTag("xPos", $this->x);
+		$nbt->zPos = new IntTag("zPos", $this->z);
 
 		$nbt->Sections = new Enum("Sections", []);
 		$nbt->Sections->setTagType(NBT::TAG_Compound);
@@ -274,8 +274,8 @@ class Chunk extends BaseChunk{
 	public function toBinary(){
 		$nbt = clone $this->getNBT();
 
-		$nbt->xPos = new Int("xPos", $this->x);
-		$nbt->zPos = new Int("zPos", $this->z);
+		$nbt->xPos = new IntTag("xPos", $this->x);
+		$nbt->zPos = new IntTag("zPos", $this->z);
 
 		$nbt->Sections = new Enum("Sections", []);
 		$nbt->Sections->setTagType(NBT::TAG_Compound);

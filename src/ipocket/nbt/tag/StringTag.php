@@ -25,17 +25,18 @@ use ipocket\nbt\NBT;
 
 #include <rules/NBT.h>
 
-class Float extends NamedTag{
+class StringTag extends NamedTag{
 
 	public function getType(){
-		return NBT::TAG_Float;
+		return NBT::TAG_String;
 	}
 
 	public function read(NBT $nbt){
-		$this->value = $nbt->getFloat();
+		$this->value = $nbt->get($nbt->getShort());
 	}
 
 	public function write(NBT $nbt){
-		$nbt->putFloat($this->value);
+		$nbt->putShort(strlen($this->value));
+		$nbt->put($this->value);
 	}
 }

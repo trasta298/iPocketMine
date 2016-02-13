@@ -26,8 +26,8 @@ use ipocket\item\Item;
 use ipocket\item\Tool;
 
 use ipocket\nbt\tag\Compound;
-use ipocket\nbt\tag\Int;
-use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\IntTag;
+use ipocket\nbt\tag\StringTag;
 use ipocket\Player;
 use ipocket\tile\Tile;
 
@@ -42,14 +42,14 @@ class EnchantingTable extends Transparent{
 	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
 		$this->getLevel()->setBlock($block, $this, true, true);
 		$nbt = new Compound("", [
-			new String("id", Tile::ENCHANT_TABLE),
-			new Int("x", $this->x),
-			new Int("y", $this->y),
-			new Int("z", $this->z)
+			new StringTag("id", Tile::ENCHANT_TABLE),
+			new IntTag("x", $this->x),
+			new IntTag("y", $this->y),
+			new IntTag("z", $this->z)
 		]);
 
 		if($item->hasCustomName()){
-			$nbt->CustomName = new String("CustomName", $item->getCustomName());
+			$nbt->CustomName = new StringTag("CustomName", $item->getCustomName());
 		}
 
 		if($item->hasCustomBlockData()){

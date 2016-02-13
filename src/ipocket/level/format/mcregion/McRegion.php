@@ -28,9 +28,9 @@ use ipocket\level\Level;
 use ipocket\nbt\NBT;
 use ipocket\nbt\tag\Byte;
 use ipocket\nbt\tag\Compound;
-use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\IntTag;
 use ipocket\nbt\tag\Long;
-use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\StringTag;
 use ipocket\tile\Spawnable;
 
 use ipocket\utils\BinaryStream;
@@ -84,20 +84,20 @@ class McRegion extends BaseLevelProvider{
 		$levelData = new Compound("Data", [
 			"hardcore" => new Byte("hardcore", 0),
 			"initialized" => new Byte("initialized", 1),
-			"GameType" => new Int("GameType", 0),
-			"generatorVersion" => new Int("generatorVersion", 1), //2 in MCPE
-			"SpawnX" => new Int("SpawnX", 128),
-			"SpawnY" => new Int("SpawnY", 70),
-			"SpawnZ" => new Int("SpawnZ", 128),
-			"version" => new Int("version", 19133),
-			"DayTime" => new Int("DayTime", 0),
+			"GameType" => new IntTag("GameType", 0),
+			"generatorVersion" => new IntTag("generatorVersion", 1), //2 in MCPE
+			"SpawnX" => new IntTag("SpawnX", 128),
+			"SpawnY" => new IntTag("SpawnY", 70),
+			"SpawnZ" => new IntTag("SpawnZ", 128),
+			"version" => new IntTag("version", 19133),
+			"DayTime" => new IntTag("DayTime", 0),
 			"LastPlayed" => new Long("LastPlayed", microtime(true) * 1000),
 			"RandomSeed" => new Long("RandomSeed", $seed),
 			"SizeOnDisk" => new Long("SizeOnDisk", 0),
 			"Time" => new Long("Time", 0),
-			"generatorName" => new String("generatorName", Generator::getGeneratorName($generator)),
-			"generatorOptions" => new String("generatorOptions", isset($options["preset"]) ? $options["preset"] : ""),
-			"LevelName" => new String("LevelName", $name),
+			"generatorName" => new StringTag("generatorName", Generator::getGeneratorName($generator)),
+			"generatorOptions" => new StringTag("generatorOptions", isset($options["preset"]) ? $options["preset"] : ""),
+			"LevelName" => new StringTag("LevelName", $name),
 			"GameRules" => new Compound("GameRules", [])
 		]);
 		$nbt = new NBT(NBT::BIG_ENDIAN);

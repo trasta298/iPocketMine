@@ -30,8 +30,8 @@ use ipocket\level\format\FullChunk;
 use ipocket\level\Level;
 use ipocket\level\Position;
 use ipocket\nbt\tag\Compound;
-use ipocket\nbt\tag\Int;
-use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\IntTag;
+use ipocket\nbt\tag\StringTag;
 use ipocket\utils\ChunkException;
 
 abstract class Tile extends Position{
@@ -137,10 +137,10 @@ abstract class Tile extends Position{
 	}
 
 	public function saveNBT(){
-		$this->namedtag->id = new String("id", $this->getSaveId());
-		$this->namedtag->x = new Int("x", $this->x);
-		$this->namedtag->y = new Int("y", $this->y);
-		$this->namedtag->z = new Int("z", $this->z);
+		$this->namedtag->id = new StringTag("id", $this->getSaveId());
+		$this->namedtag->x = new IntTag("x", $this->x);
+		$this->namedtag->y = new IntTag("y", $this->y);
+		$this->namedtag->z = new IntTag("z", $this->z);
 	}
 
 	/**

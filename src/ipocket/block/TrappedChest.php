@@ -27,8 +27,8 @@ use ipocket\math\AxisAlignedBB;
 use ipocket\nbt\NBT;
 use ipocket\nbt\tag\Compound;
 use ipocket\nbt\tag\Enum;
-use ipocket\nbt\tag\Int;
-use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\IntTag;
+use ipocket\nbt\tag\StringTag;
 use ipocket\Player;
 use ipocket\tile\Chest as TileChest;
 use ipocket\tile\Tile;
@@ -98,15 +98,15 @@ class TrappedChest extends Transparent{
 		$this->getLevel()->setBlock($block, $this, true, true);
 		$nbt = new Compound("", [
 			new Enum("Items", []),
-			new String("id", Tile::CHEST),
-			new Int("x", $this->x),
-			new Int("y", $this->y),
-			new Int("z", $this->z)
+			new StringTag("id", Tile::CHEST),
+			new IntTag("x", $this->x),
+			new IntTag("y", $this->y),
+			new IntTag("z", $this->z)
 		]);
 		$nbt->Items->setTagType(NBT::TAG_Compound);
 
 		if($item->hasCustomName()){
-			$nbt->CustomName = new String("CustomName", $item->getCustomName());
+			$nbt->CustomName = new StringTag("CustomName", $item->getCustomName());
 		}
 
 		if($item->hasCustomBlockData()){
@@ -149,16 +149,16 @@ class TrappedChest extends Transparent{
 			}else{
 				$nbt = new Compound("", [
 					new Enum("Items", []),
-					new String("id", Tile::CHEST),
-					new Int("x", $this->x),
-					new Int("y", $this->y),
-					new Int("z", $this->z)
+					new StringTag("id", Tile::CHEST),
+					new IntTag("x", $this->x),
+					new IntTag("y", $this->y),
+					new IntTag("z", $this->z)
 				]);
 				$nbt->Items->setTagType(NBT::TAG_Compound);
 				$chest = Tile::createTile("Chest", $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
 			}
 
-			if(isset($chest->namedtag->Lock) and $chest->namedtag->Lock instanceof String){
+			if(isset($chest->namedtag->Lock) and $chest->namedtag->Lock instanceof StringTag){
 				if($chest->namedtag->Lock->getValue() !== $item->getCustomName()){
 					return true;
 				}

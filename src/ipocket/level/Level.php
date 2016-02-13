@@ -84,10 +84,10 @@ use ipocket\nbt\NBT;
 use ipocket\nbt\tag\Compound;
 use ipocket\nbt\tag\Double;
 use ipocket\nbt\tag\Enum;
-use ipocket\nbt\tag\Float;
-use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\FloatTag;
+use ipocket\nbt\tag\IntTag;
 use ipocket\nbt\tag\Short;
-use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\StringTag;
 use ipocket\network\Network;
 use ipocket\network\protocol\DataPacket;
 use ipocket\network\protocol\FullChunkDataPacket;
@@ -1479,8 +1479,8 @@ class Level implements ChunkManager, Metadatable{
 					new Double("", $motion->z)
 				]),
 				"Rotation" => new Enum("Rotation", [
-					new Float("", lcg_value() * 360),
-					new Float("", 0)
+					new FloatTag("", lcg_value() * 360),
+					new FloatTag("", 0)
 				]),
 				"Health" => new Short("Health", 5),
 				"Item" => $itemTag,
@@ -1571,7 +1571,7 @@ class Level implements ChunkManager, Metadatable{
 		if($tag instanceof Enum){
 			$canBreak = false;
 			foreach($tag as $v){
-				if($v instanceof String){
+				if($v instanceof StringTag){
 					$entry = Item::fromString($v->getValue());
 					if($entry->getId() > 0 and $entry->getBlock() !== null and $entry->getBlock()->getId() === $target->getId()){
 						$canBreak = true;
@@ -1733,7 +1733,7 @@ class Level implements ChunkManager, Metadatable{
 		if($tag instanceof Enum){
 			$canPlace = false;
 			foreach($tag as $v){
-				if($v instanceof String){
+				if($v instanceof StringTag){
 					$entry = Item::fromString($v->getValue());
 					if($entry->getId() > 0 and $entry->getBlock() !== null and $entry->getBlock()->getId() === $target->getId()){
 						$canPlace = true;
@@ -1770,18 +1770,18 @@ class Level implements ChunkManager, Metadatable{
 		if($hand->getId() === Item::SIGN_POST or $hand->getId() === Item::WALL_SIGN){
 
 			$nbt = new Compound("", [
-				"id" => new String("id", Tile::SIGN),
-				"x" => new Int("x", $block->x),
-				"y" => new Int("y", $block->y),
-				"z" => new Int("z", $block->z),
-				"Text1" => new String("Text1", ""),
-				"Text2" => new String("Text2", ""),
-				"Text3" => new String("Text3", ""),
-				"Text4" => new String("Text4", "")
+				"id" => new StringTag("id", Tile::SIGN),
+				"x" => new IntTag("x", $block->x),
+				"y" => new IntTag("y", $block->y),
+				"z" => new IntTag("z", $block->z),
+				"Text1" => new StringTag("Text1", ""),
+				"Text2" => new StringTag("Text2", ""),
+				"Text3" => new StringTag("Text3", ""),
+				"Text4" => new StringTag("Text4", "")
 			]);
 
 			if($player !== null){
-				$nbt->Creator = new String("Creator", $player->getRawUniqueId());
+				$nbt->Creator = new StringTag("Creator", $player->getRawUniqueId());
 			}
 
 			if($item->hasCustomBlockData()){

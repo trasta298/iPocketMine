@@ -34,7 +34,7 @@ use ipocket\nbt\NBT;
 use ipocket\nbt\tag\Compound;
 use ipocket\nbt\tag\Enum;
 use ipocket\nbt\tag\Short;
-use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\StringTag;
 use ipocket\network\Network;
 use ipocket\network\protocol\ContainerSetDataPacket;
 
@@ -84,7 +84,7 @@ class Furnace extends Tile implements InventoryHolder, Container, Nameable{
 			return;
 		}
 
-		$this->namedtag->CustomName = new String("CustomName", $str);
+		$this->namedtag->CustomName = new StringTag("CustomName", $str);
 	}
 
 	public function close(){

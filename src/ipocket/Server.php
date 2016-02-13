@@ -77,11 +77,11 @@ use ipocket\nbt\tag\Byte;
 use ipocket\nbt\tag\Compound;
 use ipocket\nbt\tag\Double;
 use ipocket\nbt\tag\Enum;
-use ipocket\nbt\tag\Float;
-use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\FloatTag;
+use ipocket\nbt\tag\IntTag;
 use ipocket\nbt\tag\Long;
 use ipocket\nbt\tag\Short;
-use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\StringTag;
 use ipocket\network\CompressBatchedTask;
 use ipocket\network\Network;
 use ipocket\network\protocol\BatchPacket;
@@ -770,30 +770,30 @@ class Server{
 				new Double(1, $spawn->y),
 				new Double(2, $spawn->z)
 			]),
-			new String("Level", $this->getDefaultLevel()->getName()),
-			//new String("SpawnLevel", $this->getDefaultLevel()->getName()),
-			//new Int("SpawnX", (int) $spawn->x),
-			//new Int("SpawnY", (int) $spawn->y),
-			//new Int("SpawnZ", (int) $spawn->z),
+			new StringTag("Level", $this->getDefaultLevel()->getName()),
+			//new StringTag("SpawnLevel", $this->getDefaultLevel()->getName()),
+			//new IntTag("SpawnX", (int) $spawn->x),
+			//new IntTag("SpawnY", (int) $spawn->y),
+			//new IntTag("SpawnZ", (int) $spawn->z),
 			//new Byte("SpawnForced", 1), //TODO
 			new Enum("Inventory", []),
 			new Compound("Achievements", []),
-			new Int("playerGameType", $this->getGamemode()),
+			new IntTag("playerGameType", $this->getGamemode()),
 			new Enum("Motion", [
 				new Double(0, 0.0),
 				new Double(1, 0.0),
 				new Double(2, 0.0)
 			]),
 			new Enum("Rotation", [
-				new Float(0, 0.0),
-				new Float(1, 0.0)
+				new FloatTag(0, 0.0),
+				new FloatTag(1, 0.0)
 			]),
-			new Float("FallDistance", 0.0),
+			new FloatTag("FallDistance", 0.0),
 			new Short("Fire", 0),
 			new Short("Air", 300),
 			new Byte("OnGround", 1),
 			new Byte("Invulnerable", 0),
-			new String("NameTag", $name),
+			new StringTag("NameTag", $name),
 		]);
 		$nbt->Pos->setTagType(NBT::TAG_Double);
 		$nbt->Inventory->setTagType(NBT::TAG_Compound);

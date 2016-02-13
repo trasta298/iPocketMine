@@ -94,11 +94,11 @@ use ipocket\nbt\tag\Byte;
 use ipocket\nbt\tag\Compound;
 use ipocket\nbt\tag\Double;
 use ipocket\nbt\tag\Enum;
-use ipocket\nbt\tag\Float;
-use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\FloatTag;
+use ipocket\nbt\tag\IntTag;
 use ipocket\nbt\tag\Long;
 use ipocket\nbt\tag\Short;
-use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\StringTag;
 use ipocket\network\Network;
 use ipocket\network\protocol\AdventureSettingsPacket;
 use ipocket\network\protocol\AnimatePacket;
@@ -1096,7 +1096,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->spawnToAll();
 		}
 
-		$this->namedtag->playerGameType = new Int("playerGameType", $this->gamemode);
+		$this->namedtag->playerGameType = new IntTag("playerGameType", $this->gamemode);
 
 		$pk = new SetPlayerGameTypePacket();
 		$pk->gamemode = $this->gamemode & 0x01;
@@ -1624,14 +1624,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 		$nbt = $this->server->getOfflinePlayerData($this->username);
 		if(!isset($nbt->NameTag)){
-			$nbt->NameTag = new String("NameTag", $this->username);
+			$nbt->NameTag = new StringTag("NameTag", $this->username);
 		}else{
 			$nbt["NameTag"] = $this->username;
 		}
 		$this->gamemode = $nbt["playerGameType"] & 0x03;
 		if($this->server->getForceGamemode()){
 			$this->gamemode = $this->server->getGamemode();
-			$nbt->playerGameType = new Int("playerGameType", $this->gamemode);
+			$nbt->playerGameType = new IntTag("playerGameType", $this->gamemode);
 		}
 
 		$this->allowFlight = $this->isCreative();
@@ -2039,8 +2039,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 								new Double("", $aimPos->z)
 							]),
 							"Rotation" => new Enum("Rotation", [
-								new Float("", $this->yaw),
-								new Float("", $this->pitch)
+								new FloatTag("", $this->yaw),
+								new FloatTag("", $this->pitch)
 							]),
 						]);
 
@@ -2115,8 +2115,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 										new Double("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
 									]),
 									"Rotation" => new Enum("Rotation", [
-										new Float("", $this->yaw),
-										new Float("", $this->pitch)
+										new FloatTag("", $this->yaw),
+										new FloatTag("", $this->pitch)
 									]),
 									"Fire" => new Short("Fire", $this->isOnFire() ? 45 * 60 : 0)
 								]);
@@ -3088,7 +3088,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 		parent::saveNBT();
 		if($this->level instanceof Level){
-			$this->namedtag->Level = new String("Level", $this->level->getName());
+			$this->namedtag->Level = new StringTag("Level", $this->level->getName());
 			if($this->spawnPosition instanceof Position and $this->spawnPosition->getLevel() instanceof Level){
 				$this->namedtag["SpawnLevel"] = $this->spawnPosition->getLevel()->getName();
 				$this->namedtag["SpawnX"] = (int) $this->spawnPosition->x;

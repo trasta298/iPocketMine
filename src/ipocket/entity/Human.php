@@ -30,7 +30,7 @@ use ipocket\nbt\tag\Byte;
 use ipocket\nbt\tag\Compound;
 use ipocket\nbt\tag\Enum;
 use ipocket\nbt\tag\Short;
-use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\StringTag;
 use ipocket\network\Network;
 use ipocket\network\protocol\AddPlayerPacket;
 use ipocket\network\protocol\RemovePlayerPacket;
@@ -194,8 +194,8 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 
 		if(strlen($this->getSkinData()) > 0){
 			$this->namedtag->Skin = new Compound("Skin", [
-				"Data" => new String("Data", $this->getSkinData()),
-				"Name" => new String("Name", $this->getSkinName())
+				"Data" => new StringTag("Data", $this->getSkinData()),
+				"Name" => new StringTag("Name", $this->getSkinName())
 			]);
 		}
 	}

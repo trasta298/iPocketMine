@@ -31,13 +31,13 @@ use ipocket\nbt\tag\Compound;
 use ipocket\nbt\tag\Double;
 use ipocket\nbt\tag\End;
 use ipocket\nbt\tag\Enum;
-use ipocket\nbt\tag\Float;
-use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\FloatTag;
+use ipocket\nbt\tag\IntTag;
 use ipocket\nbt\tag\IntArray;
 use ipocket\nbt\tag\Long;
 use ipocket\nbt\tag\NamedTAG;
 use ipocket\nbt\tag\Short;
-use ipocket\nbt\tag\String;
+use ipocket\nbt\tag\StringTag;
 use ipocket\nbt\tag\Tag;
 use ipocket\utils\Utils;
 
@@ -224,13 +224,13 @@ class NBT{
 					$data[$key] = new Short($key, $value);
 					break;
 				case NBT::TAG_Int:
-					$data[$key] = new Int($key, $value);
+					$data[$key] = new IntTag($key, $value);
 					break;
 				case NBT::TAG_Long:
 					$data[$key] = new Long($key, $value);
 					break;
 				case NBT::TAG_Float:
-					$data[$key] = new Float($key, $value);
+					$data[$key] = new FloatTag($key, $value);
 					break;
 				case NBT::TAG_Double:
 					$data[$key] = new Double($key, $value);
@@ -282,13 +282,13 @@ class NBT{
 					$data[$key] = new Short($key, $value);
 					break;
 				case NBT::TAG_Int:
-					$data[$key] = new Int($key, $value);
+					$data[$key] = new IntTag($key, $value);
 					break;
 				case NBT::TAG_Long:
 					$data[$key] = new Long($key, $value);
 					break;
 				case NBT::TAG_Float:
-					$data[$key] = new Float($key, $value);
+					$data[$key] = new FloatTag($key, $value);
 					break;
 				case NBT::TAG_Double:
 					$data[$key] = new Double($key, $value);
@@ -297,7 +297,7 @@ class NBT{
 					$data[$key] = new ByteArray($key, $value);
 					break;
 				case NBT::TAG_String:
-					$data[$key] = new String($key, $value);
+					$data[$key] = new StringTag($key, $value);
 					break;
 				case NBT::TAG_Enum:
 					$data[$key] = new Enum($key, $value);
@@ -513,7 +513,7 @@ class NBT{
 				$tag->read($this);
 				break;
 			case NBT::TAG_Int:
-				$tag = new Int($this->getString());
+				$tag = new IntTag($this->getString());
 				$tag->read($this);
 				break;
 			case NBT::TAG_Long:
@@ -521,7 +521,7 @@ class NBT{
 				$tag->read($this);
 				break;
 			case NBT::TAG_Float:
-				$tag = new Float($this->getString());
+				$tag = new FloatTag($this->getString());
 				$tag->read($this);
 				break;
 			case NBT::TAG_Double:
@@ -533,7 +533,7 @@ class NBT{
 				$tag->read($this);
 				break;
 			case NBT::TAG_String:
-				$tag = new String($this->getString());
+				$tag = new StringTag($this->getString());
 				$tag->read($this);
 				break;
 			case NBT::TAG_Enum:
@@ -641,11 +641,11 @@ class NBT{
 
 	public static function fromArrayGuesser($key, $value){
 		if(is_int($value)){
-			return new Int($key, $value);
+			return new IntTag($key, $value);
 		}elseif(is_float($value)){
-			return new Float($key, $value);
+			return new FloatTag($key, $value);
 		}elseif(is_string($value)){
-			return new String($key, $value);
+			return new StringTag($key, $value);
 		}elseif(is_bool($value)){
 			return new Byte($key, $value ? 1 : 0);
 		}

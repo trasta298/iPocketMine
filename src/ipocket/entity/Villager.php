@@ -22,7 +22,7 @@
 namespace ipocket\entity;
 
 
-use ipocket\nbt\tag\Int;
+use ipocket\nbt\tag\IntTag;
 use ipocket\network\Network;
 use ipocket\network\protocol\AddEntityPacket;
 use ipocket\Player;
@@ -76,7 +76,7 @@ class Villager extends Creature implements NPC, Ageable{
 	 * @param $profession
 	 */
 	public function setProfession($profession){
-		$this->namedtag->Profession = new Int("Profession", $profession);
+		$this->namedtag->Profession = new IntTag("Profession", $profession);
 	}
 
 	public function getProfession(){
