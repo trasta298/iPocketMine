@@ -60,7 +60,7 @@ class TaskHandler{
 		$this->taskId = $taskId;
 		$this->delay = $delay;
 		$this->period = $period;
-		$this->timingName = $timingName === null ? "Unknown" : $timingName;
+		$this->timingName = $timingName ?? "Unknown";
 		$this->timings = Timings::getPluginTaskTimings($this, $period);
 	}
 

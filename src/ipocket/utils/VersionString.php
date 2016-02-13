@@ -38,9 +38,9 @@ class VersionString{
 			$this->generation = ($version >> 9) & 0x0F;
 		}else{
 			$version = preg_split("/([A-Za-z]*)[ _\\-]?([0-9]*)\\.([0-9]*)\\.{0,1}([0-9]*)(dev|)(-[\\0-9]{1,}|)/", $version, -1, PREG_SPLIT_DELIM_CAPTURE);
-			$this->generation = isset($version[2]) ? (int) $version[2] : 0; //0-15
-			$this->major = isset($version[3]) ? (int) $version[3] : 0; //0-15
-			$this->minor = isset($version[4]) ? (int) $version[4] : 0; //0-31
+			$this->generation = $version[2] ?? 0; //0-15
+			$this->major = $version[3] ?? 0; //0-15
+			$this->minor = $version[4] ?? 0; //0-31
 			$this->development = $version[5] === "dev" ? true : false;
 			if($version[6] !== ""){
 				$this->build = intval(substr($version[6], 1));
@@ -50,14 +50,14 @@ class VersionString{
 		}
 	}
 
-	public function getNumber(){
+	public function getNumber() : int{
 		return (int) (($this->generation << 9) + ($this->major << 5) + $this->minor);
 	}
 
 	/**
 	 * @deprecated
 	 */
-	public function getStage(){
+	public function getStage() : string{
 		return "final";
 	}
 
@@ -65,11 +65,11 @@ class VersionString{
 		return $this->generation;
 	}
 
-	public function getMajor(){
+	public function getMajor() : int{
 		return $this->major;
 	}
 
-	public function getMinor(){
+	public function getMinor() : int{
 		return $this->minor;
 	}
 
@@ -81,7 +81,7 @@ class VersionString{
 		return $this->build;
 	}
 
-	public function isDev(){
+	public function isDev() : bool{
 		return $this->development === true;
 	}
 
@@ -93,7 +93,7 @@ class VersionString{
 		return $this->get();
 	}
 
-	public function compare($target, $diff = false){
+	public function compare($target, $diff = false) : int{
 		if(($target instanceof VersionString) === false){
 			$target = new VersionString($target);
 		}

@@ -67,7 +67,7 @@ class Explosion{
 	 * @deprecated
 	 * @return bool
 	 */
-	public function explode(){
+	public function explode() : bool{
 		if($this->explodeA()){
 			return $this->explodeB();
 		}

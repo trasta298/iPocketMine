@@ -48,7 +48,7 @@ class Binary{
 	 *
 	 * @return string
 	 */
-	public static function writeTriad($value){
+	public static function writeTriad($value) : string{
 		return substr(pack("N", $value), 1);
 	}
 
@@ -70,7 +70,7 @@ class Binary{
 	 *
 	 * @return string
 	 */
-	public static function writeLTriad($value){
+	public static function writeLTriad($value) : string{
 		return substr(pack("V", $value), 0, -1);
 	}
 
@@ -81,7 +81,7 @@ class Binary{
 	 *
 	 * @return string
 	 */
-	public static function writeMetadata(array $data){
+	public static function writeMetadata(array $data) : string{
 		$m = "";
 		foreach($data as $bottom => $d){
 			$m .= chr(($d[0] << 5) | ($bottom & 0x1F));
@@ -129,7 +129,7 @@ class Binary{
 	 *
 	 * @return array
 	 */
-	public static function readMetadata($value, $types = false){
+	public static function readMetadata($value, $types = false) : array{
 		$offset = 0;
 		$m = [];
 		$b = ord($value{$offset});
@@ -203,7 +203,7 @@ class Binary{
 	 *
 	 * @return bool
 	 */
-	public static function readBool($b){
+	public static function readBool($b) : bool{
 		return self::readByte($b, false) === 0 ? false : true;
 	}
 
@@ -226,7 +226,7 @@ class Binary{
 	 *
 	 * @return int
 	 */
-	public static function readByte($c, $signed = true){
+	public static function readByte($c, $signed = true) : int{
 		$b = ord($c{0});
 
 		if($signed){

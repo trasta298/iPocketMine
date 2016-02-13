@@ -43,7 +43,7 @@ class SimpleChunkManager implements ChunkManager{
 	 *
 	 * @return int 0-255
 	 */
-	public function getBlockIdAt($x, $y, $z){
+	public function getBlockIdAt($x, $y, $z) : int{
 		if($chunk = $this->getChunk($x >> 4, $z >> 4)){
 			return $chunk->getBlockId($x & 0xf, $y & 0x7f, $z & 0xf);
 		}
@@ -73,7 +73,7 @@ class SimpleChunkManager implements ChunkManager{
 	 *
 	 * @return int 0-15
 	 */
-	public function getBlockDataAt($x, $y, $z){
+	public function getBlockDataAt($x, $y, $z) : int{
 		if($chunk = $this->getChunk($x >> 4, $z >> 4)){
 			return $chunk->getBlockData($x & 0xf, $y & 0x7f, $z & 0xf);
 		}
@@ -101,7 +101,7 @@ class SimpleChunkManager implements ChunkManager{
 	 * @return FullChunk
 	 */
 	public function getChunk($chunkX, $chunkZ){
-		return isset($this->chunks[$index = Level::chunkHash($chunkX, $chunkZ)]) ? $this->chunks[$index] : null;
+		return $this->chunks[Level::chunkHash($chunkX, $chunkZ)] ?? null;
 	}
 
 	/**
@@ -126,7 +126,7 @@ class SimpleChunkManager implements ChunkManager{
 	 *
 	 * @return int
 	 */
-	public function getSeed(){
+	public function getSeed() : int{
 		return $this->seed;
 	}
 }
