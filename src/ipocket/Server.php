@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://www.ipocket.net/
+ * @link http://ipocket.link/
  *
  *
 */
@@ -1891,7 +1891,7 @@ class Server{
 
 			$this->pluginManager->loadPlugins($this->pluginPath);
 
-			$this->updater = new AutoUpdater($this, $this->getProperty("auto-updater.host", "www.ipocket.net"));
+			$this->updater = new AutoUpdater($this, $this->getProperty("auto-updater.host", "ipocket.link"));
 
 			$this->enablePlugins(PluginLoadOrder::STARTUP);
 

@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://www.ipocket.net/
+ * @link http://ipocket.link/
  *
  *
 */
