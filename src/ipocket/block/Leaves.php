@@ -144,7 +144,7 @@ class Leaves extends Transparent{
 				}else{
 					$this->getLevel()->useBreakOn($this);
 				$particle = new ipocket\level\particle\DestroyBlockParticle($this, $this);
-				$this->addParticle($particle);
+				$this->level->addParticle($particle);
 
 					return Level::BLOCK_UPDATE_NORMAL;
 				}

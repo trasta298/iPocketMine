@@ -43,7 +43,7 @@ class RedMushroom extends Flowable{
 			if($this->getSide(0)->isTransparent() === true){
 				$this->getLevel()->useBreakOn($this);
 				$particle = new ipocket\level\particle\DestroyBlockParticle($this, $this);
-				$this->addParticle($particle);
+				$this->level->addParticle($particle);
 
 				return Level::BLOCK_UPDATE_NORMAL;
 			}
