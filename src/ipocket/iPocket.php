@@ -87,9 +87,9 @@ namespace ipocket {
 	 */
 
 	if(\Phar::running(true) !== ""){
-		@define('ipocket\PATH', \Phar::running(true) . "/");
+		@define('iPocket\PATH', \Phar::running(true) . "/");
 	}else{
-		@define('ipocket\PATH', \getcwd() . DIRECTORY_SEPARATOR);
+		@define('iPocket\PATH', \getcwd() . DIRECTORY_SEPARATOR);
 	}
 
 	if(version_compare("7.0", PHP_VERSION) > 0){
@@ -105,14 +105,14 @@ namespace ipocket {
 	}
 
 	if(!class_exists("ClassLoader", false)){
-		require_once(\ipocket\PATH . "src/spl/ClassLoader.php");
-		require_once(\ipocket\PATH . "src/spl/BaseClassLoader.php");
-		require_once(\ipocket\PATH . "src/ipocket/CompatibleClassLoader.php");
+		require_once(\iPocket\PATH . "src/spl/ClassLoader.php");
+		require_once(\iPocket\PATH . "src/spl/BaseClassLoader.php");
+		require_once(\iPocket\PATH . "src/ipocket/CompatibleClassLoader.php");
 	}
 
 	$autoloader = new CompatibleClassLoader();
-	$autoloader->addPath(\ipocket\PATH . "src");
-	$autoloader->addPath(\ipocket\PATH . "src" . DIRECTORY_SEPARATOR . "spl");
+	$autoloader->addPath(\iPocket\PATH . "src");
+	$autoloader->addPath(\iPocket\PATH . "src" . DIRECTORY_SEPARATOR . "spl");
 	$autoloader->register(true);
 
 
@@ -378,7 +378,7 @@ namespace ipocket {
 	}
 
 	function cleanPath($path){
-		return rtrim(str_replace(["\\", ".php", "phar://", rtrim(str_replace(["\\", "phar://"], ["/", ""], \ipocket\PATH), "/"), rtrim(str_replace(["\\", "phar://"], ["/", ""], \ipocket\PLUGIN_PATH), "/")], ["/", "", "", "", ""], $path), "/");
+		return rtrim(str_replace(["\\", ".php", "phar://", rtrim(str_replace(["\\", "phar://"], ["/", ""], \iPocket\PATH), "/"), rtrim(str_replace(["\\", "phar://"], ["/", ""], \ipocket\PLUGIN_PATH), "/")], ["/", "", "", "", ""], $path), "/");
 	}
 
 	$errors = 0;
@@ -443,8 +443,8 @@ namespace ipocket {
 		exit(1); //Exit with error
 	}
 
-	if(file_exists(\ipocket\PATH . ".git/refs/heads/master")){ //Found Git information!
-		define('ipocket\GIT_COMMIT', strtolower(trim(file_get_contents(\ipocket\PATH . ".git/refs/heads/master"))));
+	if(file_exists(\iPocket\PATH . ".git/refs/heads/master")){ //Found Git information!
+		define('ipocket\GIT_COMMIT', strtolower(trim(file_get_contents(\iPocket\PATH . ".git/refs/heads/master"))));
 	}else{ //Unknown :(
 		define('ipocket\GIT_COMMIT', str_repeat("00", 20));
 	}
@@ -462,7 +462,7 @@ namespace ipocket {
 	}*/
 
 	ThreadManager::init();
-	$server = new Server($autoloader, $logger, \ipocket\PATH, \ipocket\DATA, \ipocket\PLUGIN_PATH);
+	$server = new Server($autoloader, $logger, \iPocket\PATH, \ipocket\DATA, \ipocket\PLUGIN_PATH);
 
 	$logger->info("Stopping other threads");
 
