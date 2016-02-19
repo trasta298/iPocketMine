@@ -74,11 +74,15 @@ class Cactus extends Transparent{
 			$down = $this->getSide(0);
 			if($down->getId() !== self::SAND and $down->getId() !== self::CACTUS){
 				$this->getLevel()->useBreakOn($this);
+				$particle = new ipocket\level\particle\DestroyBlockParticle($this, $this);
+				$this->addParticle($particle);
 			}else{
 				for($side = 2; $side <= 5; ++$side){
 					$b = $this->getSide($side);
 					if(!$b->canBeFlowedInto()){
 						$this->getLevel()->useBreakOn($this);
+				$particle = new ipocket\level\particle\DestroyBlockParticle($this, $this);
+				$this->addParticle($particle);
 					}
 				}
 			}

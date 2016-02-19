@@ -418,6 +418,8 @@ class RedstoneWire extends RedstoneSource{
 			$down = $this->getSide(Vector3::SIDE_DOWN);
 			if($down instanceof Transparent and $down->getId() != Block::INACTIVE_REDSTONE_LAMP and $down->getId() != Block::ACTIVE_REDSTONE_LAMP){
 				$this->getLevel()->useBreakOn($this);
+				$particle = new ipocket\level\particle\DestroyBlockParticle($this, $this);
+				$this->addParticle($particle);
 				return Level::BLOCK_UPDATE_NORMAL;
 			}
 		}

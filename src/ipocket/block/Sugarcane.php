@@ -78,6 +78,8 @@ class Sugarcane extends Flowable{
 			$down = $this->getSide(0);
 			if($down->isTransparent() === true and $down->getId() !== self::SUGARCANE_BLOCK){
 				$this->getLevel()->useBreakOn($this);
+				$particle = new ipocket\level\particle\DestroyBlockParticle($this, $this);
+				$this->addParticle($particle);
 
 				return Level::BLOCK_UPDATE_NORMAL;
 			}

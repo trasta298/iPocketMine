@@ -42,6 +42,8 @@ class MelonStem extends Crops{
 		if($type === Level::BLOCK_UPDATE_NORMAL){
 			if($this->getSide(0)->isTransparent() === true){
 				$this->getLevel()->useBreakOn($this);
+				$particle = new ipocket\level\particle\DestroyBlockParticle($this, $this);
+				$this->addParticle($particle);
 				return Level::BLOCK_UPDATE_NORMAL;
 			}
 		}elseif($type === Level::BLOCK_UPDATE_RANDOM){
