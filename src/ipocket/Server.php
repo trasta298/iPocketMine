@@ -1705,8 +1705,8 @@ class Server{
 				mkdir($pluginPath, 0777);
 			}
 
-			if(!file_exists($dataPath . "crashdumps/")){
-				mkdir($dataPath . "crashdumps/", 0777);
+			if(!file_exists($dataPath . "CrashDumps/")){
+				mkdir($dataPath . "CrashDumps/", 0777);
 			}
 
 			$this->dataPath = realpath($dataPath) . DIRECTORY_SEPARATOR;
@@ -1727,13 +1727,8 @@ class Server{
 			}
 			$this->config = new Config($this->dataPath . "ipocket.yml", Config::YAML, []);
 
-			$this->logger->info("Loading ipocket.yml...");
-
 			$lang = $this->getProperty("settings.language", BaseLang::FALLBACK_LANGUAGE);
 
-			if(!file_exists($this->dataPath . "ipocket.yml")){
-				@file_put_contents($this->dataPath . "ipocket.yml", $content);
-			}
 			$internelConfig = new Config($file, Config::YAML, []);
 			$this->advancedConfig = new Config($this->dataPath . "ipocket.yml", Config::YAML, []);
 			$cfgVer = $this->getAdvancedProperty("config.version", 0, $internelConfig);
