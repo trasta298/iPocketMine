@@ -23,7 +23,7 @@ namespace ipocket\utils;
 
 
 /**
- * Manages iPocket-MP version strings, and compares them
+ * Manages iPocketMine version strings, and compares them
  */
 class VersionString{
 	private $major;

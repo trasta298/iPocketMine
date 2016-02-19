@@ -22,7 +22,7 @@
 namespace ipocket\math;
 
 /**
- * WARNING: This class is available on the iPocket-MP Zephir project.
+ * WARNING: This class is available on the iPocketMine Zephir project.
  * If this class is modified, remember to modify the PHP C extension.
  */
 class Vector2{

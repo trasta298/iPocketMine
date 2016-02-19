@@ -1,7 +1,7 @@
 <?php
 
 /*
- * FastTransfer plugin for iPocket-MP
+ * FastTransfer plugin for iPocketMine
  * Copyright (C) 2015 Shoghi Cervantes <https://github.com/shoghicp/FastTransfer>
  *
  * This program is free software: you can redistribute it and/or modify

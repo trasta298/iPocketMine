@@ -85,8 +85,8 @@ class AutoUpdater{
 	public function showConsoleUpdate(){
 		$logger = $this->server->getLogger();
 		$newVersion = new VersionString($this->updateInfo["version"]);
-		$logger->warning("----- iPocket-MP Auto Updater -----");
-		$logger->warning("Your version of iPocket-MP is out of date. Version " . $newVersion->get(false) . " (build #" . $newVersion->getBuild() . ") was released on " . date("D M j h:i:s Y", $this->updateInfo["date"]));
+		$logger->warning("----- iPocketMine Auto Updater -----");
+		$logger->warning("Your version of iPocketMine is out of date. Version " . $newVersion->get(false) . " (build #" . $newVersion->getBuild() . ") was released on " . date("D M j h:i:s Y", $this->updateInfo["date"]));
 		if($this->updateInfo["details_url"] !== null){
 			$logger->warning("Details: " . $this->updateInfo["details_url"]);
 		}
@@ -95,13 +95,13 @@ class AutoUpdater{
 	}
 
 	public function showPlayerUpdate(Player $player){
-		$player->sendMessage(TextFormat::DARK_PURPLE . "The version of iPocket-MP that this server is running is out of date. Please consider updating to the latest version.");
+		$player->sendMessage(TextFormat::DARK_PURPLE . "The version of iPocketMine that this server is running is out of date. Please consider updating to the latest version.");
 		$player->sendMessage(TextFormat::DARK_PURPLE . "Check the console for more details.");
 	}
 
 	protected function showChannelSuggestionStable(){
 		$logger = $this->server->getLogger();
-		$logger->info("----- iPocket-MP Auto Updater -----");
+		$logger->info("----- iPocketMine Auto Updater -----");
 		$logger->info("It appears you're running a Stable build, when you've specified that you prefer to run " . ucfirst($this->getChannel()) . " builds.");
 		$logger->info("If you would like to be kept informed about new Stable builds only, it is recommended that you change 'preferred-channel' in your ipocket.yml to 'stable'.");
 		$logger->info("----- -------------------------- -----");
@@ -109,7 +109,7 @@ class AutoUpdater{
 
 	protected function showChannelSuggestionBeta(){
 		$logger = $this->server->getLogger();
-		$logger->info("----- iPocket-MP Auto Updater -----");
+		$logger->info("----- iPocketMine Auto Updater -----");
 		$logger->info("It appears you're running a Beta build, when you've specified that you prefer to run Stable builds.");
 		$logger->info("If you would like to be kept informed about new Beta or Development builds, it is recommended that you change 'preferred-channel' in your ipocket.yml to 'beta' or 'development'.");
 		$logger->info("----- -------------------------- -----");

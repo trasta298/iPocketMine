@@ -384,7 +384,7 @@ namespace ipocket {
 	$errors = 0;
 
 	if(php_sapi_name() !== "cli"){
-		$logger->critical("You must run iPocket-MP using the CLI.");
+		$logger->critical("You must run iPocketMine using the CLI.");
 		++$errors;
 	}
 
@@ -458,7 +458,7 @@ namespace ipocket {
 	}
 
 	/*if(\Phar::running(true) === ""){
-		$logger->warning("Non-packaged iPocket-MP installation detected, do not use on production.");
+		$logger->warning("Non-packaged iPocketMine installation detected, do not use on production.");
 	}*/
 
 	ThreadManager::init();

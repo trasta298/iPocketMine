@@ -26,7 +26,7 @@ use ipocket\Server;
 /**
  * Class used to run async tasks in other threads.
  *
- * WARNING: Do not call iPocket-MP API methods, or save objects from/on other Threads!!
+ * WARNING: Do not call iPocketMine API methods, or save objects from/on other Threads!!
  */
 abstract class AsyncTask extends \Threaded implements \Collectable{
 

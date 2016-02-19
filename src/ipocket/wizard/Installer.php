@@ -38,7 +38,7 @@ class Installer{
 	private $lang;
 
 	public function __construct(){
-		echo "[*] iPocket-MP set-up wizard\n";
+		echo "[*] iPocketMine set-up wizard\n";
 		echo "[*] Please select a language:\n";
 		foreach(InstallerLang::$languages as $short => $native){
 			echo " $native => $short\n";

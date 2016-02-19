@@ -918,7 +918,7 @@ class Server{
 		$nbt->Motion->setTagType(NBT::TAG_Double);
 		$nbt->Rotation->setTagType(NBT::TAG_Float);
 
-		if(file_exists($path . "$name.yml")){ //Importing old iPocket-MP files
+		if(file_exists($path . "$name.yml")){ //Importing old iPocketMine files
 			$data = new Config($path . "$name.yml", Config::YAML, []);
 			$nbt["playerGameType"] = (int) $data->get("gamemode");
 			$nbt["Level"] = $data->get("position")["level"];
@@ -2424,7 +2424,7 @@ private function lookupAddress($address) {
 	}
 
 	/**
-	 * Starts the iPocket-MP server and starts processing ticks and packets
+	 * Starts the iPocketMine server and starts processing ticks and packets
 	 */
 	public function start(){
 		if($this->getConfigBoolean("enable-query", true) === true){
