@@ -42,7 +42,7 @@ class FillCommand extends VanillaCommand{
 		$this->setPermission("ipocket.command.fill");
 	}
 
-	public function execute(CommandSender $sender, $label, array $args){
+	public function execute(CommandSender $sender, $label, array $args) : bool{
 		if(!$this->testPermission($sender)){
 			return true;
 		}
@@ -54,8 +54,8 @@ class FillCommand extends VanillaCommand{
 						for($x = $args[0]; $x <= $args[3]; $x++){
 							for($y = $args[1]; $y <= $args[4]; $y++){
 								for($z = $args[2]; $z <= $args[5]; $z++){
-									$this->setBlock(new Vector3($x, $y, $z), $sender->getLevel(), Item::fromString($args[6]), isset($args[7]) ? $args[7] : 0);
-									$sender->sendMessage();
+									$this->setBlock(new Vector3($x, $y, $z), $sender->getLevel(), Item::fromString($args[6]), $args[7] ?? 0);
+									$sender->sendMessage("設置完了！");
 									return true;
 								}
 							}
