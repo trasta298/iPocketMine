@@ -41,7 +41,7 @@ class Lever extends RedstoneSource{
 			if($block->isTransparent()){
 				$this->getLevel()->useBreakOn($this);
 				$particle = new ipocket\level\particle\DestroyBlockParticle($this, $this);
-				$this->level->addParticle($particle);
+				$this->getLevel()->addParticle($particle);
 
 				return Level::BLOCK_UPDATE_NORMAL;
 			}

@@ -97,7 +97,7 @@ class FlowerPot extends Flowable{
 			if($this->getSide(Vector3::SIDE_DOWN)->isTransparent()){
 				$this->getLevel()->useBreakOn($this);
 				$particle = new ipocket\level\particle\DestroyBlockParticle($this, $this);
-				$this->level->addParticle($particle);
+				$this->getLevel()->addParticle($particle);
 				return Level::BLOCK_UPDATE_NORMAL;
 			}
 		}

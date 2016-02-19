@@ -40,9 +40,6 @@ class VersionCommand extends VanillaCommand{
 	}
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
-		if(!$this->testPermission($sender)){
-			return \true;
-		}
 
 		if(\count($args) === 0){
 			$sender->sendMessage(new TranslationContainer("ipocket.server.info.extended", [
@@ -51,8 +48,7 @@ class VersionCommand extends VanillaCommand{
 				$sender->getServer()->getCodename(),
 				$sender->getServer()->getApiVersion(),
 				$sender->getServer()->getVersion(),
-				Info::CURRENT_PROTOCOL,
-				$sender->getServer()->getiTXApiVersion()
+				Info::CURRENT_PROTOCOL
 			]));
 		}else{
 			$pluginName = \implode(" ", $args);
