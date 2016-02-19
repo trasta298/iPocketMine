@@ -1729,7 +1729,7 @@ class Server{
 
 			$lang = $this->getProperty("settings.language", BaseLang::FALLBACK_LANGUAGE);
 
-			$internelConfig = new Config($file, Config::YAML, []);
+			$internelConfig = new Config($this->dataPath . "ipocket.yml", Config::YAML, []);
 			$this->advancedConfig = new Config($this->dataPath . "ipocket.yml", Config::YAML, []);
 			$cfgVer = $this->getAdvancedProperty("config.version", 0, $internelConfig);
 			$advVer = $this->getAdvancedProperty("config.version", 0);
