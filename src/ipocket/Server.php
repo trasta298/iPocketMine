@@ -382,89 +382,84 @@ class Server{
 	/**
 	 * @return bool
 	 */
-	public function isRunning(){
+	public function isRunning() : bool{
 		return $this->isRunning === true;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getiPocketVersion(){
-		return \ipocket\VERSION;
+	public function getiPocketVersion() : string{
+		return \iPocket\VERSION;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getCodename(){
-		return \ipocket\CODENAME;
+	public function getCodename() : string{
+		return \iPocket\CODENAME;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getVersion(){
-		return \ipocket\MINECRAFT_VERSION;
+	public function getVersion() : string{
+		return \iPocket\MINECRAFT_VERSION;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getApiVersion(){
-		return \ipocket\API_VERSION;
-	}
-
-
-	public function getiTXApiVersion(){
-		return \ipocket\iTX_API_VERSION;
+	public function getApiVersion() : string{
+		return \iPocket\API_VERSION;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getFilePath(){
+	public function getFilePath() : string{
 		return $this->filePath;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getDataPath(){
+	public function getDataPath() : string{
 		return $this->dataPath;
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getPluginPath(){
+	public function getPluginPath() : string{
 		return $this->pluginPath;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getMaxPlayers(){
+	public function getMaxPlayers() : int{
 		return $this->maxPlayers;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getPort(){
+	public function getPort() : int{
 		return $this->getConfigInt("server-port", 19132);
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getViewDistance(){
+	public function getViewDistance() : int{
 		return max(56, $this->getProperty("chunk-sending.max-chunks", 256));
 	}
 
 	/**
 	 * @return string
 	 */
-	public function getIp(){
+	public function getIp() : string{
 		return $this->getConfigString("server-ip", "0.0.0.0");
 	}
 
@@ -482,7 +477,7 @@ class Server{
 	/**
 	 * @return bool
 	 */
-	public function getAutoSave(){
+	public function getAutoSave() : bool{
 		return $this->autoSave;
 	}
 
@@ -499,28 +494,28 @@ class Server{
 	/**
 	 * @return string
 	 */
-	public function getLevelType(){
+	public function getLevelType() : string{
 		return $this->getConfigString("level-type", "DEFAULT");
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function getGenerateStructures(){
+	public function getGenerateStructures() : bool{
 		return $this->getConfigBoolean("generate-structures", true);
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getGamemode(){
+	public function getGamemode() : int{
 		return $this->getConfigInt("gamemode", 0) & 0b11;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function getForceGamemode(){
+	public function getForceGamemode() : bool{
 		return $this->getConfigBoolean("force-gamemode", false);
 	}
 
@@ -531,7 +526,7 @@ class Server{
 	 *
 	 * @return string
 	 */
-	public static function getGamemodeString($mode){
+	public static function getGamemodeString($mode) : string{
 		switch((int) $mode){
 			case Player::SURVIVAL:
 				return "%gameMode.survival";
@@ -553,7 +548,7 @@ class Server{
 	 *
 	 * @return int
 	 */
-	public static function getGamemodeFromString($str){
+	public static function getGamemodeFromString($str) : int{
 		switch(strtolower(trim($str))){
 			case (string) Player::SURVIVAL:
 			case "survival":
@@ -584,7 +579,7 @@ class Server{
 	 *
 	 * @return int
 	 */
-	public static function getDifficultyFromString($str){
+	public static function getDifficultyFromString($str) : int{
 		switch(strtolower(trim($str))){
 			case "0":
 			case "peaceful":
@@ -991,7 +986,7 @@ class Server{
 			}
 		}catch(\Throwable $e){
 			$this->logger->critical($this->getLanguage()->translateString("ipocket.data.saveError", [$name, $e->getMessage()]));
-			if(\ipocket\DEBUG > 1 and $this->logger instanceof MainLogger){
+			if(\iPocket\DEBUG > 1 and $this->logger instanceof MainLogger){
 				$this->logger->logException($e);
 			}
 		}
@@ -1249,7 +1244,7 @@ class Server{
 
 		try{
 			$path = $this->getDataPath() . "worlds/" . $name . "/";
-			/** @var \ipocket\level\format\LevelProvider $provider */
+			/** @var \iPocket\level\format\LevelProvider $provider */
 			$provider::generate($path, $name, $seed, $generator, $options);
 
 			$level = new Level($this, $name, $path, $provider);
@@ -1845,10 +1840,10 @@ class Server{
 
 			define("ipocket\\DEBUG", (int) $this->getProperty("debug.level", 1));
 			if($this->logger instanceof MainLogger){
-				$this->logger->setLogDebug(\ipocket\DEBUG > 1);
+				$this->logger->setLogDebug(\iPocket\DEBUG > 1);
 			}
 
-			if(\ipocket\DEBUG >= 0){
+			if(\iPocket\DEBUG >= 0){
 				@cli_set_process_title($this->getName() . " " . $this->getiPocketVersion());
 			}
 
@@ -2457,7 +2452,7 @@ private function lookupAddress($address) {
 
 		$this->logger->info($this->getLanguage()->translateString("ipocket.server.defaultGameMode", [self::getGamemodeString($this->getGamemode())]));
 
-		$this->logger->info($this->getLanguage()->translateString("ipocket.server.startFinished", [round(microtime(true) - \ipocket\START_TIME, 3)]));
+		$this->logger->info($this->getLanguage()->translateString("ipocket.server.startFinished", [round(microtime(true) - \iPocket\START_TIME, 3)]));
 
 		if(!file_exists($this->getPluginPath() . DIRECTORY_SEPARATOR . "iPocket-iTX"))
 			@mkdir($this->getPluginPath() . DIRECTORY_SEPARATOR . "iPocket-iTX");
@@ -2718,7 +2713,7 @@ private function lookupAddress($address) {
 				}
 			}catch(\Throwable $e){
 				$this->logger->critical($this->getLanguage()->translateString("ipocket.level.tickError", [$level->getName(), $e->getMessage()]));
-				if(\ipocket\DEBUG > 1 and $this->logger instanceof MainLogger){
+				if(\iPocket\DEBUG > 1 and $this->logger instanceof MainLogger){
 					$this->logger->logException($e);
 				}
 			}
@@ -2812,7 +2807,7 @@ private function lookupAddress($address) {
 				$this->queryHandler->handle($address, $port, $payload);
 			}
 		}catch(\Throwable $e){
-			if(\ipocket\DEBUG > 1){
+			if(\iPocket\DEBUG > 1){
 				if($this->logger instanceof MainLogger){
 					$this->logger->logException($e);
 				}

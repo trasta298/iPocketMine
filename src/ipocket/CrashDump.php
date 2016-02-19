@@ -35,8 +35,6 @@ class CrashDump{
 		$this->pluginsData();
 
 		$this->extraData();
-
-		//$this->encodeData();
 	}
 
 	public function getPath(){
@@ -67,7 +65,6 @@ class CrashDump{
 		if(class_exists("ipocket\\plugin\\PluginManager", false)){
 			$this->addLine();
 			$this->addLine("Loaded plugins:");
-			$this->addLine("加载的插件:");
 			$this->data["plugins"] = [];
 			foreach($this->server->getPluginManager()->getPlugins() as $p){
 				$d = $p->getDescription();
