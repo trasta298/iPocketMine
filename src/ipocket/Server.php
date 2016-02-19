@@ -1727,20 +1727,15 @@ class Server{
 			}
 			$this->config = new Config($this->dataPath . "ipocket.yml", Config::YAML, []);
 
-			$this->logger->info("Loading genisys.yml...");
+			$this->logger->info("Loading ipocket.yml...");
 
 			$lang = $this->getProperty("settings.language", BaseLang::FALLBACK_LANGUAGE);
-			if(file_exists($this->filePath . "src/ipocket/resources/genisys_$lang.yml")){
-				$content = file_get_contents($file = $this->filePath . "src/ipocket/resources/genisys_$lang.yml");
-			}else{
-				$content = file_get_contents($file = $this->filePath . "src/ipocket/resources/genisys_eng.yml");
-			}
 
-			if(!file_exists($this->dataPath . "genisys.yml")){
-				@file_put_contents($this->dataPath . "genisys.yml", $content);
+			if(!file_exists($this->dataPath . "ipocket.yml")){
+				@file_put_contents($this->dataPath . "ipocket.yml", $content);
 			}
 			$internelConfig = new Config($file, Config::YAML, []);
-			$this->advancedConfig = new Config($this->dataPath . "genisys.yml", Config::YAML, []);
+			$this->advancedConfig = new Config($this->dataPath . "ipocket.yml", Config::YAML, []);
 			$cfgVer = $this->getAdvancedProperty("config.version", 0, $internelConfig);
 			$advVer = $this->getAdvancedProperty("config.version", 0);
 
@@ -1893,7 +1888,6 @@ class Server{
 			$this->pluginManager->registerInterface(FolderPluginLoader::class);
 			$this->pluginManager->registerInterface(ScriptPluginLoader::class);
 
-			//set_exception_handler([$this, "exceptionHandler"]);
 			register_shutdown_function([$this, "crashDump"]);
 
 			$this->queryRegenerateTask = new QueryRegenerateEvent($this, 5);
@@ -1965,7 +1959,6 @@ class Server{
 
 			if($this->netherEnabled){
 				if(!$this->loadLevel($this->netherName)){
-					//$this->logger->info("正在生成地狱 ".$this->netherName);
 					$this->generateLevel($this->netherName, time(), Generator::getGenerator("nether"));
 				}
 				$this->netherLevel = $this->getLevelByName($this->netherName);
@@ -1984,7 +1977,7 @@ class Server{
 			]), $this->dserverConfig["timer"]);
 
 			if($cfgVer != $advVer){
-				$this->logger->notice("Your genisys.yml needs update");
+				$this->logger->notice("Your ipocket.yml needs update");
 				$this->logger->notice("Current Version: $advVer   Latest Version: $cfgVer");
 			}
 
