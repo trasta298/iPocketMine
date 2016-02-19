@@ -1,14 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * Time: 2015/12/31 21:11
- ]
 
- *
- * OpenGenisys Project
- *
- * Merged from ImagicalMine
- */
 namespace ipocket\item;
 
 use ipocket\block\Block;

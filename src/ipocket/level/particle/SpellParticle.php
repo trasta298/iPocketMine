@@ -1,12 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * Time: 2015/12/30 21:16
- ]
 
- *
- * OpenGenisys Project & Nukkit Project
- */
 namespace ipocket\level\particle;
 
 use ipocket\math\Vector3;

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * OpenGenisys Project
- *
- * @author PeratX
- */
-
 namespace ipocket\item;
 
 use ipocket\level\Level;

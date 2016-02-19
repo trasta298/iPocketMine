@@ -1,13 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * QQ: 1215714524
- * Time: 2016/2/2 11:23
 
-
- *
- * OpenGenisys Project
- */
 namespace ipocket\item;
 
 class EnchantedBook extends Item{

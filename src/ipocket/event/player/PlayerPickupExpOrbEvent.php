@@ -1,13 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * QQ: 1215714524
- * Time: 2016/2/9 13:17
 
-
- *
- * OpenGenisys Project
- */
 namespace ipocket\event\player;
 
 use ipocket\event\Cancellable;

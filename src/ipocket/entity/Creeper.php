@@ -1,12 +1,5 @@
 <?php
 
-/**
- * OpenGenisys Project
- *
- * @author PeratX
- */
-
-
 namespace ipocket\entity;
 
 use ipocket\network\protocol\AddEntityPacket;

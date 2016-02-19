@@ -1,10 +1,5 @@
 <?php
 
-/**
- * OpenGenisys Project
- * @author happy163
-*/
-
 namespace ipocket\block;
 
 use ipocket\item\Item;

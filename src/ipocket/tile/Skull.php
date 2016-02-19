@@ -1,18 +1,4 @@
 <?php
-/**
- * Author: PeratX
- * Time: 2015/12/29 23:54
- ]
-
- *
- * OpenGenisys Project
- */
-/*
- * Copied from ImagicalMine.
- * THIS IS COPIED FROM THE PLUGIN FlowerPot MADE BY @beito123!!
- * https://github.com/beito123/iPocketMine-Plugins/blob/master/test%2FFlowerPot%2Fsrc%2Fbeito%2FFlowerPot%2Fomake%2FSkull.php
- *
- */
 
 namespace ipocket\tile;
 

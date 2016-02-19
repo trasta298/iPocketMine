@@ -1,15 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * QQ: 1215714524
- * Time: 2016/2/1 8:49
 
-
- *
- * OpenGenisys Project
- *
- * Translated from Nukkit Project
- */
 namespace ipocket\item\enchantment;
 
 use ipocket\item\Armor;

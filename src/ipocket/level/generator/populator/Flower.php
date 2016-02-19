@@ -1,15 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * QQ: 1215714524
- * Time: 2016/2/12 10:04
 
-
- *
- * OpenGenisys Project
- *
- * Copied from ImagicalMine
- */
 namespace ipocket\level\generator\populator;
 
 use ipocket\block\Block;

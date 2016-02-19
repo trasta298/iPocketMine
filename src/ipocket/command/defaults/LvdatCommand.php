@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Author: PeratX
- * OpenGenisys Project
- */
-
 namespace ipocket\command\defaults;
 
 use ipocket\command\Command;

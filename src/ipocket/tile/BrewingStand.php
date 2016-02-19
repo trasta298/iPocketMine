@@ -1,14 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * Time: 2016/1/2 23:34
 
-
- *
- * OpenGenisys Project
- *
- * Translated from Nukkit and improved by PeratX
- */
 namespace ipocket\tile;
 
 use ipocket\inventory\BrewingInventory;

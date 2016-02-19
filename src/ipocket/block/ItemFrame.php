@@ -1,13 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * QQ: 1215714524
- * Time: 2016/1/31 16:01
 
-
- *
- * OpenGenisys Project
- */
 namespace ipocket\block;
 
 use ipocket\item\Item;

@@ -1,15 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * QQ: 1215714524
- * Time: 2016/1/10 21:30
 
-
- *
- * OpenGenisys Project
- *
- * Copied from Weather_boybook
- */
 namespace ipocket\command\defaults;
 
 use ipocket\command\CommandSender;

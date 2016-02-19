@@ -1,11 +1,5 @@
 <?php
 
-/**
- * OpenGenisys Project
- *
- * @author PeratX
- */
-
 namespace ipocket\entity;
 
 use ipocket\nbt\tag\ByteTag;

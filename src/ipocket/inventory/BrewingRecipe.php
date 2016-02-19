@@ -1,14 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * Time: 2016/1/2 23:18
 
-
- *
- * OpenGenisys Project
- *
- * Merged from ImagicalMine
- */
 namespace ipocket\inventory;
 
 use ipocket\item\Item;

@@ -1,12 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * Time: 2015/12/24 22:03
- ]
 
- *
- * OpenGenisys Project
- */
 namespace ipocket\level\sound;
 
 use ipocket\math\Vector3;

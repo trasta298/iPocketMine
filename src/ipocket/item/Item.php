@@ -1,16 +1,5 @@
 <?php
 
-/*
- * iPocket-iTX Genisys
- * @author iPocket-iTX Team & iTX Technologies LLC.
- * @link http://mcper.cn
- *       http://mcpe.asia
- *       http://pl.zxda.net
-*/
-
-/**
- * All the Item classes
- */
 namespace ipocket\item;
 
 use ipocket\block\Block;

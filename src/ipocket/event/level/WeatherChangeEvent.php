@@ -1,12 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * Time: 2015/12/27 18:01
- ]
 
- *
- * OpenGenisys Project
- */
 namespace ipocket\event\level;
 
 use ipocket\event\Cancellable;

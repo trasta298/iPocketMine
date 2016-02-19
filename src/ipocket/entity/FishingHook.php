@@ -1,13 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * QQ: 1215714524
- * Time: 2016/1/7 16:41
 
-
- *
- * OpenGenisys Project
- */
 namespace ipocket\entity;
 
 use ipocket\item\Item as ItemItem;

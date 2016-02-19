@@ -1,11 +1,4 @@
 <?php
-/**
- * Author: gaoyichuan
- * Time: 2016/2/2 15:16
- *
- * OpenGenisys Project
- */
-
 
 namespace ipocket\command\defaults;
 

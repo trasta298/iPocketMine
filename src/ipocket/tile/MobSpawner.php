@@ -1,13 +1,4 @@
 <?php
-/**
- * Author: PeratX
- * QQ: 1215714524
- * Time: 2016/1/19 15:46
-
-
- *
- * OpenGenisys Project
- */
 
 namespace ipocket\tile;
 

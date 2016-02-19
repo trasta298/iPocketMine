@@ -1,13 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * QQ: 1215714524
- * Time: 2016/2/1 8:54
 
-
- *
- * OpenGenisys Project
- */
 namespace ipocket\utils;
 
 class Range{

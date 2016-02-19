@@ -1,12 +1,4 @@
 <?php
-/**
- * Author: PeratX
- * Time: 2015/12/22 21:12
- ]
-
- *
- * OpenGenisys Project
- */
 
 namespace ipocket\block;
 

@@ -1,21 +1,12 @@
 <?php
-/**
- * Author: labi
- * Time: 2015/12/31 21:16
- ]
 
- *
- * OpenGenisys Project
-*/
 namespace ipocket\event\player;
 
 use ipocket\event\Cancellable;
 use ipocket\Player;
 
-/**
- * Called when a player is sent to some messages by using sendMessage, sendPopup and sendTip
- */
 class PlayerTextPreSendEvent extends PlayerEvent implements Cancellable{
+
 	const MESSAGE = 0;
 	const POPUP = 1;
 	const TIP = 2;

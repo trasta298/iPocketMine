@@ -1,13 +1,5 @@
 <?php
-/**
- * Author: PeratX
- * QQ: 1215714524
- * Time: 2016/2/3 14:30
 
-
- *
- * OpenGenisys Project
- */
 namespace ipocket\inventory;
 
 use ipocket\tile\Dispenser;
