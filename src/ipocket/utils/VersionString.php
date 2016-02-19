@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -23,7 +23,7 @@ namespace ipocket\utils;
 
 
 /**
- * Manages iPocket version strings, and compares them
+ * Manages iPocket-MP version strings, and compares them
  */
 class VersionString{
 	private $major;
@@ -38,9 +38,9 @@ class VersionString{
 			$this->generation = ($version >> 9) & 0x0F;
 		}else{
 			$version = preg_split("/([A-Za-z]*)[ _\\-]?([0-9]*)\\.([0-9]*)\\.{0,1}([0-9]*)(dev|)(-[\\0-9]{1,}|)/", $version, -1, PREG_SPLIT_DELIM_CAPTURE);
-			$this->generation = $version[2] ?? 0; //0-15
-			$this->major = $version[3] ?? 0; //0-15
-			$this->minor = $version[4] ?? 0; //0-31
+			$this->generation = isset($version[2]) ? (int) $version[2] : 0; //0-15
+			$this->major = isset($version[3]) ? (int) $version[3] : 0; //0-15
+			$this->minor = isset($version[4]) ? (int) $version[4] : 0; //0-31
 			$this->development = $version[5] === "dev" ? true : false;
 			if($version[6] !== ""){
 				$this->build = intval(substr($version[6], 1));
@@ -50,14 +50,14 @@ class VersionString{
 		}
 	}
 
-	public function getNumber() : int{
+	public function getNumber(){
 		return (int) (($this->generation << 9) + ($this->major << 5) + $this->minor);
 	}
 
 	/**
 	 * @deprecated
 	 */
-	public function getStage() : string{
+	public function getStage(){
 		return "final";
 	}
 
@@ -65,11 +65,11 @@ class VersionString{
 		return $this->generation;
 	}
 
-	public function getMajor() : int{
+	public function getMajor(){
 		return $this->major;
 	}
 
-	public function getMinor() : int{
+	public function getMinor(){
 		return $this->minor;
 	}
 
@@ -81,7 +81,7 @@ class VersionString{
 		return $this->build;
 	}
 
-	public function isDev() : bool{
+	public function isDev(){
 		return $this->development === true;
 	}
 
@@ -93,7 +93,7 @@ class VersionString{
 		return $this->get();
 	}
 
-	public function compare($target, $diff = false) : int{
+	public function compare($target, $diff = false){
 		if(($target instanceof VersionString) === false){
 			$target = new VersionString($target);
 		}

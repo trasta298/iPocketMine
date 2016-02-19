@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -24,7 +24,7 @@ namespace ipocket\item;
 
 use ipocket\block\Block;
 use ipocket\entity\Entity;
-use ipocket\nbt\tag\Byte;
+use ipocket\nbt\tag\ByteTag;
 
 abstract class Tool extends Item{
 	const TIER_WOODEN = 1;
@@ -44,7 +44,7 @@ abstract class Tool extends Item{
 		parent::__construct($id, $meta, $count, $name);
 	}
 
-	public function getMaxStackSize(){
+	public function getMaxStackSize() : int {
 		return 1;
 	}
 

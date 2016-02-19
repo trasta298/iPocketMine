@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -38,7 +38,7 @@ class Installer{
 	private $lang;
 
 	public function __construct(){
-		echo "[*] iPocket set-up wizard\n";
+		echo "[*] iPocket-MP set-up wizard\n";
 		echo "[*] Please select a language:\n";
 		foreach(InstallerLang::$languages as $short => $native){
 			echo " $native => $short\n";
@@ -76,7 +76,7 @@ class Installer{
 	}
 
 	private function showLicense(){
-		echo $this->lang->welcome_to_pocketmine . "\n";
+		echo $this->lang->welcome_to_ipocket . "\n";
 		echo <<<LICENSE
 
   This program is free software: you can redistribute it and/or modify
@@ -204,8 +204,8 @@ LICENSE;
 
 	private function endWizard(){
 		echo "[*] " . $this->lang->you_have_finished . "\n";
-		echo "[*] " . $this->lang->pocketmine_plugins . "\n";
-		echo "[*] " . $this->lang->pocketmine_will_start . "\n\n\n";
+		echo "[*] " . $this->lang->ipocket_plugins . "\n";
+		echo "[*] " . $this->lang->ipocket_will_start . "\n\n\n";
 		sleep(4);
 	}
 

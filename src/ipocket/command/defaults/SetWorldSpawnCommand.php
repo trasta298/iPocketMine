@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -34,7 +34,8 @@ class SetWorldSpawnCommand extends VanillaCommand{
 		parent::__construct(
 			$name,
 			"%ipocket.command.setworldspawn.description",
-			"%commands.setworldspawn.usage"
+			"%commands.setworldspawn.usage",
+			["setspawn"]
 		);
 		$this->setPermission("ipocket.command.setworldspawn");
 	}

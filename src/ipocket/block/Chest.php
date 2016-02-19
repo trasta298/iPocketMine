@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -25,8 +25,8 @@ use ipocket\item\Item;
 use ipocket\item\Tool;
 use ipocket\math\AxisAlignedBB;
 use ipocket\nbt\NBT;
-use ipocket\nbt\tag\Compound;
-use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\CompoundTag;
+use ipocket\nbt\tag\EnumTag;
 use ipocket\nbt\tag\IntTag;
 use ipocket\nbt\tag\StringTag;
 use ipocket\Player;
@@ -41,15 +41,15 @@ class Chest extends Transparent{
 		$this->meta = $meta;
 	}
 
-	public function canBeActivated(){
+	public function canBeActivated() : bool {
 		return true;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 2.5;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Chest";
 	}
 
@@ -57,7 +57,7 @@ class Chest extends Transparent{
 		return Tool::TYPE_AXE;
 	}
 
-	protected function recalculateBoundingBox(){
+	protected function recalculateBoundingBox() {
 		return new AxisAlignedBB(
 			$this->x + 0.0625,
 			$this->y,
@@ -96,8 +96,8 @@ class Chest extends Transparent{
 		}
 
 		$this->getLevel()->setBlock($block, $this, true, true);
-		$nbt = new Compound("", [
-			new Enum("Items", []),
+		$nbt = new CompoundTag("", [
+			new EnumTag("Items", []),
 			new StringTag("id", Tile::CHEST),
 			new IntTag("x", $this->x),
 			new IntTag("y", $this->y),
@@ -147,8 +147,8 @@ class Chest extends Transparent{
 			if($t instanceof TileChest){
 				$chest = $t;
 			}else{
-				$nbt = new Compound("", [
-					new Enum("Items", []),
+				$nbt = new CompoundTag("", [
+					new EnumTag("Items", []),
 					new StringTag("id", Tile::CHEST),
 					new IntTag("x", $this->x),
 					new IntTag("y", $this->y),
@@ -173,7 +173,7 @@ class Chest extends Transparent{
 		return true;
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array {
 		return [
 			[$this->id, 0, 1],
 		];

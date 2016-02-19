@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -23,10 +23,10 @@ namespace ipocket\block;
 
 use ipocket\entity\Entity;
 use ipocket\item\Item;
-use ipocket\nbt\tag\Byte;
-use ipocket\nbt\tag\Compound;
-use ipocket\nbt\tag\Double;
-use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\ByteTag;
+use ipocket\nbt\tag\CompoundTag;
+use ipocket\nbt\tag\DoubleTag;
+use ipocket\nbt\tag\EnumTag;
 use ipocket\nbt\tag\FloatTag;
 use ipocket\Player;
 use ipocket\utils\Random;
@@ -39,15 +39,15 @@ class TNT extends Solid{
 
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "TNT";
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 0;
 	}
 
-	public function canBeActivated(){
+	public function canBeActivated() : bool {
 		return true;
 	}
 
@@ -57,22 +57,22 @@ class TNT extends Solid{
 			$this->getLevel()->setBlock($this, new Air(), true);
 
 			$mot = (new Random())->nextSignedFloat() * M_PI * 2;
-			$tnt = Entity::createEntity("PrimedTNT", $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), new Compound("", [
-				"Pos" => new Enum("Pos", [
-					new Double("", $this->x + 0.5),
-					new Double("", $this->y),
-					new Double("", $this->z + 0.5)
+			$tnt = Entity::createEntity("PrimedTNT", $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), new CompoundTag("", [
+				"Pos" => new EnumTag("Pos", [
+					new DoubleTag("", $this->x + 0.5),
+					new DoubleTag("", $this->y),
+					new DoubleTag("", $this->z + 0.5)
 				]),
-				"Motion" => new Enum("Motion", [
-					new Double("", -sin($mot) * 0.02),
-					new Double("", 0.2),
-					new Double("", -cos($mot) * 0.02)
+				"Motion" => new EnumTag("Motion", [
+					new DoubleTag("", -sin($mot) * 0.02),
+					new DoubleTag("", 0.2),
+					new DoubleTag("", -cos($mot) * 0.02)
 				]),
-				"Rotation" => new Enum("Rotation", [
+				"Rotation" => new EnumTag("Rotation", [
 					new FloatTag("", 0),
 					new FloatTag("", 0)
 				]),
-				"Fuse" => new Byte("Fuse", 80)
+				"Fuse" => new ByteTag("Fuse", 80)
 			]));
 
 			$tnt->spawnToAll();

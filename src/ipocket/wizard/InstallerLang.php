@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -25,24 +25,10 @@ namespace ipocket\wizard;
 class InstallerLang{
 	public static $languages = [
 		"en" => "English",
-		"es" => "Español",
-		"zh" => "中文",
-		"ru" => "Pyccĸий",
-		"ja" => "日本語",
-		"de" => "Deutsch",
-		//"vi" => "Tiếng Việt",
-		"ko" => "한국어",
-		"nl" => "Nederlands",
-		"fr" => "Français",
-		"it" => "Italiano",
-		//"lv" => "Latviešu",
-		"ms" => "Melayu",
-		"no" => "Norsk",
-		//"pt" => "Português",
-		"sv" => "Svenska",
-		"fi" => "Suomi",
-		"tr" => "Türkçe",
-		//"et" => "Eesti",
+		"chs" => "简体中文",
+		"zho" => "繁體中文",
+		"jpn" => "日本語",
+		"rus" => "Русский"
 	];
 	private $texts = [];
 	private $lang;

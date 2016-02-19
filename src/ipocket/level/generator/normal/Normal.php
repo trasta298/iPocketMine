@@ -2,19 +2,24 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+ *  _                       _           _ __  __ _
+ * (_)                     (_)         | |  \/  (_)
+ *  _ _ __ ___   __ _  __ _ _  ___ __ _| | \  / |_ _ __   ___
+ * | | '_ ` _ \ / _` |/ _` | |/ __/ _` | | |\/| | | '_ \ / _ \
+ * | | | | | | | (_| | (_| | | (_| (_| | | |  | | | | | |  __/
+ * |_|_| |_| |_|\__,_|\__, |_|\___\__,_|_|_|  |_|_|_| |_|\___|
+ *                     __/ |
+ *                    |___/
  *
- * This program is free software: you can redistribute it and/or modify
+ * This program is a third party build by ImagicalMine.
+ *
+ * iPocket is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author iPocket Team
- * @link http://ipocket.link/
+ * @author ImagicalMine Team
+ * @link http://forums.imagicalcorp.ml/
  *
  *
 */
@@ -30,24 +35,28 @@ use ipocket\block\Gravel;
 use ipocket\block\IronOre;
 use ipocket\block\LapisOre;
 use ipocket\block\RedstoneOre;
+use ipocket\block\Stone;
 use ipocket\level\ChunkManager;
 use ipocket\level\generator\biome\Biome;
 use ipocket\level\generator\biome\BiomeSelector;
+use ipocket\level\generator\GenerationChunkManager;
+use ipocket\level\generator\GenerationManager;
 use ipocket\level\generator\Generator;
-
+use ipocket\level\generator\noise\Perlin;
 use ipocket\level\generator\noise\Simplex;
-
+use ipocket\level\generator\normal\biome\NormalBiome;
 use ipocket\level\generator\object\OreType;
 use ipocket\level\generator\populator\GroundCover;
 use ipocket\level\generator\populator\Ore;
 use ipocket\level\generator\populator\Populator;
-
-
+use ipocket\level\generator\populator\TallGrass;
+use ipocket\level\generator\populator\Tree;
 use ipocket\level\Level;
 use ipocket\math\Vector3 as Vector3;
 use ipocket\utils\Random;
 
 class Normal extends Generator{
+	const NAME = "Normal";
 
 	/** @var Populator[] */
 	private $populators = [];
@@ -92,8 +101,8 @@ class Normal extends Generator{
 		}
 	}
 
-	public function getName(){
-		return "normal";
+	public function getName() : string{
+		return self::NAME;
 	}
 
 	public function getSettings(){
@@ -105,10 +114,10 @@ class Normal extends Generator{
 		$hash *= $hash + 223;
 		$xNoise = $hash >> 20 & 3;
 		$zNoise = $hash >> 22 & 3;
-		if ($xNoise == 3) {
+		if($xNoise == 3){
 			$xNoise = 1;
 		}
-		if($zNoise == 3) {
+		if($zNoise == 3){
 			$zNoise = 1;
 		}
 
@@ -123,9 +132,9 @@ class Normal extends Generator{
 		$this->random->setSeed($this->level->getSeed());
 		$this->selector = new BiomeSelector($this->random, function($temperature, $rainfall){
 			if($rainfall < 0.25){
-				if($rainfall < 0.7){
+				if($temperature < 0.7){
 					return Biome::OCEAN;
-				}elseif($rainfall < 0.85){
+				}elseif($temperature < 0.85){
 					return Biome::RIVER;
 				}else{
 					return Biome::SWAMP;
@@ -147,9 +156,9 @@ class Normal extends Generator{
 					return Biome::BIRCH_FOREST;
 				}
 			}else{
-				if($rainfall < 0.25){
+				if($temperature < 0.25){
 					return Biome::MOUNTAINS;
-				}elseif($rainfall < 0.70){
+				}elseif($temperature < 0.70){
 					return Biome::SMALL_MOUNTAINS;
 				}else{
 					return Biome::RIVER;
@@ -183,6 +192,9 @@ class Normal extends Generator{
 			new OreType(new GoldOre(), 2, 8, 0, 32),
 			new OreType(new DiamondOre(), 1, 7, 0, 16),
 			new OreType(new Dirt(), 20, 32, 0, 128),
+			new OreType(new Stone(Stone::GRANITE), 20, 32, 0, 128),
+			new OreType(new Stone(Stone::DIORITE), 20, 32, 0, 128),
+			new OreType(new Stone(Stone::ANDESITE), 20, 32, 0, 128),
 			new OreType(new Gravel(), 10, 16, 0, 128)
 		]);
 		$this->populators[] = $ores;
@@ -239,18 +251,29 @@ class Normal extends Generator{
 
 				$chunk->setBiomeColor($x, $z, sqrt($color[0] / $weightSum), sqrt($color[1] / $weightSum), sqrt($color[2] / $weightSum));
 
-				$smoothHeight = ($maxSum - $minSum) / 2;
-
-				for($y = 0; $y < 128; ++$y){
+				$solidLand = false;
+				for($y = 127; $y >= 0; --$y){
 					if($y === 0){
 						$chunk->setBlockId($x, $y, $z, Block::BEDROCK);
 						continue;
 					}
-					$noiseValue = $noise[$x][$z][$y] - 1 / $smoothHeight * ($y - $smoothHeight - $minSum);
+
+					// A noiseAdjustment of 1 will guarantee ground, a noiseAdjustment of -1 will guarantee air.
+					//$effHeight = min($y - $smoothHeight - $minSum,
+					$noiseAdjustment = 2 * (($maxSum - $y) / ($maxSum - $minSum)) - 1;
+
+
+					// To generate caves, we bring the noiseAdjustment down away from 1.
+					$caveLevel = $minSum - 10;
+					$distAboveCaveLevel = max(0, $y - $caveLevel); // must be positive
+
+					$noiseAdjustment = min($noiseAdjustment, 0.4 + ($distAboveCaveLevel / 10));
+					$noiseValue = $noise[$x][$z][$y] + $noiseAdjustment;
 
 					if($noiseValue > 0){
 						$chunk->setBlockId($x, $y, $z, Block::STONE);
-					}elseif($y <= $this->waterHeight){
+						$solidLand = true;
+					}elseif($y <= $this->waterHeight && $solidLand == false){
 						$chunk->setBlockId($x, $y, $z, Block::STILL_WATER);
 					}
 				}

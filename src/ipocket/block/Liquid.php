@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -363,7 +363,7 @@ abstract class Liquid extends Transparent{
 		return $cost;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 100;
 	}
 
@@ -451,7 +451,7 @@ abstract class Liquid extends Transparent{
 		return null;
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array {
 		return [];
 	}
 }

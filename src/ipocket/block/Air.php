@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -36,7 +36,7 @@ class Air extends Transparent{
 
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Air";
 	}
 
@@ -68,7 +68,7 @@ class Air extends Transparent{
 		return null;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return -1;
 	}
 

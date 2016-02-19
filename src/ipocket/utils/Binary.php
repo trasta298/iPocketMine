@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -48,7 +48,7 @@ class Binary{
 	 *
 	 * @return string
 	 */
-	public static function writeTriad($value) : string{
+	public static function writeTriad($value){
 		return substr(pack("N", $value), 1);
 	}
 
@@ -70,7 +70,7 @@ class Binary{
 	 *
 	 * @return string
 	 */
-	public static function writeLTriad($value) : string{
+	public static function writeLTriad($value){
 		return substr(pack("V", $value), 0, -1);
 	}
 
@@ -81,7 +81,7 @@ class Binary{
 	 *
 	 * @return string
 	 */
-	public static function writeMetadata(array $data) : string{
+	public static function writeMetadata(array $data){
 		$m = "";
 		foreach($data as $bottom => $d){
 			$m .= chr(($d[0] << 5) | ($bottom & 0x1F));
@@ -129,7 +129,7 @@ class Binary{
 	 *
 	 * @return array
 	 */
-	public static function readMetadata($value, $types = false) : array{
+	public static function readMetadata($value, $types = false){
 		$offset = 0;
 		$m = [];
 		$b = ord($value{$offset});
@@ -203,7 +203,7 @@ class Binary{
 	 *
 	 * @return bool
 	 */
-	public static function readBool($b) : bool{
+	public static function readBool($b){
 		return self::readByte($b, false) === 0 ? false : true;
 	}
 
@@ -226,7 +226,7 @@ class Binary{
 	 *
 	 * @return int
 	 */
-	public static function readByte($c, $signed = true) : int{
+	public static function readByte($c, $signed = true){
 		$b = ord($c{0});
 
 		if($signed){
@@ -326,6 +326,7 @@ class Binary{
 	}
 
 	public static function readInt($str){
+		if(strlen($str) != 4) return 0;
 		if(PHP_INT_SIZE === 8){
 			return unpack("N", $str)[1] << 32 >> 32;
 		}else{

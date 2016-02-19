@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -35,6 +35,9 @@ use ipocket\permission\Permission;
 use ipocket\Server;
 use ipocket\utils\MainLogger;
 use ipocket\utils\PluginException;
+
+use ipocket\event\entity\EntityDamageByEntityEvent;
+use ipocket\event\entity\EntityDeathEvent;
 
 /**
  * Manages all the plugins, Permissions and Permissibles
@@ -219,8 +222,13 @@ class PluginManager{
 								$version = array_map("intval", explode(".", $version));
 								$apiVersion = array_map("intval", explode(".", $this->server->getApiVersion()));
 								//Completely different API version
-								if($version[0] !== $apiVersion[0]){
+								if($version[0] > $apiVersion[0]){
 									continue;
+								}
+								//If the plugin uses new API
+								if($version[0] <= $apiVersion[0]){
+									$compatible = true;
+									break;
 								}
 								//If the plugin requires new API features, being backwards compatible
 								if($version[1] > $apiVersion[1]){
@@ -249,12 +257,9 @@ class PluginManager{
 								}
 							}
 						}
-					}catch(\Exception $e){
+					}catch(\Throwable $e){
 						$this->server->getLogger()->error($this->server->getLanguage()->translateString("ipocket.plugin.fileError", [$file, $directory, $e->getMessage()]));
-						$logger = $this->server->getLogger();
-						if($logger instanceof MainLogger){
-							$logger->logException($e);
-						}
+						$this->server->getLogger()->logException($e);
 					}
 				}
 			}
@@ -413,7 +418,7 @@ class PluginManager{
 			$this->defaultPerms[$permission->getName()] = $permission;
 			$this->dirtyPermissibles(false);
 		}
-		Timings::$permissionDefaultTimer->startTiming();
+		Timings::$permissionDefaultTimer->stopTiming();
 	}
 
 	/**
@@ -467,8 +472,10 @@ class PluginManager{
 					unset($this->permSubs[$permission][$k]);
 				}
 			}
+
 			return $subs;
 		}
+
 		return [];
 	}
 
@@ -496,8 +503,14 @@ class PluginManager{
 		}
 	}
 
+	/**
+	 * @param boolean $op
+	 *
+	 * @return Permissible[]
+	 */
 	public function getDefaultPermSubscriptions($op){
 		$subs = [];
+
 		if($op === true){
 			return $this->defSubsOp;
 			foreach($this->defSubsOp as $k => $perm){
@@ -521,6 +534,7 @@ class PluginManager{
 				}
 			}
 		}
+
 		return $subs;
 	}
 
@@ -554,11 +568,8 @@ class PluginManager{
 					$this->addPermission($perm);
 				}
 				$plugin->getPluginLoader()->enablePlugin($plugin);
-			}catch(\Exception $e){
-				$logger = Server::getInstance()->getLogger();
-				if($logger instanceof MainLogger){
-					$logger->logException($e);
-				}
+			}catch(\Throwable $e){
+				$this->server->getLogger()->logException($e);
 				$this->disablePlugin($plugin);
 			}
 		}
@@ -628,11 +639,8 @@ class PluginManager{
 		if($plugin->isEnabled()){
 			try{
 				$plugin->getPluginLoader()->disablePlugin($plugin);
-			}catch(\Exception $e){
-				$logger = Server::getInstance()->getLogger();
-				if($logger instanceof MainLogger){
-					$logger->logException($e);
-				}
+			}catch(\Throwable $e){
+				$this->server->getLogger()->logException($e);
 			}
 
 			$this->server->getScheduler()->cancelTasks($plugin);
@@ -665,7 +673,7 @@ class PluginManager{
 
 			try{
 				$registration->callEvent($event);
-			}catch(\Exception $e){
+			}catch(\Throwable $e){
 				$this->server->getLogger()->critical(
 					$this->server->getLanguage()->translateString("ipocket.plugin.eventError", [
 						$event->getEventName(),
@@ -673,11 +681,13 @@ class PluginManager{
 						$e->getMessage(),
 						get_class($registration->getListener())
 					]));
-				$logger = $this->server->getLogger();
-				if($logger instanceof MainLogger){
-					$logger->logException($e);
-				}
+				$this->server->getLogger()->logException($e);
 			}
+		}
+
+		if($this->server->getAIHolder() != null) {
+			if($event instanceof EntityDeathEvent) $this->server->getAIHolder()->MobDeath($event);
+			if($event instanceof EntityDamageByEntityEvent) $this->server->getAIHolder()->EntityDamage($event);
 		}
 	}
 
@@ -763,7 +773,7 @@ class PluginManager{
 	}
 
 	/**
-	 * @param string $event
+	 * @param $event
 	 *
 	 * @return HandlerList
 	 */

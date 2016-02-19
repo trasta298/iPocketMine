@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -33,8 +33,11 @@ use ipocket\level\generator\normal\biome\PlainBiome;
 use ipocket\level\generator\normal\biome\RiverBiome;
 use ipocket\level\generator\normal\biome\SmallMountainsBiome;
 use ipocket\level\generator\normal\biome\TaigaBiome;
+use ipocket\level\generator\hell\HellBiome;
 use ipocket\level\generator\populator\Populator;
 use ipocket\utils\Random;
+
+use ipocket\level\generator\populator\Flower;
 
 abstract class Biome{
 
@@ -81,6 +84,20 @@ abstract class Biome{
 		self::$biomes[(int) $id] = $biome;
 		$biome->setId((int) $id);
 		$biome->grassColor = self::generateBiomeColor($biome->getTemperature(), $biome->getRainfall());
+
+		$flowerPopFound = false;
+
+		foreach($biome->getPopulators() as $populator){
+			if($populator instanceof Flower){
+				$flowerPopFound = true;
+				break;
+			}
+		}
+
+		if($flowerPopFound === false){
+			$flower = new Flower();
+			$biome->addPopulator($flower);
+		}
 	}
 
 	public static function init(){
@@ -97,6 +114,7 @@ abstract class Biome{
 
 
 		self::register(self::SMALL_MOUNTAINS, new SmallMountainsBiome());
+		self::register(self::HELL, new HellBiome());
 
 		self::register(self::BIRCH_FOREST, new ForestBiome(ForestBiome::TYPE_BIRCH));
 	}

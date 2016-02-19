@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -29,14 +29,18 @@ use ipocket\math\Vector3;
 use ipocket\Player;
 
 
-abstract class Door extends Transparent{
+abstract class Door extends Transparent implements ElectricalAppliance{
 
-	public function canBeActivated(){
+	public function canBeActivated() : bool {
 		return true;
 	}
 
 	public function isSolid(){
 		return false;
+	}
+
+	public function canPassThrough(){
+		return true;
 	}
 
 	private function getFullDamage(){
@@ -56,7 +60,7 @@ abstract class Door extends Transparent{
 		return $down & 0x07 | ($isUp ? 8 : 0) | ($isRight ? 0x10 : 0);
 	}
 
-	protected function recalculateBoundingBox(){
+	protected function recalculateBoundingBox() {
 
 		$f = 0.1875;
 		$damage = $this->getFullDamage();
@@ -263,6 +267,10 @@ abstract class Door extends Transparent{
 		$this->getLevel()->setBlock($this, new Air(), true);
 
 		return true;
+	}
+
+	public function isOpened(){
+		return (($this->getFullDamage() & 0x04) > 0);
 	}
 
 	public function onActivate(Item $item, Player $player = null){

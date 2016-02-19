@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -27,7 +27,7 @@ class BeetrootSoup extends Item{
 		parent::__construct(self::BEETROOT_SOUP, 0, $count, "Beetroot Soup");
 	}
 
-	public function getMaxStackSize(){
+	public function getMaxStackSize() : int{
 		return 1;
 	}
 }

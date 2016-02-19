@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -42,7 +42,7 @@ class Leaves extends Transparent{
 		$this->meta = $meta;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 0.2;
 	}
 
@@ -50,7 +50,7 @@ class Leaves extends Transparent{
 		return Tool::TYPE_SHEARS;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		static $names = [
 			self::OAK => "Oak Leaves",
 			self::SPRUCE => "Spruce Leaves",
@@ -157,7 +157,7 @@ class Leaves extends Transparent{
 		$this->getLevel()->setBlock($this, $this, true);
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array {
 		$drops = [];
 		if($item->isShears()){
 			$drops[] = [Item::LEAVES, $this->meta & 0x03, 1];

@@ -14,16 +14,19 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
 
 namespace ipocket\item;
 
+use ipocket\block\block;
+
 class Redstone extends Item{
 	public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::REDSTONE, $meta, $count, "Redstone");
+		$this->block = Block::get(Item::REDSTONE_WIRE);
+		parent::__construct(self::REDSTONE, 0, $count, "Redstone");
 	}
 
 }

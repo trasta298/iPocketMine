@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -27,7 +27,7 @@ class MushroomStew extends Item{
 		parent::__construct(self::MUSHROOM_STEW, 0, $count, "Mushroom Stew");
 	}
 
-	public function getMaxStackSize(){
+	public function getMaxStackSize() : int {
 		return 1;
 	}
 }

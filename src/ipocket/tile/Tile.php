@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -29,7 +29,7 @@ use ipocket\level\format\Chunk;
 use ipocket\level\format\FullChunk;
 use ipocket\level\Level;
 use ipocket\level\Position;
-use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\CompoundTag;
 use ipocket\nbt\tag\IntTag;
 use ipocket\nbt\tag\StringTag;
 use ipocket\utils\ChunkException;
@@ -41,8 +41,12 @@ abstract class Tile extends Position{
 	const FLOWER_POT = "FlowerPot";
 	const MOB_SPAWNER = "MobSpawner";
 	const SKULL = "Skull";
-	const BREWING_STAND = "Cauldron";
+	const BREWING_STAND = "BrewingStand";
 	const ENCHANT_TABLE = "EnchantTable";
+	const ITEM_FRAME = "ItemFrame";
+	const DISPENSER = "Dispenser";
+	const DROPPER = "Dropper";
+	const DAY_LIGHT_DETECTOR = "DLDetector";
 
 	public static $tileCount = 1;
 
@@ -70,12 +74,12 @@ abstract class Tile extends Position{
 	/**
 	 * @param string    $type
 	 * @param FullChunk $chunk
-	 * @param Compound  $nbt
+	 * @param CompoundTag  $nbt
 	 * @param           $args
 	 *
 	 * @return Tile
 	 */
-	public static function createTile($type, FullChunk $chunk, Compound $nbt, ...$args){
+	public static function createTile($type, FullChunk $chunk, CompoundTag $nbt, ...$args){
 		if(isset(self::$knownTiles[$type])){
 			$class = self::$knownTiles[$type];
 			return new $class($chunk, $nbt, ...$args);
@@ -109,7 +113,7 @@ abstract class Tile extends Position{
 		return self::$shortNames[static::class];
 	}
 
-	public function __construct(FullChunk $chunk, Compound $nbt){
+	public function __construct(FullChunk $chunk, CompoundTag $nbt){
 		if($chunk === null or $chunk->getProvider() === null){
 			throw new ChunkException("Invalid garbage Chunk given to Tile");
 		}
@@ -176,7 +180,7 @@ abstract class Tile extends Position{
 		}
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return $this->name;
 	}
 

@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -32,7 +32,8 @@ class WhitelistCommand extends VanillaCommand{
 		parent::__construct(
 			$name,
 			"%ipocket.command.whitelist.description",
-			"%commands.whitelist.usage"
+			"%commands.whitelist.usage",
+			["wl"]
 		);
 		$this->setPermission("ipocket.command.whitelist.reload;ipocket.command.whitelist.enable;ipocket.command.whitelist.disable;ipocket.command.whitelist.list;ipocket.command.whitelist.add;ipocket.command.whitelist.remove");
 	}

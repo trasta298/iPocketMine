@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -22,14 +22,21 @@
 namespace ipocket;
 
 use ipocket\block\Block;
+use ipocket\block\PressurePlate;
 use ipocket\command\CommandSender;
 use ipocket\entity\Arrow;
+use ipocket\entity\AttributeManager;
+use ipocket\entity\Boat;
 use ipocket\entity\Effect;
 use ipocket\entity\Entity;
+use ipocket\entity\FishingHook;
 use ipocket\entity\Human;
 use ipocket\entity\Item as DroppedItem;
 use ipocket\entity\Living;
+use ipocket\entity\Minecart;
 use ipocket\entity\Projectile;
+use ipocket\entity\ThrownExpBottle;
+use ipocket\entity\ThrownPotion;
 use ipocket\event\block\SignChangeEvent;
 use ipocket\event\entity\EntityDamageByBlockEvent;
 use ipocket\event\entity\EntityDamageByEntityEvent;
@@ -41,6 +48,7 @@ use ipocket\event\inventory\CraftItemEvent;
 use ipocket\event\inventory\InventoryCloseEvent;
 use ipocket\event\inventory\InventoryPickupArrowEvent;
 use ipocket\event\inventory\InventoryPickupItemEvent;
+use ipocket\event\player\PlayerTextPreSendEvent;
 use ipocket\event\player\PlayerAchievementAwardedEvent;
 use ipocket\event\player\PlayerAnimationEvent;
 use ipocket\event\player\PlayerBedEnterEvent;
@@ -49,7 +57,9 @@ use ipocket\event\player\PlayerChatEvent;
 use ipocket\event\player\PlayerCommandPreprocessEvent;
 use ipocket\event\player\PlayerDeathEvent;
 use ipocket\event\player\PlayerDropItemEvent;
+use ipocket\event\player\PlayerExperienceChangeEvent;
 use ipocket\event\player\PlayerGameModeChangeEvent;
+use ipocket\event\player\PlayerHungerChangeEvent;
 use ipocket\event\player\PlayerInteractEvent;
 use ipocket\event\player\PlayerItemConsumeEvent;
 use ipocket\event\player\PlayerJoinEvent;
@@ -69,6 +79,7 @@ use ipocket\event\TranslationContainer;
 use ipocket\inventory\BaseTransaction;
 use ipocket\inventory\BigShapedRecipe;
 use ipocket\inventory\BigShapelessRecipe;
+use ipocket\inventory\EnchantInventory;
 use ipocket\inventory\FurnaceInventory;
 use ipocket\inventory\Inventory;
 use ipocket\inventory\InventoryHolder;
@@ -76,28 +87,28 @@ use ipocket\inventory\PlayerInventory;
 use ipocket\inventory\ShapedRecipe;
 use ipocket\inventory\ShapelessRecipe;
 use ipocket\inventory\SimpleTransactionGroup;
-
 use ipocket\item\Item;
+use ipocket\item\Potion;
 use ipocket\level\ChunkLoader;
 use ipocket\level\format\FullChunk;
-use ipocket\level\format\LevelProvider;
 use ipocket\level\Level;
 use ipocket\level\Location;
 use ipocket\level\Position;
 use ipocket\level\sound\LaunchSound;
+use ipocket\level\weather\WeatherManager;
 use ipocket\math\AxisAlignedBB;
 use ipocket\math\Vector2;
 use ipocket\math\Vector3;
 use ipocket\metadata\MetadataValue;
 use ipocket\nbt\NBT;
-use ipocket\nbt\tag\Byte;
-use ipocket\nbt\tag\Compound;
-use ipocket\nbt\tag\Double;
-use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\ByteTag;
+use ipocket\nbt\tag\CompoundTag;
+use ipocket\nbt\tag\DoubleTag;
+use ipocket\nbt\tag\EnumTag;
 use ipocket\nbt\tag\FloatTag;
 use ipocket\nbt\tag\IntTag;
-use ipocket\nbt\tag\Long;
-use ipocket\nbt\tag\Short;
+use ipocket\nbt\tag\LongTag;
+use ipocket\nbt\tag\ShortTag;
 use ipocket\nbt\tag\StringTag;
 use ipocket\network\Network;
 use ipocket\network\protocol\AdventureSettingsPacket;
@@ -105,25 +116,25 @@ use ipocket\network\protocol\AnimatePacket;
 use ipocket\network\protocol\BatchPacket;
 use ipocket\network\protocol\ContainerClosePacket;
 use ipocket\network\protocol\ContainerSetContentPacket;
+use ipocket\network\protocol\ChangeDimensionPacket;
 use ipocket\network\protocol\DataPacket;
 use ipocket\network\protocol\DisconnectPacket;
 use ipocket\network\protocol\EntityEventPacket;
 use ipocket\network\protocol\FullChunkDataPacket;
 use ipocket\network\protocol\Info as ProtocolInfo;
+use ipocket\network\protocol\MovePlayerPacket;
 use ipocket\network\protocol\PlayerActionPacket;
 use ipocket\network\protocol\PlayStatusPacket;
 use ipocket\network\protocol\RespawnPacket;
-use ipocket\network\protocol\SetPlayerGameTypePacket;
-use ipocket\network\protocol\TextPacket;
-
-use ipocket\network\protocol\MovePlayerPacket;
 use ipocket\network\protocol\SetDifficultyPacket;
 use ipocket\network\protocol\SetEntityMotionPacket;
 use ipocket\network\protocol\SetHealthPacket;
 use ipocket\network\protocol\SetSpawnPositionPacket;
 use ipocket\network\protocol\SetTimePacket;
 use ipocket\network\protocol\StartGamePacket;
+use ipocket\network\protocol\SetPlayerGameTypePacket;
 use ipocket\network\protocol\TakeItemEntityPacket;
+use ipocket\network\protocol\TextPacket;
 use ipocket\network\protocol\UpdateBlockPacket;
 use ipocket\network\SourceInterface;
 use ipocket\permission\PermissibleBase;
@@ -133,8 +144,6 @@ use ipocket\tile\Sign;
 use ipocket\tile\Spawnable;
 use ipocket\tile\Tile;
 use ipocket\utils\TextFormat;
-
-
 use raklib\Binary;
 
 /**
@@ -193,6 +202,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 	protected $randomClientId;
 
+	protected $protocol;
+
 	protected $lastMovement = 0;
 	/** @var Vector3 */
 	protected $forceMovement = null;
@@ -200,7 +211,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	protected $teleportPosition = null;
 	protected $connected = true;
 	protected $ip;
-	protected $removeFormat = true;
+	protected $removeFormat = false;
 	protected $port;
 	protected $username;
 	protected $iusername;
@@ -227,7 +238,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 	protected $viewDistance;
 	protected $chunksPerTick;
-    protected $spawnThreshold;
+	protected $spawnThreshold;
 	/** @var null|Position */
 	private $spawnPosition = null;
 
@@ -245,18 +256,119 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	/** @var PermissibleBase */
 	private $perm = null;
 
+	protected $attribute;
+
+	public $weatherData = [0, 0, 0];
+
+	/** @var Vector3 */
+	public $fromPos = null;
+	private $portalTime = 0;
+	private $hasTransfered = false;
+	private $shouldSendStatus = false;
+	/** @var  Position */
+	private $shouldResPos;
+
+	/** @var FishingHook */
+	public $fishingHook = null;
+
+	public $selectedPos = [];
+	public $selectedLev = [];
+
+	public function getAttribute(){
+		return $this->attribute;
+	}
+
+	public function setAttribute($attribute){
+		$this->attribute = $attribute;
+	}
+
 	public function getLeaveMessage(){
 		return new TranslationContainer(TextFormat::YELLOW . "%multiplayer.player.left", [
 			$this->getDisplayName()
 		]);
 	}
 
+	protected $explevel = 0;
+	protected $experience = 0;
+
+	public function setExperienceAndLevel($exp, $level){
+		$this->server->getPluginManager()->callEvent($ev = new PlayerExperienceChangeEvent($this, $exp, $level));
+		if($ev->isCancelled()) return false;
+		$this->explevel = $level;
+		$this->experience = $exp;
+		$this->calcExpLevel();
+		$this->updateExperience();
+		return true;
+	}
+
+	public function setExperience($exp){
+		$this->server->getPluginManager()->callEvent($ev = new PlayerExperienceChangeEvent($this, $exp, 0));
+		if($ev->isCancelled()) return false;
+		$this->experience = $ev->getExp();
+		$this->calcExpLevel();
+		$this->updateExperience();
+		return true;
+	}
+
+	public function setExpLevel($level){
+		$this->server->getPluginManager()->callEvent($ev = new PlayerExperienceChangeEvent($this, 0, $level));
+		if($ev->isCancelled()) return false;
+		$this->explevel = $level;
+		$this->updateExperience();
+		return true;
+	}
+
+	public function getExpectedExperience(){
+		return $this->server->getExpectedExperience($this->explevel + 1);
+	}
+
+	public function getLevelUpExpectedExperience(){
+		/*if($this->explevel < 16) return 2 * $this->explevel + 7;
+		elseif($this->explevel < 31) return 5 * $this->explevel - 38;
+		else return 9 * $this->explevel - 158;*/
+		return $this->getExpectedExperience() - $this->server->getExpectedExperience($this->explevel);
+	}
+
+	public function calcExpLevel(){
+		while($this->experience >= $this->getExpectedExperience()){
+			$this->explevel++;
+		}
+		while($this->experience < $this->server->getExpectedExperience($this->explevel - 1)){
+			$this->explevel--;
+		}
+	}
+
+	public function addExperience($exp){
+		$this->server->getPluginManager()->callEvent($ev = new PlayerExperienceChangeEvent($this, $exp, 0, PlayerExperienceChangeEvent::ADD_EXPERIENCE));
+		if($ev->isCancelled()) return false;
+		$this->experience = $this->experience + $ev->getExp();
+		$this->calcExpLevel();
+		$this->updateExperience();
+		return true;
+	}
+
+	public function addExpLevel($level){
+		$this->explevel = $this->explevel + $level;
+		$this->updateExperience();
+	}
+
+	public function getExperience(){
+		return $this->experience;
+	}
+
+	public function getExpLevel(){
+		return $this->explevel;
+	}
+
+	public function updateExperience(){
+		$this->getAttribute()->getAttribute(AttributeManager::EXPERIENCE)->setValue(($this->experience - $this->server->getExpectedExperience($this->explevel)) / ($this->getLevelUpExpectedExperience()));
+		$this->getAttribute()->getAttribute(AttributeManager::EXPERIENCE_LEVEL)->setValue($this->explevel);
+	}
+
 	/**
 	 * This might disappear in the future.
-	 * Please use getUniqueId() instead (IP + clientId + name combo, in the future it'll change to real UUID for online auth)
-	 *
-	 * @deprecated
-	 *
+	 * Please use getUniqueId() instead (IP + clientId + name combo, in the future it'll change to real UUID for online
+	 * auth)
 	 */
 	public function getClientId(){
 		return $this->randomClientId;
@@ -273,13 +385,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	public function setBanned($value){
 		if($value === true){
 			$this->server->getNameBans()->addBan($this->getName(), null, null, null);
-			$this->kick("You have been banned");
+			$this->kick(TextFormat::RED . "You have been banned");
 		}else{
 			$this->server->getNameBans()->remove($this->getName());
 		}
 	}
 
-	public function isWhitelisted(){
+	public function isWhitelisted() : bool{
 		return $this->server->isWhitelisted(strtolower($this->getName()));
 	}
 
@@ -296,15 +408,15 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	}
 
 	public function getFirstPlayed(){
-		return $this->namedtag instanceof Compound ? $this->namedtag["firstPlayed"] : null;
+		return $this->namedtag instanceof CompoundTag ? $this->namedtag["firstPlayed"] : null;
 	}
 
 	public function getLastPlayed(){
-		return $this->namedtag instanceof Compound ? $this->namedtag["lastPlayed"] : null;
+		return $this->namedtag instanceof CompoundTag ? $this->namedtag["lastPlayed"] : null;
 	}
 
 	public function hasPlayedBefore(){
-		return $this->namedtag instanceof Compound;
+		return $this->namedtag instanceof CompoundTag;
 	}
 
 	public function setAllowFlight($value){
@@ -312,7 +424,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->sendSettings();
 	}
 
-	public function getAllowFlight(){
+	public function getAllowFlight() : bool{
 		return $this->allowFlight;
 	}
 
@@ -321,7 +433,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->sendSettings();
 	}
 
-	public function hasAutoJump(){
+	public function hasAutoJump() : bool{
 		return $this->autoJump;
 	}
 
@@ -360,7 +472,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 *
 	 * @return bool
 	 */
-	public function canSee(Player $player){
+	public function canSee(Player $player) : bool{
 		return !isset($this->hiddenPlayers[$player->getRawUniqueId()]);
 	}
 
@@ -388,7 +500,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		}
 	}
 
-	public function canCollideWith(Entity $entity){
+	public function canCollideWith(Entity $entity) : bool{
 		return false;
 	}
 
@@ -403,14 +515,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	/**
 	 * @return bool
 	 */
-	public function isOnline(){
+	public function isOnline() : bool{
 		return $this->connected === true and $this->loggedIn === true;
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function isOp(){
+	public function isOp() : bool{
 		return $this->server->isOp($this->getName());
 	}
 
@@ -445,8 +557,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 *
 	 * @return bool
 	 */
-	public function hasPermission($name){
-		return $this->perm->hasPermission($name);
+	public function hasPermission($name) : bool{
+		if($this->perm == null) return false;else return $this->perm->hasPermission($name);
 	}
 
 	/**
@@ -457,14 +569,21 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 * @return permission\PermissionAttachment
 	 */
 	public function addAttachment(Plugin $plugin, $name = null, $value = null){
+		if($this->perm == null) return false;
 		return $this->perm->addAttachment($plugin, $name, $value);
 	}
 
+
 	/**
 	 * @param PermissionAttachment $attachment
+	 * @return bool
 	 */
 	public function removeAttachment(PermissionAttachment $attachment){
+		if($this->perm == null){
+			return false;
+		}
 		$this->perm->removeAttachment($attachment);
+		return true;
 	}
 
 	public function recalculatePermissions(){
@@ -503,7 +622,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->interface = $interface;
 		$this->windows = new \SplObjectStorage();
 		$this->perm = new PermissibleBase($this);
-		$this->namedtag = new Compound();
+		$this->namedtag = new CompoundTag();
 		$this->server = Server::getInstance();
 		$this->lastBreak = PHP_INT_MAX;
 		$this->ip = $ip;
@@ -511,7 +630,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->clientID = $clientID;
 		$this->loaderId = Level::generateChunkLoaderId($this);
 		$this->chunksPerTick = (int) $this->server->getProperty("chunk-sending.per-tick", 4);
-        $this->spawnThreshold = (int) $this->server->getProperty("chunk-sending.spawn-threshold", 56);
+		$this->spawnThreshold = (int) $this->server->getProperty("chunk-sending.spawn-threshold", 56);
 		$this->spawnPosition = null;
 		$this->gamemode = $this->server->getGamemode();
 		$this->setLevel($this->server->getDefaultLevel());
@@ -519,10 +638,18 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->newPosition = new Vector3(0, 0, 0);
 		$this->boundingBox = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
+		$this->attribute = new AttributeManager($this);
+		$this->attribute->init();
+
 		$this->uuid = null;
 		$this->rawUUID = null;
 
 		$this->creationTime = microtime(true);
+
+		$this->experience = 0;
+		$this->explevel = 0;
+		$this->food = 20;
+		Entity::setHealth(20);
 	}
 
 	/**
@@ -539,7 +666,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 *
 	 * @return bool
 	 */
-	public function hasAchievement($achievementId){
+	public function hasAchievement($achievementId) : bool{
 		if(!isset(Achievement::$list[$achievementId]) or !isset($this->achievements)){
 			$this->achievements = [];
 
@@ -552,7 +679,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	/**
 	 * @return bool
 	 */
-	public function isConnected(){
+	public function isConnected() : bool{
 		return $this->connected === true;
 	}
 
@@ -565,9 +692,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		return $this->displayName;
 	}
 
-    /**
-     * @param string $name
-     */
+	/**
+	 * @param string $name
+	 */
 	public function setDisplayName($name){
 		$this->displayName = $name;
 		if($this->spawned){
@@ -587,14 +714,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 *
 	 * @return string
 	 */
-	public function getAddress(){
+	public function getAddress() : string{
 		return $this->ip;
 	}
 
 	/**
 	 * @return int
 	 */
-	public function getPort(){
+	public function getPort() : int{
 		return $this->port;
 	}
 
@@ -605,8 +732,12 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	/**
 	 * @return bool
 	 */
-	public function isSleeping(){
+	public function isSleeping() : bool{
 		return $this->sleeping !== null;
+	}
+
+	public function getInAirTicks(){
+		return $this->inAirTicks;
 	}
 
 	protected function switchLevel(Level $targetLevel){
@@ -622,6 +753,23 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$pk->time = $this->level->getTime();
 			$pk->started = $this->level->stopTime == false;
 			$this->dataPacket($pk);
+
+			if(WeatherManager::isRegistered($targetLevel)) $targetLevel->getWeather()->sendWeather($this);
+
+			if($this->server->netherEnabled){
+				if($targetLevel == $this->server->netherLevel){
+					$pk = new ChangeDimensionPacket();
+					$pk->dimension = ChangeDimensionPacket::DIMENSION_NETHER;
+					$this->dataPacket($pk);
+					$this->shouldSendStatus = true;
+				}elseif($oldLevel == $this->server->netherLevel){
+					$pk = new ChangeDimensionPacket();
+					$pk->dimension = ChangeDimensionPacket::DIMENSION_NORMAL;
+					$this->dataPacket($pk);
+					$this->shouldSendStatus = true;
+				}
+			}
+
 		}
 	}
 
@@ -644,7 +792,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	/**
 	 * @return Position
 	 */
-	public function getSpawn(){
+	public function getSpawn() : Position{
 		if($this->spawnPosition instanceof Position and $this->spawnPosition->getLevel() instanceof Level){
 			return $this->spawnPosition;
 		}else{
@@ -702,7 +850,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			++$count;
 
 			$this->usedChunks[$index] = false;
-			$this->level->registerChunkLoader($this, $X, $Z, false);
+			$this->level->registerChunkLoader($this, $X, $Z, true);
 
 			if(!$this->level->populateChunk($X, $Z)){
 				if($this->spawned and $this->teleportPosition === null){
@@ -714,6 +862,20 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 			unset($this->loadQueue[$index]);
 			$this->level->requestChunk($X, $Z, $this);
+			if((count($this->loadQueue) == 0) and $this->shouldSendStatus){
+				$this->shouldSendStatus = false;
+
+				/*$pos = $this->shouldResPos;
+				$pk = new RespawnPacket();
+				$pk->x = $pos->x;
+				$pk->y = $pos->y;
+				$pk->z = $pos->z;
+				$this->dataPacket($pk);*/
+
+				$pk = new PlayStatusPacket();
+				$pk->status = PlayStatusPacket::PLAYER_SPAWN;
+				$this->dataPacket($pk);
+			}
 		}
 
 		if($this->chunkLoadCount >= $this->spawnThreshold and $this->spawned === false and $this->teleportPosition === null){
@@ -727,6 +889,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->spawned = true;
 
 		$this->sendSettings();
+		$this->setMovementSpeed(0.1);
 		$this->sendPotionEffects($this);
 		$this->sendData($this);
 		$this->inventory->sendContents($this);
@@ -742,6 +905,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->server->getPluginManager()->callEvent($ev = new PlayerRespawnEvent($this, $pos));
 
 		$pos = $ev->getRespawnPosition();
+		if($pos->getY() < 127) $pos = $pos->add(0, 0.2, 0);
 
 		$pk = new RespawnPacket();
 		$pk->x = $pos->x;
@@ -752,15 +916,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$pk = new PlayStatusPacket();
 		$pk->status = PlayStatusPacket::PLAYER_SPAWN;
 		$this->dataPacket($pk);
-
-		$this->server->getPluginManager()->callEvent($ev = new PlayerJoinEvent($this,
-			new TranslationContainer(TextFormat::YELLOW . "%multiplayer.player.joined", [
-				$this->getDisplayName()
-			])
-		));
-		if(strlen(trim($ev->getJoinMessage())) > 0){
-			$this->server->broadcastMessage($ev->getJoinMessage());
-		}
 
 		$this->noDamageTicks = 60;
 
@@ -775,11 +930,34 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 		$this->teleport($pos);
 
+		$this->server->getPluginManager()->callEvent($ev = new PlayerJoinEvent($this, new TranslationContainer(TextFormat::YELLOW . "%multiplayer.player.joined", [
+			$this->getDisplayName()
+		])));
+
+		if(strlen(trim($msg = $ev->getJoinMessage())) > 0){
+			if($this->server->playerMsgType === Server:: PLAYER_MSG_TYPE_MESSAGE) $this->server->broadcastMessage($msg);
+			elseif($this->server->playerMsgType === Server::PLAYER_MSG_TYPE_TIP) $this->server->broadcastTip(str_replace("@player", $this->getName(), $this->server->playerLoginMsg));
+			elseif($this->server->playerMsgType === Server::PLAYER_MSG_TYPE_POPUP) $this->server->broadcastPopup(str_replace("@player", $this->getName(), $this->server->playerLoginMsg));
+		}
+
+		$this->setAllowFlight($this->gamemode == 3 || $this->gamemode == 1);
+
+		$this->server->onPlayerLogin($this);
 		$this->spawnToAll();
 
-		if($this->server->getUpdater()->hasUpdate() and $this->hasPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE)){
-			$this->server->getUpdater()->showPlayerUpdate($this);
+		if(WeatherManager::isRegistered($this->level)) $this->level->getWeather()->sendWeather($this);
+		if($this->server->expEnabled){
+			//$this->checkExpLevel();
+			$this->updateExperience();
 		}
+		$this->setHealth($this->getHealth());
+		if($this->server->foodEnabled) $this->setFood($this->getFood());else $this->setFood(20);
+
+		if($this->server->dserverConfig["enable"] and $this->server->dserverConfig["queryAutoUpdate"]) $this->server->updateQuery();
+
+		/*if($this->server->getUpdater()->hasUpdate() and $this->hasPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE)){
+			$this->server->getUpdater()->showPlayerUpdate($this);
+		}*/
 
 		if($this->getHealth() <= 0){
 			$pk = new RespawnPacket();
@@ -873,7 +1051,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 * @return bool
 	 */
 	public function batchDataPacket(DataPacket $packet){
-		if($this->connected === false){
+		if($this->connected === false or $this->hasTransfered){
 			return false;
 		}
 
@@ -885,11 +1063,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			return false;
 		}
 
-		if(!isset($this->batchedPackets[$packet->getChannel()])){
-			$this->batchedPackets[$packet->getChannel()] = [];
+		if(!isset($this->batchedPackets)){
+			$this->batchedPackets = [];
 		}
 
-		$this->batchedPackets[$packet->getChannel()][] = clone $packet;
+		$this->batchedPackets[] = clone $packet;
 		$timings->stopTiming();
 		return true;
 	}
@@ -903,7 +1081,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 * @return int|bool
 	 */
 	public function dataPacket(DataPacket $packet, $needACK = false){
-		if(!$this->connected){
+		if(!$this->connected or $this->hasTransfered){
 			return false;
 		}
 
@@ -936,7 +1114,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 * @return bool|int
 	 */
 	public function directDataPacket(DataPacket $packet, $needACK = false){
-		if($this->connected === false){
+		if($this->connected === false or $this->hasTransfered){
 			return false;
 		}
 
@@ -985,7 +1163,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		}
 
 		$this->sleeping = clone $pos;
-		$this->teleport(new Position($pos->x + 0.5, $pos->y - 0.5, $pos->z + 0.5, $this->level));
+		$this->teleport(new Position($pos->x + 0.5, $pos->y - 1, $pos->z + 0.5, $this->level));
 
 		$this->setDataProperty(self::DATA_PLAYER_BED_POSITION, self::DATA_TYPE_POS, [$pos->x, $pos->y, $pos->z]);
 		$this->setDataFlag(self::DATA_PLAYER_FLAGS, self::DATA_PLAYER_FLAG_SLEEP, true);
@@ -999,7 +1177,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	}
 
 	/**
-	 * Sets the spawnpoint of the player (and the compass direction) to a Vector3, or set it on another world with a Position object
+	 * Sets the spawnpoint of the player (and the compass direction) to a Vector3, or set it on another world with a
+	 * Position object
 	 *
 	 * @param Vector3|Position $pos
 	 */
@@ -1065,7 +1244,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	/**
 	 * @return int
 	 */
-	public function getGamemode(){
+	public function getGamemode() : int{
 		return $this->gamemode;
 	}
 
@@ -1076,15 +1255,17 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 *
 	 * @return bool
 	 */
-	public function setGamemode($gm){
+	public function setGamemode(int $gm){
 		if($gm < 0 or $gm > 3 or $this->gamemode === $gm){
 			return false;
 		}
 
-		$this->server->getPluginManager()->callEvent($ev = new PlayerGameModeChangeEvent($this, (int) $gm));
+		$this->server->getPluginManager()->callEvent($ev = new PlayerGameModeChangeEvent($this, $gm));
 		if($ev->isCancelled()){
 			return false;
 		}
+
+		if($this->server->autoClearInv) $this->inventory->clearAll();
 
 		$this->gamemode = $gm;
 
@@ -1098,6 +1279,19 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 		$this->namedtag->playerGameType = new IntTag("playerGameType", $this->gamemode);
 
+		/*$spawnPosition = $this->getSpawn();
+
+		$pk = new StartGamePacket();
+		$pk->seed = -1;
+		$pk->x = $this->x;
+		$pk->y = $this->y;
+		$pk->z = $this->z;
+		$pk->spawnX = (int)$spawnPosition->x;
+		$pk->spawnY = (int)$spawnPosition->y;
+		$pk->spawnZ = (int)$spawnPosition->z;
+		$pk->generator = 1; //0 old, 1 infinite, 2 flat
+		$pk->gamemode = $this->gamemode & 0x01;
+		$pk->eid = 0;*/
 		$pk = new SetPlayerGameTypePacket();
 		$pk->gamemode = $this->gamemode & 0x01;
 		$this->dataPacket($pk);
@@ -1119,7 +1313,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->inventory->sendContents($this);
 		$this->inventory->sendContents($this->getViewers());
 		$this->inventory->sendHeldItem($this->hasSpawned);
-
 		return true;
 	}
 
@@ -1188,23 +1381,23 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->dataPacket($pk);
 	}
 
-	public function isSurvival(){
+	public function isSurvival() : bool{
 		return ($this->gamemode & 0x01) === 0;
 	}
 
-	public function isCreative(){
+	public function isCreative() : bool{
 		return ($this->gamemode & 0x01) > 0;
 	}
 
-	public function isSpectator(){
+	public function isSpectator() : bool{
 		return $this->gamemode === 3;
 	}
 
-	public function isAdventure(){
+	public function isAdventure() : bool{
 		return ($this->gamemode & 0x02) > 0;
 	}
 
-	public function getDrops(){
+	public function getDrops() : array{
 		if(!$this->isCreative()){
 			return parent::getDrops();
 		}
@@ -1214,6 +1407,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 	/**
 	 * @deprecated
+	 * @param $entityId
+	 * @param $x
+	 * @param $y
+	 * @param $z
 	 */
 	public function addEntityMotion($entityId, $x, $y, $z){
 
@@ -1221,6 +1418,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 	/**
 	 * @deprecated
+	 * @param      $entityId
+	 * @param      $x
+	 * @param      $y
+	 * @param      $z
+	 * @param      $yaw
+	 * @param      $pitch
+	 * @param null $headYaw
 	 */
 	public function addEntityMovement($entityId, $x, $y, $z, $yaw, $pitch, $headYaw = null){
 
@@ -1250,13 +1454,25 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	}
 
 	protected function checkBlockCollision(){
-		foreach($this->getBlocksAround() as $block){
+		foreach($blocksaround = $this->getBlocksAround() as $block){
 			$block->onEntityCollide($this);
+			if($this->getServer()->redstoneEnabled){
+				if($block instanceof PressurePlate){
+					$this->activatedPressurePlates[Level::blockHash($block->x, $block->y, $block->z)] = $block;
+				}
+			}
+		}
+
+		if($this->getServer()->redstoneEnabled){
+			/** @var \ipocket\block\PressurePlate $block * */
+			foreach($this->activatedPressurePlates as $key => $block){
+				if(!isset($blocksaround[$key])) $block->checkActivation();
+			}
 		}
 	}
 
 	protected function checkNearEntities($tickDiff){
-		foreach($this->level->getNearbyEntities($this->boundingBox->grow(1, 0.5, 1), $this) as $entity){
+		foreach($this->level->getNearbyEntities($this->boundingBox->grow(0.5, 0.5, 0.5), $this) as $entity){
 			$entity->scheduleUpdate();
 
 			if(!$entity->isAlive()){
@@ -1274,7 +1490,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					continue;
 				}
 
-				$pk = new TakeItemEntityPacket();
+				/*$pk = new TakeItemEntityPacket();
 				$pk->eid = $this->getId();
 				$pk->target = $entity->getId();
 				Server::broadcastPacket($entity->getViewers(), $pk);
@@ -1282,9 +1498,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$pk = new TakeItemEntityPacket();
 				$pk->eid = 0;
 				$pk->target = $entity->getId();
-				$this->dataPacket($pk);
+				$this->dataPacket($pk);*/
+				//This may cause client crash
 
-				$this->inventory->addItem(clone $item);
+				if(!$this->isCreative()) $this->inventory->addItem(clone $item);
 				$entity->kill();
 			}elseif($entity instanceof DroppedItem){
 				if($entity->getPickupDelay() <= 0){
@@ -1319,7 +1536,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						$pk->target = $entity->getId();
 						$this->dataPacket($pk);
 
-						$this->inventory->addItem(clone $item);
+						if(!$this->isCreative()) $this->inventory->addItem(clone $item);
 						$entity->kill();
 					}
 				}
@@ -1329,6 +1546,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 	protected function processMovement($tickDiff){
 		if(!$this->isAlive() or !$this->spawned or $this->newPosition === null or $this->teleportPosition !== null){
+			$this->setMoving(false);
 			return;
 		}
 
@@ -1337,19 +1555,21 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 		$revert = false;
 
-		if(($distanceSquared / ($tickDiff ** 2)) > 100){
-			$revert = true;
-		}else{
-			if($this->chunk === null or !$this->chunk->isGenerated()){
-				$chunk = $this->level->getChunk($newPos->x >> 4, $newPos->z >> 4, false);
-				if($chunk === null or !$chunk->isGenerated()){
-					$revert = true;
-					$this->nextChunkOrderRun = 0;
-				}else{
-					if($this->chunk !== null){
-						$this->chunk->removeEntity($this);
+		if($this->server->checkMovement){
+			if(($distanceSquared / ($tickDiff ** 2)) > 200){
+				$revert = true;
+			}else{
+				if($this->chunk === null or !$this->chunk->isGenerated()){
+					$chunk = $this->level->getChunk($newPos->x >> 4, $newPos->z >> 4, false);
+					if($chunk === null or !$chunk->isGenerated()){
+						$revert = true;
+						$this->nextChunkOrderRun = 0;
+					}else{
+						if($this->chunk !== null){
+							$this->chunk->removeEntity($this);
+						}
+						$this->chunk = $chunk;
 					}
-					$this->chunk = $chunk;
 				}
 			}
 		}
@@ -1372,7 +1592,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 			$diff = ($diffX ** 2 + $diffY ** 2 + $diffZ ** 2) / ($tickDiff ** 2);
 
-			if($this->isSurvival()){
+			/*if($this->isSurvival()){
 				if(!$revert and !$this->isSleeping()){
 					if($diff > 0.0625){
 						$revert = true;
@@ -1387,7 +1607,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$this->z = $newPos->z;
 				$radius = $this->width / 2;
 				$this->boundingBox->setBounds($this->x - $radius, $this->y, $this->z - $radius, $this->x + $radius, $this->y + $this->height, $this->z + $radius);
-			}
+			}*/
 		}
 
 		$from = new Location($this->lastX, $this->lastY, $this->lastZ, $this->lastYaw, $this->lastPitch, $this->level);
@@ -1409,15 +1629,44 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 			if(!$isFirst){
 				$ev = new PlayerMoveEvent($this, $from, $to);
+				$this->setMoving(true);
 
 				$this->server->getPluginManager()->callEvent($ev);
 
 				if(!($revert = $ev->isCancelled())){ //Yes, this is intended
-					if($to->distanceSquared($ev->getTo()) > 0.01){ //If plugins modify the destination
+					//$teleported = false;
+					if($this->server->netherEnabled){
+						if($this->isInsideOfPortal()){
+							if($this->portalTime == 0) $this->portalTime = $this->server->getTick();
+						}else $this->portalTime = 0;
+					}
+
+					//if($this->server->redstoneEnabled) $this->getLevel()->updateAround($ev->getTo()->round());
+
+					//	if(!$teleported){
+					if($to->distanceSquared($ev->getTo()) > 0.2){ //If plugins modify the destination
 						$this->teleport($ev->getTo());
 					}else{
 						$this->level->addEntityMovement($this->x >> 4, $this->z >> 4, $this->getId(), $this->x, $this->y + $this->getEyeHeight(), $this->z, $this->yaw, $this->pitch, $this->yaw);
 					}
+
+					if($this->fishingHook instanceof FishingHook){
+						if($this->distance($this->fishingHook) > 20 or $this->inventory->getItemInHand()->getId() !== Item::FISHING_ROD){
+							$this->fishingHook->close();
+							$this->fishingHook = null;
+						}
+					}
+					//	}
+
+					/*if($this->server->expEnabled){
+						/** @var \ipocket\entity\ExperienceOrb $e *
+						foreach($this->level->getNearbyExperienceOrb(new AxisAlignedBB($this->x - 1, $this->y - 1, $this->z - 1, $this->x + 1, $this->y + 2, $this->z + 1)) as $e){
+							if($e->getExperience() > 0){
+								$e->close();
+								$this->addExperience($e->getExperience());
+							}
+						}
+					}*/
 				}
 			}
 
@@ -1428,6 +1677,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->speed = $from->subtract($to);
 		}elseif($distanceSquared == 0){
 			$this->speed = new Vector3(0, 0, 0);
+			$this->setMoving(false);
 		}
 
 		if($revert){
@@ -1469,8 +1719,25 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		return false;
 	}
 
+
 	protected function updateMovement(){
 
+	}
+
+	public $foodTick = 0;
+
+	public $starvationTick = 0;
+
+	public $foodUsageTime = 0;
+
+	protected $moving = false;
+
+	public function setMoving($moving){
+		$this->moving = $moving;
+	}
+
+	public function isMoving() : bool{
+		return $this->moving;
 	}
 
 	public function onUpdate($currentTick){
@@ -1499,32 +1766,93 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->timings->startTiming();
 
 		if($this->spawned){
+			if($this->server->netherEnabled){
+				if(($this->server->getTick() - $this->portalTime) >= ($this->server->getTicksPerSecondAverage() * 1) and $this->portalTime > 0){
+					if($this->server->netherLevel instanceof Level){
+						if($this->getLevel() != $this->server->netherLevel){
+							$this->fromPos = $this->getPosition();
+							$this->teleport($this->shouldResPos = $this->server->netherLevel->getSafeSpawn());
+						}elseif($this->fromPos != null){
+							$this->teleport($this->shouldResPos = $this->fromPos->add(mt_rand(-5, 5), 0, mt_rand(-5, 5)));
+							$this->fromPos = null;
+						}else{
+							$this->teleport($this->shouldResPos = $this->server->getDefaultLevel()->getSafeSpawn());
+						}
+						$this->portalTime = 0;
+					}
+				}
+			}
 			$this->processMovement($tickDiff);
 
-			$this->entityBaseTick($tickDiff);
+			if(!$this->isSpectator()) $this->entityBaseTick($tickDiff);
 
-			if(!$this->isSpectator() and $this->speed !== null){
-				if($this->onGround){
-					if($this->inAirTicks !== 0){
-						$this->startAirTicks = 5;
-					}
-					$this->inAirTicks = 0;
-				}else{
-					if(!$this->allowFlight and $this->inAirTicks > 10 and !$this->isSleeping() and $this->getDataProperty(self::DATA_NO_AI) !== 1){
-						$expectedVelocity = (-$this->gravity) / $this->drag - ((-$this->gravity) / $this->drag) * exp(-$this->drag * ($this->inAirTicks - $this->startAirTicks));
-						$diff = ($this->speed->y - $expectedVelocity) ** 2;
-
-						if(!$this->hasEffect(Effect::JUMP) and $diff > 0.6 and $expectedVelocity < $this->speed->y and !$this->server->getAllowFlight()){
-							if($this->inAirTicks < 100){
+			if($this->server->antiFly){
+				if(!$this->isSpectator() and $this->speed !== null){
+					if($this->onGround){
+						if($this->inAirTicks !== 0){
+							$this->startAirTicks = 5;
+						}
+						$this->inAirTicks = 0;
+					}else{
+						if(!$this->allowFlight and $this->inAirTicks > 10 and !$this->isSleeping() and $this->getDataProperty(self::DATA_NO_AI) !== 1){
+							$expectedVelocity = (-$this->gravity) / $this->drag - ((-$this->gravity) / $this->drag) * exp(-$this->drag * ($this->inAirTicks - $this->startAirTicks));
+							$diff = ($this->speed->y - $expectedVelocity) ** 2;
+							if(!$this->hasEffect(Effect::JUMP) and $diff > 0.6 and $expectedVelocity < $this->speed->y and !$this->server->getAllowFlight()){
 								$this->setMotion(new Vector3(0, $expectedVelocity, 0));
-							}elseif($this->kick("Flying is not enabled on this server")){
-								$this->timings->stopTiming();
-								return false;
+								/*if($this->inAirTicks < 1000){
+
+								}elseif($this->kick("Flying is not enabled on this server")){
+									$this->timings->stopTiming();
+									return false;
+								}*/
 							}
 						}
+						++$this->inAirTicks;
 					}
+				}
+			}
 
-					++$this->inAirTicks;
+			if($this->server->foodEnabled){
+				if($this->starvationTick >= 20){
+					$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_CUSTOM, 1);
+					if($this->getHealth() > $this->server->hungerHealth) $this->attack(1, $ev);
+					$this->starvationTick = 0;
+				}
+				if($this->getFood() <= 0){
+					$this->starvationTick++;
+				}
+
+				if($this->isMoving() && $this->isSurvival()){
+					if($this->isSprinting()){
+						$this->foodUsageTime += 500;
+					}else{
+						$this->foodUsageTime += 250;
+					}
+				}
+
+				if($this->foodUsageTime >= 200000 && $this->foodEnabled){
+					$this->foodUsageTime -= 200000;
+					$this->subtractFood(1);
+				}
+
+				if((($currentTick % 20) == 0) and $this->getHealth() < $this->getMaxHealth() && $this->getFood() >= 18 && $this->foodEnabled){
+					$ev = new EntityRegainHealthEvent($this, 1, EntityRegainHealthEvent::CAUSE_EATING);
+					$this->heal(1, $ev);
+				}
+
+				if($this->foodTick >= $this->server->hungerTimer){
+					if($this->foodEnabled){
+						if($this->foodDepletion >= 2){
+							$this->subtractFood(1);
+							$this->foodDepletion = 0;
+						}else{
+							$this->foodDepletion++;
+						}
+					}
+					$this->foodTick = 0;
+				}
+				if($this->getHealth() < $this->getMaxHealth()){
+					$this->foodTick++;
 				}
 			}
 		}
@@ -1534,6 +1862,190 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->timings->stopTiming();
 
 		return true;
+	}
+
+	public $eatCoolDown = 0;
+
+	public function eatFoodInHand(){
+		if($this->eatCoolDown + 2000 >= time() || !$this->spawned){
+			return;
+		}
+
+		$items = [ //TODO: move this to item classes
+			Item::APPLE => 4,
+			Item::MUSHROOM_STEW => 6,
+			Item::BEETROOT_SOUP => 5,
+			Item::BREAD => 5,
+			Item::RAW_PORKCHOP => 2,
+			Item::COOKED_PORKCHOP => 8,
+			Item::RAW_BEEF => 3,
+			Item::STEAK => 8,
+			Item::COOKED_CHICKEN => 6,
+			Item::RAW_CHICKEN => 2,
+			Item::MELON_SLICE => 2,
+			Item::GOLDEN_APPLE => 4,
+			Item::PUMPKIN_PIE => 8,
+			Item::CARROT => 3,
+			Item::POTATO => 1,
+			Item::BAKED_POTATO => 5,
+			Item::COOKIE => 2,
+			Item::COOKED_FISH => [
+				0 => 5,
+				1 => 6
+			],
+			Item::RAW_FISH => [
+				0 => 2,
+				1 => 2,
+				2 => 1,
+				3 => 1
+			],
+			Item::POTION => 0,
+		];
+
+		$slot = $this->inventory->getItemInHand();
+		if(isset($items[$slot->getId()]) and $this->isAlive()){
+			if($this->getFood() < 20 and isset($items[$slot->getId()])){
+				$this->server->getPluginManager()->callEvent($ev = new PlayerItemConsumeEvent($this, $slot));
+				if($ev->isCancelled()){
+					$this->inventory->sendContents($this);
+					return;
+				}
+
+				$pk = new EntityEventPacket();
+				$pk->eid = $this->getId();
+				$pk->event = EntityEventPacket::USE_ITEM;
+				$this->dataPacket($pk);
+				Server::broadcastPacket($this->getViewers(), $pk);
+
+				$amount = $items[$slot->getId()];
+				if(is_array($amount)){
+					$amount = isset($amount[$slot->getDamage()]) ? $amount[$slot->getDamage()] : 0;
+				}
+				if($this->getFood() + $amount >= 20){
+					$this->setFood(20);
+				}else{
+					$this->setFood($this->getFood() + $amount);
+				}
+
+				--$slot->count;
+				$this->inventory->setItemInHand($slot);
+				if($slot->getId() === Item::MUSHROOM_STEW or $slot->getId() === Item::BEETROOT_SOUP){
+					$this->inventory->addItem(Item::get(Item::BOWL, 0, 1));
+				}elseif($slot->getId() === Item::RAW_FISH and $slot->getDamage() === 3){ //Pufferfish
+					$this->addEffect(Effect::getEffect(Effect::HUNGER)->setAmplifier(2)->setDuration(15 * 20));
+					$this->addEffect(Effect::getEffect(Effect::NAUSEA)->setAmplifier(1)->setDuration(15 * 20));
+					$this->addEffect(Effect::getEffect(Effect::POISON)->setAmplifier(3)->setDuration(60 * 20));
+				}elseif($slot->getId() === Item::GOLDEN_APPLE && $slot->getDamage() === 1){
+					$this->setFood($this->getFood() + 4);
+					//$this->addEffect(Effect::getEffect(Effect::HEALTH_BOOST)->setAmplifier(0)->setDuration(2 * 60 * 20));
+					$this->addEffect(Effect::getEffect(Effect::REGENERATION)->setAmplifier(4)->setDuration(30 * 20));
+					$this->addEffect(Effect::getEffect(Effect::FIRE_RESISTANCE)->setAmplifier(0)->setDuration(5 * 60 * 20));
+					$this->addEffect(Effect::getEffect(Effect::DAMAGE_RESISTANCE)->setAmplifier(0)->setDuration(5 * 60 * 20));
+					//$this->addEffect(Effect::getEffect(Effect::ABSORPTION)->setDuration(2 * 60 * 20));
+				}elseif($slot->getId() === Item::GOLDEN_APPLE){
+					$this->setFood($this->getFood() + 4);
+					//$this->addEffect(Effect::getEffect(Effect::HEALTH_BOOST)->setAmplifier(0)->setDuration(2 * 60 * 20));
+					$this->addEffect(Effect::getEffect(Effect::REGENERATION)->setAmplifier(1)->setDuration(5 * 20));
+				}elseif($slot->getId() == Item::POTION){
+					$this->inventory->addItem(new Item(Item::POTION));
+					switch($slot->getDamage()){
+						case Potion::NIGHT_VISION:
+							$this->addEffect(Effect::getEffect(Effect::NIGHT_VISION)->setAmplifier(0)->setDuration(3 * 60 * 20));
+							break;
+						case Potion::NIGHT_VISION_T:
+							$this->addEffect(Effect::getEffect(Effect::NIGHT_VISION)->setAmplifier(0)->setDuration(8 * 60 * 20));
+							break;
+						case Potion::INVISIBILITY:
+							$this->addEffect(Effect::getEffect(Effect::INVISIBILITY)->setAmplifier(0)->setDuration(3 * 60 * 20));
+							break;
+						case Potion::INVISIBILITY_T:
+							$this->addEffect(Effect::getEffect(Effect::INVISIBILITY)->setAmplifier(0)->setDuration(8 * 60 * 20));
+							break;
+						case Potion::LEAPING:
+							$this->addEffect(Effect::getEffect(Effect::JUMP)->setAmplifier(0)->setDuration(3 * 60 * 20));
+							break;
+						case Potion::LEAPING_T:
+							$this->addEffect(Effect::getEffect(Effect::JUMP)->setAmplifier(0)->setDuration(8 * 60 * 20));
+							break;
+						case Potion::LEAPING_TWO:
+							$this->addEffect(Effect::getEffect(Effect::JUMP)->setAmplifier(1)->setDuration(1.5 * 60 * 20));
+							break;
+						case Potion::FIRE_RESISTANCE:
+							$this->addEffect(Effect::getEffect(Effect::FIRE_RESISTANCE)->setAmplifier(0)->setDuration(3 * 60 * 20));
+							break;
+						case Potion::FIRE_RESISTANCE_T:
+							$this->addEffect(Effect::getEffect(Effect::FIRE_RESISTANCE)->setAmplifier(0)->setDuration(8 * 60 * 20));
+							break;
+						case Potion::SPEED:
+							$this->addEffect(Effect::getEffect(Effect::SPEED)->setAmplifier(0)->setDuration(3 * 60 * 20));
+							break;
+						case Potion::SPEED_T:
+							$this->addEffect(Effect::getEffect(Effect::SPEED)->setAmplifier(0)->setDuration(8 * 60 * 20));
+							break;
+						case Potion::SPEED_TWO:
+							$this->addEffect(Effect::getEffect(Effect::SPEED)->setAmplifier(1)->setDuration(1.5 * 60 * 20));
+							break;
+						case Potion::SLOWNESS:
+							$this->addEffect(Effect::getEffect(Effect::SLOWNESS)->setAmplifier(0)->setDuration(1 * 60 * 20));
+							break;
+						case Potion::SLOWNESS_T:
+							$this->addEffect(Effect::getEffect(Effect::SLOWNESS)->setAmplifier(0)->setDuration(4 * 60 * 20));
+							break;
+						case Potion::WATER_BREATHING:
+							$this->addEffect(Effect::getEffect(Effect::WATER_BREATHING)->setAmplifier(0)->setDuration(3 * 60 * 20));
+							break;
+						case Potion::WATER_BREATHING_T:
+							$this->addEffect(Effect::getEffect(Effect::WATER_BREATHING)->setAmplifier(0)->setDuration(8 * 60 * 20));
+							break;
+						case Potion::POISON:
+							$this->addEffect(Effect::getEffect(Effect::POISON)->setAmplifier(0)->setDuration(45 * 20));
+							break;
+						case Potion::POISON_T:
+							$this->addEffect(Effect::getEffect(Effect::POISON)->setAmplifier(0)->setDuration(2 * 60 * 20));
+							break;
+						case Potion::POISON_TWO:
+							$this->addEffect(Effect::getEffect(Effect::POISON)->setAmplifier(0)->setDuration(22 * 20));
+							break;
+						case Potion::REGENERATION:
+							$this->addEffect(Effect::getEffect(Effect::REGENERATION)->setAmplifier(0)->setDuration(45 * 20));
+							break;
+						case Potion::REGENERATION_T:
+							$this->addEffect(Effect::getEffect(Effect::REGENERATION)->setAmplifier(0)->setDuration(2 * 60 * 20));
+							break;
+						case Potion::REGENERATION_TWO:
+							$this->addEffect(Effect::getEffect(Effect::REGENERATION)->setAmplifier(1)->setDuration(22 * 20));
+							break;
+						case Potion::STRENGTH:
+							$this->addEffect(Effect::getEffect(Effect::STRENGTH)->setAmplifier(0)->setDuration(3 * 60 * 20));
+							break;
+						case Potion::STRENGTH_T:
+							$this->addEffect(Effect::getEffect(Effect::STRENGTH)->setAmplifier(0)->setDuration(8 * 60 * 20));
+							break;
+						case Potion::STRENGTH_TWO:
+							$this->addEffect(Effect::getEffect(Effect::STRENGTH)->setAmplifier(1)->setDuration(1.5 * 60 * 20));
+							break;
+						case Potion::WEAKNESS:
+							$this->addEffect(Effect::getEffect(Effect::WEAKNESS)->setAmplifier(0)->setDuration(1.5 * 60 * 20));
+							break;
+						case Potion::WEAKNESS_T:
+							$this->addEffect(Effect::getEffect(Effect::WEAKNESS)->setAmplifier(0)->setDuration(4 * 60 * 20));
+							break;
+						case Potion::HEALING:
+							$this->addEffect(Effect::getEffect(Effect::HEALING)->setAmplifier(0)->setDuration(1));
+							break;
+						case Potion::HEALING_TWO:
+							$this->addEffect(Effect::getEffect(Effect::HEALING)->setAmplifier(1)->setDuration(1));
+							break;
+						case Potion::HARMING:
+							$this->addEffect(Effect::getEffect(Effect::HARMING)->setAmplifier(0)->setDuration(1));
+							break;
+						case Potion::HARMING_TWO:
+							$this->addEffect(Effect::getEffect(Effect::HARMING)->setAmplifier(1)->setDuration(1));
+							break;
+					}
+				}
+			}
+		}
 	}
 
 	public function checkNetwork(){
@@ -1550,9 +2062,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		}
 
 		if(count($this->batchedPackets) > 0){
-			foreach($this->batchedPackets as $channel => $list){
-				$this->server->batchPackets([$this], $list, false, $channel);
-			}
+			$this->server->batchPackets([$this], $this->batchedPackets, false);
 			$this->batchedPackets = [];
 		}
 
@@ -1595,8 +2105,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->close($this->getLeaveMessage(), "Server is white-listed");
 
 			return;
-		}elseif($this->server->getNameBans()->isBanned(strtolower($this->getName())) or $this->server->getIPBans()->isBanned($this->getAddress())){
-			$this->close($this->getLeaveMessage(), "You are banned");
+		}elseif($this->server->getNameBans()->isBanned(strtolower($this->getName())) or $this->server->getIPBans()->isBanned($this->getAddress()) or $this->server->getCIDBans()->isBanned($this->randomClientId)){
+			$this->close($this->getLeaveMessage(), TextFormat::RED . "You are banned");
 
 			return;
 		}
@@ -1628,6 +2138,19 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		}else{
 			$nbt["NameTag"] = $this->username;
 		}
+		if(!isset($nbt->Hunger) or !isset($nbt->Experience) or !isset($nbt->ExpLevel) or !isset($nbt->Health) or !isset($nbt->MaxHealth)){
+			$nbt->Hunger = new ShortTag("Hunger", 20);
+			$nbt->Experience = new LongTag("Experience", 0);
+			$nbt->ExpLevel = new LongTag("ExpLevel", 0);
+			$nbt->Health = new ShortTag("Health", 20);
+			$nbt->MaxHealth = new ShortTag("MaxHealth", 20);
+		}
+		$this->food = $nbt["Hunger"];
+		$this->setMaxHealth($nbt["MaxHealth"]);
+		Entity::setHealth(($nbt["Health"] <= 0) ? 20 : $nbt["Health"]);
+		$this->experience = ($nbt["Experience"] > 0) ? $nbt["Experience"] : 0;
+		$this->explevel = ($nbt["ExpLevel"] >= 0) ? $nbt["ExpLevel"] : 0;
+		$this->calcExpLevel();
 		$this->gamemode = $nbt["playerGameType"] & 0x03;
 		if($this->server->getForceGamemode()){
 			$this->gamemode = $this->server->getGamemode();
@@ -1647,7 +2170,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->setLevel($level);
 		}
 
-		if(!($nbt instanceof Compound)){
+		if(!($nbt instanceof CompoundTag)){
 			$this->close($this->getLeaveMessage(), "Invalid data");
 
 			return;
@@ -1655,12 +2178,12 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 		$this->achievements = [];
 
-		/** @var Byte $achievement */
+		/** @var ByteTag $achievement */
 		foreach($nbt->Achievements as $achievement){
 			$this->achievements[$achievement->getName()] = $achievement->getValue() > 0 ? true : false;
 		}
 
-		$nbt->lastPlayed = new Long("lastPlayed", floor(microtime(true) * 1000));
+		$nbt->lastPlayed = new LongTag("lastPlayed", floor(microtime(true) * 1000));
 		if($this->server->getAutoSave()){
 			$this->server->saveOfflinePlayerData($this->username, $nbt, true);
 		}
@@ -1685,16 +2208,19 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$pk = new PlayStatusPacket();
 		$pk->status = PlayStatusPacket::LOGIN_SUCCESS;
 		$this->dataPacket($pk);
-
 		if($this->spawnPosition === null and isset($this->namedtag->SpawnLevel) and ($level = $this->server->getLevelByName($this->namedtag["SpawnLevel"])) instanceof Level){
 			$this->spawnPosition = new Position($this->namedtag["SpawnX"], $this->namedtag["SpawnY"], $this->namedtag["SpawnZ"], $level);
 		}
-
 		$spawnPosition = $this->getSpawn();
 
 		$pk = new StartGamePacket();
 		$pk->seed = -1;
-		$pk->dimension = 0;
+		$pk->dimension = ChangeDimensionPacket::DIMENSION_NORMAL;
+		if($this->server->netherEnabled){
+			if($this->getLevel() == $this->server->netherLevel){
+				$pk->dimension = ChangeDimensionPacket::DIMENSION_NETHER;
+			}
+		}
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
@@ -1704,6 +2230,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$pk->generator = 1; //0 old, 1 infinite, 2 flat
 		$pk->gamemode = $this->gamemode & 0x01;
 		$pk->eid = 0; //Always use EntityID as zero for the actual player
+		/*$pk = new SetPlayerGameTypePacket();
+		$pk->gamemode = $this->gamemode & 0x01;*/
 		$this->dataPacket($pk);
 
 		$pk = new SetTimePacket();
@@ -1724,22 +2252,20 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$pk = new SetDifficultyPacket();
 		$pk->difficulty = $this->server->getDifficulty();
 		$this->dataPacket($pk);
-
 		$this->server->getLogger()->info($this->getServer()->getLanguage()->translateString("ipocket.player.logIn", [
 			TextFormat::AQUA . $this->username . TextFormat::WHITE,
 			$this->ip,
 			$this->port,
+			TextFormat::GREEN . $this->randomClientId . TextFormat::WHITE,
 			$this->id,
 			$this->level->getName(),
 			round($this->x, 4),
 			round($this->y, 4),
 			round($this->z, 4)
 		]));
-
-		if($this->isOp()){
+		/*if($this->isOp()){
 			$this->setRemoveFormat(false);
-		}
-
+		}*/
 		if($this->gamemode === Player::SPECTATOR){
 			$pk = new ContainerSetContentPacket();
 			$pk->windowid = ContainerSetContentPacket::SPECIAL_CREATIVE;
@@ -1750,10 +2276,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$pk->slots = Item::getCreativeItems();
 			$this->dataPacket($pk);
 		}
-
 		$this->forceMovement = $this->teleportPosition = $this->getPosition();
+	}
 
-		$this->server->onPlayerLogin($this);
+	public function getProtocol(){
+		return $this->protocol;
 	}
 
 	/**
@@ -1776,7 +2303,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			return;
 		}
 
-
 		$timings = Timings::getReceiveDataPacketTimings($packet);
 
 		$timings->startTiming();
@@ -1788,6 +2314,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		}
 
 		switch($packet::NETWORK_ID){
+			case ProtocolInfo::PLAYER_INPUT_PACKET:
+				break;
 			case ProtocolInfo::LOGIN_PACKET:
 				if($this->loggedIn){
 					break;
@@ -1797,12 +2325,15 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$this->displayName = $this->username;
 				$this->setNameTag($this->username);
 				$this->iusername = strtolower($this->username);
+				$this->protocol = $packet->protocol1;
+				//if ($packet->protocol1 >= 37) $this->getServer()->getLogger()->notice("玩家 " . $this->username . " 使用 0.13 客户端加入服务器");
 
-				if(count($this->server->getOnlinePlayers()) >= $this->server->getMaxPlayers() and $this->kick("disconnectionScreen.serverFull", false)){
+				if(count($this->server->getOnlinePlayers()) > $this->server->getMaxPlayers()){
+					$this->close("", "disconnectionScreen.serverFull");
 					break;
 				}
 
-				if($packet->protocol1 !== ProtocolInfo::CURRENT_PROTOCOL){
+				if($packet->protocol1 != ProtocolInfo::CURRENT_PROTOCOL){
 					if($packet->protocol1 < ProtocolInfo::CURRENT_PROTOCOL){
 						$message = "disconnectionScreen.outdatedClient";
 
@@ -1822,6 +2353,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				}
 
 				$this->randomClientId = $packet->clientId;
+				$this->loginData = ["clientId" => $packet->clientId, "loginData" => null];
 
 				$this->uuid = $packet->clientUUID;
 				$this->rawUUID = $this->uuid->toBinary();
@@ -1834,10 +2366,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				}
 				for($i = 0; $i < $len and $valid; ++$i){
 					$c = ord($packet->username{$i});
-					if(($c >= ord("a") and $c <= ord("z")) or
-						($c >= ord("A") and $c <= ord("Z")) or
-						($c >= ord("0") and $c <= ord("9")) or $c === ord("_")
-					){
+					if(($c >= ord("a") and $c <= ord("z")) or ($c >= ord("A") and $c <= ord("Z")) or ($c >= ord("0") and $c <= ord("9")) or $c === ord("_")){
 						continue;
 					}
 
@@ -1851,9 +2380,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					break;
 				}
 
-				if(strlen($packet->skin) !== 64 * 32 * 4 and strlen($packet->skin) !== 64 * 64 * 4){
-					$this->close("", "disconnectionScreen.invalidSkin");
+				if((strlen($packet->skin) != 64 * 64 * 4) and (strlen($packet->skin) != 64 * 32 * 4)){
+					$this->close("", TextFormat::RED . "Please use 0.13.1 join the server!");
+					//$this->close("", "disconnectionScreen.invalidSkin");
 					break;
+					//$this->setSkin("", "Standard_Steve");
 				}
 
 				$this->setSkin($packet->skin, $packet->skinName);
@@ -1869,6 +2400,17 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				break;
 			case ProtocolInfo::MOVE_PLAYER_PACKET:
+				if($this->linkedEntity instanceof Entity){
+					$entity = $this->linkedEntity;
+					if($entity instanceof Boat){
+						$entity->setPosition($this->temporalVector->setComponents($packet->x, $packet->y - 0.3, $packet->z));
+					}
+					/*if($entity instanceof Minecart){
+						$entity->isFreeMoving = true;
+						$entity->motionX = -sin($packet->yaw / 180 * M_PI);
+						$entity->motionZ = cos($packet->yaw / 180 * M_PI);
+					}*/
+				}
 
 				$newPos = new Vector3($packet->x, $packet->y - $this->getEyeHeight(), $packet->z);
 
@@ -1879,7 +2421,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				}
 
 				if($this->teleportPosition !== null or ($this->forceMovement instanceof Vector3 and (($dist = $newPos->distanceSquared($this->forceMovement)) > 0.1 or $revert))){
-					$this->sendPosition($this->teleportPosition === null ? $this->forceMovement : $this->teleportPosition, $packet->yaw, $packet->pitch);
+					if($this->forceMovement instanceof Vector3) $this->sendPosition($this->forceMovement, $packet->yaw, $packet->pitch);
 				}else{
 					$packet->yaw %= 360;
 					$packet->pitch %= 360;
@@ -1932,13 +2474,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 							break;
 						}
 					}else{
-                        if($packet->selectedSlot >= 0 and $packet->selectedSlot < 9){
-                            $this->inventory->setHeldItemIndex($packet->selectedSlot);
-                            $this->inventory->setHeldItemSlot($packet->slot);
-                        }else{
-                            $this->inventory->sendContents($this);
-                            break;
-                        }
+						if($packet->selectedSlot >= 0 and $packet->selectedSlot < 9){
+							$this->inventory->setHeldItemIndex($packet->selectedSlot);
+							$this->inventory->setHeldItemSlot($packet->slot);
+						}else{
+							$this->inventory->sendContents($this);
+							break;
+						}
 					}
 				}elseif($item === null or $slot === -1 or !$item->deepEquals($packet->item)){ // packet error or not implemented
 					$this->inventory->sendContents($this);
@@ -1948,13 +2490,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$this->inventory->setItem($packet->selectedSlot, $item);
 					$this->inventory->setHeldItemSlot($packet->selectedSlot);
 				}else{
-                    if($packet->selectedSlot >= 0 and $packet->selectedSlot < $this->inventory->getHotbarSize()){
-                        $this->inventory->setHeldItemIndex($packet->selectedSlot);
-                        $this->inventory->setHeldItemSlot($slot);
-                    }else{
-                        $this->inventory->sendContents($this);
-                        break;
-                    }
+					if($packet->selectedSlot >= 0 and $packet->selectedSlot < $this->inventory->getHotbarSize()){
+						$this->inventory->setHeldItemIndex($packet->selectedSlot);
+						$this->inventory->setHeldItemSlot($slot);
+					}else{
+						$this->inventory->sendContents($this);
+						break;
+					}
 				}
 
 				$this->inventory->sendHeldItem($this->hasSpawned);
@@ -1985,7 +2527,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					}else{
 						$item = $this->inventory->getItemInHand();
 						$oldItem = clone $item;
-						//TODO: Implement adventure mode checks
 						if($this->level->useItemOn($blockVector, $item, $packet->face, $packet->fx, $packet->fy, $packet->fz, $this)){
 							if(!$item->deepEquals($oldItem) or $item->getCount() !== $oldItem->getCount()){
 								$this->inventory->setItemInHand($item);
@@ -2006,6 +2547,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$this->level->sendBlocks([$this], [$target, $block], UpdateBlockPacket::FLAG_ALL_PRIORITY);
 					break;
 				}elseif($packet->face === 0xff){
+					if($this->isSpectator()) break;
+
 					$aimPos = (new Vector3($packet->x / 32768, $packet->y / 32768, $packet->z / 32768))->normalize();
 
 					if($this->isCreative()){
@@ -2026,19 +2569,53 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						break;
 					}
 
+					if($item->getId() === Item::FISHING_ROD){
+						if($this->fishingHook instanceof FishingHook){
+							$this->fishingHook->close();
+							$this->fishingHook = null;
+						}else{
+							$nbt = new CompoundTag("", [
+								"Pos" => new EnumTag("Pos", [
+									new DoubleTag("", $this->x),
+									new DoubleTag("", $this->y + $this->getEyeHeight()),
+									new DoubleTag("", $this->z)
+								]),
+								"Motion" => new EnumTag("Motion", [
+									new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
+									new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
+									new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
+								]),
+								"Rotation" => new EnumTag("Rotation", [
+									new FloatTag("", $this->yaw),
+									new FloatTag("", $this->pitch)
+								])
+							]);
+
+							$f = 0.6;
+							$this->fishingHook = new FishingHook($this->chunk, $nbt, $this);
+							$this->fishingHook->setMotion($this->fishingHook->getMotion()->multiply($f));
+							//$this->fishingHook->owner = $this;
+							$this->fishingHook->spawnToAll();
+						}
+					}
+
 					if($item->getId() === Item::SNOWBALL){
-						$nbt = new Compound("", [
-							"Pos" => new Enum("Pos", [
-								new Double("", $this->x),
-								new Double("", $this->y + $this->getEyeHeight()),
-								new Double("", $this->z)
+						$nbt = new CompoundTag("", [
+							"Pos" => new EnumTag("Pos", [
+								new DoubleTag("", $this->x),
+								new DoubleTag("", $this->y + $this->getEyeHeight()),
+								new DoubleTag("", $this->z)
 							]),
-							"Motion" => new Enum("Motion", [
-								new Double("", $aimPos->x),
-								new Double("", $aimPos->y),
-								new Double("", $aimPos->z)
+							"Motion" => new EnumTag("Motion", [
+								/*new DoubleTag("", $aimPos->x),
+								new DoubleTag("", $aimPos->y),
+								new DoubleTag("", $aimPos->z)*/
+								//TODO: remove this because of a broken client
+								new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
+								new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
+								new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
 							]),
-							"Rotation" => new Enum("Rotation", [
+							"Rotation" => new EnumTag("Rotation", [
 								new FloatTag("", $this->yaw),
 								new FloatTag("", $this->pitch)
 							]),
@@ -2064,11 +2641,127 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						}
 					}
 
+					if($item->getId() === Item::EGG){
+						$nbt = new CompoundTag("", [
+							"Pos" => new EnumTag("Pos", [
+								new DoubleTag("", $this->x),
+								new DoubleTag("", $this->y + $this->getEyeHeight()),
+								new DoubleTag("", $this->z)
+							]),
+							"Motion" => new EnumTag("Motion", [
+								new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
+								new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
+								new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
+							]),
+							"Rotation" => new EnumTag("Rotation", [
+								new FloatTag("", $this->yaw),
+								new FloatTag("", $this->pitch)
+							]),
+						]);
+
+						$f = 1.5;
+						$egg = Entity::createEntity("Egg", $this->chunk, $nbt, $this);
+						$egg->setMotion($egg->getMotion()->multiply($f));
+						if($this->isSurvival()){
+							$item->setCount($item->getCount() - 1);
+							$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+						}
+						if($egg instanceof Projectile){
+							$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($egg));
+							if($projectileEv->isCancelled()){
+								$egg->kill();
+							}else{
+								$egg->spawnToAll();
+								$this->level->addSound(new LaunchSound($this), $this->getViewers());
+							}
+						}else{
+							$egg->spawnToAll();
+						}
+					}
+
+					if($item->getId() == Item::ENCHANTING_BOTTLE){
+						$nbt = new CompoundTag("", [
+							"Pos" => new EnumTag("Pos", [
+								new DoubleTag("", $this->x),
+								new DoubleTag("", $this->y + $this->getEyeHeight()),
+								new DoubleTag("", $this->z)
+							]),
+							"Motion" => new EnumTag("Motion", [
+								new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
+								new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
+								new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
+							]),
+							"Rotation" => new EnumTag("Rotation", [
+								new FloatTag("", $this->yaw),
+								new FloatTag("", $this->pitch)
+							]),
+						]);
+
+						$f = 1.1;
+						$thrownExpBottle = new ThrownExpBottle($this->chunk, $nbt, $this);
+						$thrownExpBottle->setMotion($thrownExpBottle->getMotion()->multiply($f));
+						if($this->isSurvival()){
+							$item->setCount($item->getCount() - 1);
+							$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+						}
+						if($thrownExpBottle instanceof Projectile){
+							$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($thrownExpBottle));
+							if($projectileEv->isCancelled()){
+								$thrownExpBottle->kill();
+							}else{
+								$thrownExpBottle->spawnToAll();
+								$this->level->addSound(new LaunchSound($this), $this->getViewers());
+							}
+						}else{
+							$thrownExpBottle->spawnToAll();
+						}
+					}
+
+					if($item->getId() == Item::SPLASH_POTION){
+						$nbt = new CompoundTag("", [
+							"Pos" => new EnumTag("Pos", [
+								new DoubleTag("", $this->x),
+								new DoubleTag("", $this->y + $this->getEyeHeight()),
+								new DoubleTag("", $this->z)
+							]),
+							"Motion" => new EnumTag("Motion", [
+								new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
+								new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
+								new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
+							]),
+							"Rotation" => new EnumTag("Rotation", [
+								new FloatTag("", $this->yaw),
+								new FloatTag("", $this->pitch)
+							]),
+							"PotionId" => new ShortTag("PotionId", $item->getDamage()),
+						]);
+
+						$f = 1.1;
+						$thrownPotion = new ThrownPotion($this->chunk, $nbt, $this);
+						$thrownPotion->setMotion($thrownPotion->getMotion()->multiply($f));
+						if($this->isSurvival()){
+							$item->setCount($item->getCount() - 1);
+							$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+						}
+						if($thrownPotion instanceof Projectile){
+							$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($thrownPotion));
+							if($projectileEv->isCancelled()){
+								$thrownPotion->kill();
+							}else{
+								$thrownPotion->spawnToAll();
+								$this->level->addSound(new LaunchSound($this), $this->getViewers());
+							}
+						}else{
+							$thrownPotion->spawnToAll();
+						}
+					}
+
 					$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, true);
 					$this->startAction = $this->server->getTick();
 				}
 				break;
 			case ProtocolInfo::PLAYER_ACTION_PACKET:
+				//$this->eatFoodInHand();
 				if($this->spawned === false or $this->blocked === true or (!$this->isAlive() and $packet->action !== PlayerActionPacket::ACTION_RESPAWN and $packet->action !== PlayerActionPacket::ACTION_DIMENSION_CHANGE)){
 					break;
 				}
@@ -2095,30 +2788,30 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						break;
 					case PlayerActionPacket::ACTION_RELEASE_ITEM:
 						if($this->startAction > -1 and $this->getDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION)){
-							if($this->inventory->getItemInHand()->getId() === Item::BOW) {
+							if($this->inventory->getItemInHand()->getId() === Item::BOW){
 								$bow = $this->inventory->getItemInHand();
-								if ($this->isSurvival() and !$this->inventory->contains(Item::get(Item::ARROW, 0, 1))) {
+								if($this->isSurvival() and !$this->inventory->contains(Item::get(Item::ARROW, 0, 1))){
 									$this->inventory->sendContents($this);
 									break;
 								}
 
 
-								$nbt = new Compound("", [
-									"Pos" => new Enum("Pos", [
-										new Double("", $this->x),
-										new Double("", $this->y + $this->getEyeHeight()),
-										new Double("", $this->z)
+								$nbt = new CompoundTag("", [
+									"Pos" => new EnumTag("Pos", [
+										new DoubleTag("", $this->x),
+										new DoubleTag("", $this->y + $this->getEyeHeight()),
+										new DoubleTag("", $this->z)
 									]),
-									"Motion" => new Enum("Motion", [
-										new Double("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
-										new Double("", -sin($this->pitch / 180 * M_PI)),
-										new Double("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
+									"Motion" => new EnumTag("Motion", [
+										new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
+										new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
+										new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
 									]),
-									"Rotation" => new Enum("Rotation", [
+									"Rotation" => new EnumTag("Rotation", [
 										new FloatTag("", $this->yaw),
 										new FloatTag("", $this->pitch)
 									]),
-									"Fire" => new Short("Fire", $this->isOnFire() ? 45 * 60 : 0)
+									"Fire" => new ShortTag("Fire", $this->isOnFire() ? 45 * 60 : 0)
 								]);
 
 								$diff = ($this->server->getTick() - $this->startAction);
@@ -2126,35 +2819,35 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 								$f = min((($p ** 2) + $p * 2) / 3, 1) * 2;
 								$ev = new EntityShootBowEvent($this, $bow, Entity::createEntity("Arrow", $this->chunk, $nbt, $this, $f == 2 ? true : false), $f);
 
-								if ($f < 0.1 or $diff < 5) {
+								if($f < 0.1 or $diff < 5){
 									$ev->setCancelled();
 								}
 
 								$this->server->getPluginManager()->callEvent($ev);
 
-								if ($ev->isCancelled()) {
+								if($ev->isCancelled()){
 									$ev->getProjectile()->kill();
 									$this->inventory->sendContents($this);
-								} else {
+								}else{
 									$ev->getProjectile()->setMotion($ev->getProjectile()->getMotion()->multiply($ev->getForce()));
 									if($this->isSurvival()){
 										$this->inventory->removeItem(Item::get(Item::ARROW, 0, 1));
 										$bow->setDamage($bow->getDamage() + 1);
-										if ($bow->getDamage() >= 385) {
+										if($bow->getDamage() >= 385){
 											$this->inventory->setItemInHand(Item::get(Item::AIR, 0, 0));
-										} else {
+										}else{
 											$this->inventory->setItemInHand($bow);
 										}
 									}
-									if ($ev->getProjectile() instanceof Projectile) {
+									if($ev->getProjectile() instanceof Projectile){
 										$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($ev->getProjectile()));
-										if ($projectileEv->isCancelled()) {
+										if($projectileEv->isCancelled()){
 											$ev->getProjectile()->kill();
-										} else {
+										}else{
 											$ev->getProjectile()->spawnToAll();
 											$this->level->addSound(new LaunchSound($this), $this->getViewers());
 										}
-									} else {
+									}else{
 										$ev->getProjectile()->spawnToAll();
 									}
 								}
@@ -2169,10 +2862,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 							$pk = new EntityEventPacket();
 							$pk->eid = $this->getId();
 							$pk->event = EntityEventPacket::USE_ITEM;
+							//$pk;
 							$this->dataPacket($pk);
 							Server::broadcastPacket($this->getViewers(), $pk);
 
-							if ($this->isSurvival()) {
+							if($this->isSurvival()){
 								$slot = $this->inventory->getItemInHand();
 								--$slot->count;
 								$this->inventory->setItemInHand($slot);
@@ -2211,7 +2905,15 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						$this->deadTicks = 0;
 						$this->noDamageTicks = 60;
 
+						//$this->getAttribute()->resetAll();
 						$this->setHealth($this->getMaxHealth());
+						$this->setFood(20);
+						$this->setMovementSpeed(0.1);
+						if($this->server->expEnabled) $this->updateExperience();
+
+						$this->starvationTick = 0;
+						$this->foodTick = 0;
+						$this->foodUsageTime = 0;
 
 						$this->removeAllEffects();
 						$this->sendData($this);
@@ -2284,11 +2986,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				$oldItem = clone $item;
 
-				if($this->canInteract($vector->add(0.5, 0.5, 0.5), $this->isCreative() ? 13 : 6) and $this->level->useBreakOn($vector, $item, $this)){
+				if($this->canInteract($vector->add(0.5, 0.5, 0.5), $this->isCreative() ? 13 : 6) and $this->level->useBreakOn($vector, $item, $this, true)){
 					if($this->isSurvival()){
-						if(!$item->deepEquals($oldItem) or $item->getCount() !== $oldItem->getCount()){
+						if(!$item->equals($oldItem) or $item->getCount() !== $oldItem->getCount()){
 							$this->inventory->setItemInHand($item);
-							$this->inventory->sendHeldItem($this->hasSpawned);
+							$this->inventory->sendHeldItem($this);
 						}
 					}
 					break;
@@ -2300,7 +3002,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				$this->level->sendBlocks([$this], [$target], UpdateBlockPacket::FLAG_ALL_PRIORITY);
 
-                $this->inventory->sendHeldItem($this);
+				$this->inventory->sendHeldItem($this);
 
 				if($tile instanceof Spawnable){
 					$tile->spawnTo($this);
@@ -2321,12 +3023,24 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				$cancelled = false;
 
-				if(
-					$target instanceof Player and
-					$this->server->getConfigBoolean("pvp", true) === false
+				if($target instanceof Player and $this->server->getConfigBoolean("pvp", true) === false
 
 				){
 					$cancelled = true;
+				}
+
+				if($target instanceof Boat or $target instanceof Minecart){
+					if($packet->action === 1){
+						$this->linkEntity($target);
+					}elseif($packet->action === 2){
+						if($this->linkedEntity == $target){
+							$target->setLinked(0, $this);
+						}
+						$target->close();
+					}elseif($packet->action === 3){
+						$this->setLinked(0, $target);
+					}
+					return;
 				}
 
 				if($target instanceof Entity and $this->getGamemode() !== Player::VIEW and $this->isAlive() and $target->isAlive()){
@@ -2460,66 +3174,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				switch($packet->event){
 					case 9: //Eating
-						$items = [ //TODO: move this to item classes
-							Item::APPLE => 4,
-							Item::MUSHROOM_STEW => 10,
-							Item::BEETROOT_SOUP => 10,
-							Item::BREAD => 5,
-							Item::RAW_PORKCHOP => 3,
-							Item::COOKED_PORKCHOP => 8,
-							Item::RAW_BEEF => 3,
-							Item::STEAK => 8,
-							Item::COOKED_CHICKEN => 6,
-							Item::RAW_CHICKEN => 2,
-							Item::MELON_SLICE => 2,
-							Item::GOLDEN_APPLE => 10,
-							Item::PUMPKIN_PIE => 8,
-							Item::CARROT => 4,
-							Item::POTATO => 1,
-							Item::BAKED_POTATO => 6,
-							Item::COOKIE => 2,
-							Item::COOKED_FISH => [
-								0 => 5,
-								1 => 6
-							],
-							Item::RAW_FISH => [
-								0 => 2,
-								1 => 2,
-								2 => 1,
-								3 => 1
-							],
-						];
-						$slot = $this->inventory->getItemInHand();
-						if($this->getHealth() < $this->getMaxHealth() and isset($items[$slot->getId()])){
-							$this->server->getPluginManager()->callEvent($ev = new PlayerItemConsumeEvent($this, $slot));
-							if($ev->isCancelled()){
-								$this->inventory->sendContents($this);
-								break;
-							}
-
-							$pk = new EntityEventPacket();
-							$pk->eid = $this->getId();
-							$pk->event = EntityEventPacket::USE_ITEM;
-							$this->dataPacket($pk);
-							Server::broadcastPacket($this->getViewers(), $pk);
-
-							$amount = $items[$slot->getId()];
-							if(is_array($amount)){
-								$amount = isset($amount[$slot->getDamage()]) ? $amount[$slot->getDamage()] : 0;
-							}
-                            $ev = new EntityRegainHealthEvent($this, $amount, EntityRegainHealthEvent::CAUSE_EATING);
-							$this->heal($ev->getAmount(), $ev);
-
-							--$slot->count;
-							$this->inventory->setItemInHand($slot);
-							if($slot->getId() === Item::MUSHROOM_STEW or $slot->getId() === Item::BEETROOT_SOUP){
-								$this->inventory->addItem(Item::get(Item::BOWL, 0, 1));
-							}elseif($slot->getId() === Item::RAW_FISH and $slot->getDamage() === 3){ //Pufferfish
-								//$this->addEffect(Effect::getEffect(Effect::HUNGER)->setAmplifier(2)->setDuration(15 * 20));
-								$this->addEffect(Effect::getEffect(Effect::NAUSEA)->setAmplifier(1)->setDuration(15 * 20));
-								$this->addEffect(Effect::getEffect(Effect::POISON)->setAmplifier(3)->setDuration(60 * 20));
-							}
-						}
+						$this->eatFoodInHand();
 						break;
 				}
 				break;
@@ -2568,7 +3223,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 							}else{
 								$this->server->getPluginManager()->callEvent($ev = new PlayerChatEvent($this, $ev->getMessage()));
 								if(!$ev->isCancelled()){
-									$this->server->broadcastMessage($this->getServer()->getLanguage()->translateString($ev->getFormat(), [$ev->getPlayer()->getDisplayName(), $ev->getMessage()]), $ev->getRecipients());
+									$this->server->broadcastMessage($this->getServer()->getLanguage()->translateString($ev->getFormat(), [
+										$ev->getPlayer()->getDisplayName(),
+										$ev->getMessage()
+									]), $ev->getRecipients());
 								}
 							}
 						}
@@ -2602,11 +3260,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				$recipe = $this->server->getCraftingManager()->getRecipe($packet->id);
 
+
 				if($recipe === null or (($recipe instanceof BigShapelessRecipe or $recipe instanceof BigShapedRecipe) and $this->craftingType === 0)){
 					$this->inventory->sendContents($this);
 					break;
 				}
 
+				/** @var Item $item */
 				foreach($packet->input as $i => $item){
 					if($item->getDamage() === -1 or $item->getDamage() === 0xffff){
 						$item->setDamage(null);
@@ -2625,11 +3285,19 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						for($y = 0; $y < 3; ++$y){
 							$item = $packet->input[$y * 3 + $x];
 							$ingredient = $recipe->getIngredient($x, $y);
-							if($item->getCount() > 0){
-								if($ingredient === null or !$ingredient->deepEquals($item, $ingredient->getDamage() !== null, $ingredient->getCompoundTag() !== null)){
+							if($item->getCount() > 0 and $item->getId() > 0){
+								if($ingredient == null){
 									$canCraft = false;
 									break;
 								}
+								if($ingredient->getId() != 0 and !$ingredient->deepEquals($item, $ingredient->getDamage() !== null, $ingredient->getCompoundTag() !== null)){
+									$canCraft = false;
+									break;
+								}
+
+							}elseif($ingredient !== null and $item->getId() !== 0){
+								$canCraft = false;
+								break;
 							}
 						}
 					}
@@ -2667,11 +3335,12 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				}
 
 				/** @var Item[] $ingredients */
+				$canCraft = true;//0.13.1大量物品本地配方出现问题,无法解决,使用极端(唯一)方法修复.
 				$ingredients = $packet->input;
 				$result = $packet->output[0];
 
 				if(!$canCraft or !$recipe->getResult()->deepEquals($result)){
-					$this->server->getLogger()->debug("Unmatched recipe ". $recipe->getId() ." from player ". $this->getName() .": expected " . $recipe->getResult() . ", got ". $result .", using: " . implode(", ", $ingredients));
+					$this->server->getLogger()->debug("Unmatched recipe " . $recipe->getId() . " from player " . $this->getName() . ": expected " . $recipe->getResult() . ", got " . $result . ", using: " . implode(", ", $ingredients));
 					$this->inventory->sendContents($this);
 					break;
 				}
@@ -2681,7 +3350,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				foreach($ingredients as $ingredient){
 					$slot = -1;
 					foreach($this->inventory->getContents() as $index => $i){
-						if($ingredient->getId() !== 0 and $ingredient->deepEquals($i, $i->getDamage() !== null) and ($i->getCount() - $used[$index]) >= 1){
+						if($ingredient->getId() !== 0 and $ingredient->deepEquals($i, $ingredient->getDamage() !== null) and ($i->getCount() - $used[$index]) >= 1){
 							$slot = $index;
 							$used[$index]++;
 							break;
@@ -2695,7 +3364,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				}
 
 				if(!$canCraft){
-					$this->server->getLogger()->debug("Unmatched recipe ". $recipe->getId() ." from player ". $this->getName() .": client does not have enough items, using: " . implode(", ", $ingredients));
+					$this->server->getLogger()->debug("Unmatched recipe " . $recipe->getId() . " from player " . $this->getName() . ": client does not have enough items, using: " . implode(", ", $ingredients));
 					$this->inventory->sendContents($this);
 					break;
 				}
@@ -2797,6 +3466,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				}elseif(isset($this->windowIndex[$packet->windowid])){
 					$this->craftingType = 0;
 					$inv = $this->windowIndex[$packet->windowid];
+
+					if($inv instanceof EnchantInventory and $packet->item->hasEnchantments()){
+						$inv->onEnchant($this, $inv->getItem($packet->slot), $packet->item);
+					}
+
 					$transaction = new BaseTransaction($inv, $packet->slot, $inv->getItem($packet->slot), $packet->item);
 				}else{
 					break;
@@ -2845,7 +3519,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 					$this->currentTransaction = null;
 				}
-
 				break;
 			case ProtocolInfo::BLOCK_ENTITY_DATA_PACKET:
 				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
@@ -2867,7 +3540,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						$t->spawnTo($this);
 					}else{
 						$ev = new SignChangeEvent($t->getBlock(), $this, [
-							TextFormat::clean($nbt["Text1"], $this->removeFormat), TextFormat::clean($nbt["Text2"], $this->removeFormat), TextFormat::clean($nbt["Text3"], $this->removeFormat), TextFormat::clean($nbt["Text4"], $this->removeFormat)
+							TextFormat::clean($nbt["Text1"], $this->removeFormat),
+							TextFormat::clean($nbt["Text2"], $this->removeFormat),
+							TextFormat::clean($nbt["Text3"], $this->removeFormat),
+							TextFormat::clean($nbt["Text4"], $this->removeFormat)
 						]);
 
 						if(!isset($t->namedtag->Creator) or $t->namedtag["Creator"] !== $this->getRawUniqueId()){
@@ -2909,11 +3585,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$this->server->getPluginManager()->callEvent($ev = new PlayerKickEvent($this, $reason, $this->getLeaveMessage()));
 		if(!$ev->isCancelled()){
 			if($isAdmin){
-                if(!$this->isBanned()) {
-                    $message = "Kicked by admin." . ($reason !== "" ? " Reason: " . $reason : "");
-                }else{
-                    $message = $reason;
-                }
+				$message = "Kicked by admin." . ($reason !== "" ? " Reason: " . $reason : "");
 			}else{
 				if($reason === ""){
 					$message = "disconnectionScreen.noReason";
@@ -2933,26 +3605,36 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 * Sends a direct chat message to a player
 	 *
 	 * @param string|TextContainer $message
+	 * @return bool
 	 */
 	public function sendMessage($message){
+
 		if($message instanceof TextContainer){
-				if ($message instanceof TranslationContainer) {
-					$this->sendTranslation($message->getText(), $message->getParameters());
-					return;
-				}
-				$message = $message->getText();
+
+			if($message instanceof TranslationContainer){
+				$this->sendTranslation($message->getText(), $message->getParameters());
+				return false;
+			}
+
+			$message = $message->getText();
 
 		}
 
 		$mes = explode("\n", $this->server->getLanguage()->translateString($message));
+
 		foreach($mes as $m){
 			if($m !== ""){
-				$pk = new TextPacket();
-				$pk->type = TextPacket::TYPE_RAW;
-				$pk->message = $m;
-				$this->dataPacket($pk);
+				$this->server->getPluginManager()->callEvent($ev = new PlayerTextPreSendEvent($this, $m, PlayerTextPreSendEvent::MESSAGE));
+				if(!$ev->isCancelled()){
+					$pk = new TextPacket();
+					$pk->type = TextPacket::TYPE_RAW;
+					$pk->message = $ev->getMessage();
+					$this->dataPacket($pk);
+				}
 			}
 		}
+
+		return true;
 	}
 
 	public function sendTranslation($message, array $parameters = []){
@@ -2968,31 +3650,81 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$pk->type = TextPacket::TYPE_RAW;
 			$pk->message = $this->server->getLanguage()->translateString($message, $parameters);
 		}
+
+		$ev = new PlayerTextPreSendEvent($this, $pk->message, PlayerTextPreSendEvent::TRANSLATED_MESSAGE);
+		$this->server->getPluginManager()->callEvent($ev);
+		if($ev->isCancelled()) return false;
+
 		$this->dataPacket($pk);
+
+		return true;
 	}
 
 	public function sendPopup($message, $subtitle = ""){
+		$ev = new PlayerTextPreSendEvent($this, $message, PlayerTextPreSendEvent::POPUP);
+		$this->server->getPluginManager()->callEvent($ev);
+		if($ev->isCancelled()) return false;
+
 		$pk = new TextPacket();
 		$pk->type = TextPacket::TYPE_POPUP;
 		$pk->source = $message;
 		$pk->message = $subtitle;
 		$this->dataPacket($pk);
+
+		return true;
 	}
 
 	public function sendTip($message){
+		$ev = new PlayerTextPreSendEvent($this, $message, PlayerTextPreSendEvent::TIP);
+		$this->server->getPluginManager()->callEvent($ev);
+		if($ev->isCancelled()) return false;
+
 		$pk = new TextPacket();
 		$pk->type = TextPacket::TYPE_TIP;
 		$pk->message = $message;
 		$this->dataPacket($pk);
+
+		return true;
 	}
+
+	/**
+	 * @param string $tranferedTo
+	 */
+	/*public final function setTransfered($transferedTo = "") {
+		if ($this->connected and !$this->closed) {
+			foreach ($this->usedChunks as $index => $d) {
+				Level::getXZ($index, $chunkX, $chunkZ);
+				$this->level->unregisterChunkLoader($this, $chunkX, $chunkZ);
+				unset($this->usedChunks[$index]);
+			}
+
+			$this->despawnFromAll();
+
+			if ($this->loggedIn) {
+				$this->server->removeOnlinePlayer($this);
+			}
+
+			$this->loggedIn = false;
+
+			$this->server->getPluginManager()->unsubscribeFromPermission(Server::BROADCAST_CHANNEL_USERS, $this);
+			$this->spawned = false;
+			$this->server->getLogger()->info($this->getServer()->getLanguage()->translateString("ipocket.player.transfered", [
+				TextFormat::AQUA . $this->getName() . TextFormat::WHITE,
+				$this->ip,
+				$this->port,
+				$transferedTo
+			]));
+			$this->hasTransfered = true;
+		}
+	}*/
 
 	/**
 	 * Note for plugin developers: use kick() with the isAdmin
 	 * flag set to kick without the "Kicked by admin" part instead of this method.
 	 *
 	 * @param string $message Message to be broadcasted
-	 * @param string $reason  Reason showed in console
-	 * @param bool $notify
+	 * @param string $reason Reason showed in console
+	 * @param bool   $notify
 	 */
 	public final function close($message = "", $reason = "generic reason", $notify = true){
 
@@ -3001,6 +3733,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$pk = new DisconnectPacket;
 				$pk->message = $reason;
 				$this->directDataPacket($pk);
+			}
+
+			//$this->setLinked();
+
+			if($this->fishingHook instanceof FishingHook){
+				$this->fishingHook->close();
+				$this->fishingHook = null;
 			}
 
 			$this->connected = false;
@@ -3039,7 +3778,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->loggedIn = false;
 
 			if(isset($ev) and $this->username != "" and $this->spawned !== false and $ev->getQuitMessage() != ""){
-				$this->server->broadcastMessage($ev->getQuitMessage());
+				if($this->server->playerMsgType === Server::PLAYER_MSG_TYPE_MESSAGE) $this->server->broadcastMessage($ev->getQuitMessage());
+				elseif($this->server->playerMsgType === Server::PLAYER_MSG_TYPE_TIP) $this->server->broadcastTip(str_replace("@player", $this->getName(), $this->server->playerLogoutMsg));
+				elseif($this->server->playerMsgType === Server::PLAYER_MSG_TYPE_POPUP) $this->server->broadcastPopup(str_replace("@player", $this->getName(), $this->server->playerLogoutMsg));
 			}
 
 			$this->server->getPluginManager()->unsubscribeFromPermission(Server::BROADCAST_CHANNEL_USERS, $this);
@@ -3057,6 +3798,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->hasSpawned = [];
 			$this->spawnPosition = null;
 			unset($this->buffer);
+
+			if($this->server->dserverConfig["enable"] and $this->server->dserverConfig["queryAutoUpdate"]) $this->server->updateQuery();
 		}
 
 		if($this->perm !== null){
@@ -3097,13 +3840,18 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			}
 
 			foreach($this->achievements as $achievement => $status){
-				$this->namedtag->Achievements[$achievement] = new Byte($achievement, $status === true ? 1 : 0);
+				$this->namedtag->Achievements[$achievement] = new ByteTag($achievement, $status === true ? 1 : 0);
 			}
 
 			$this->namedtag["playerGameType"] = $this->gamemode;
-			$this->namedtag["lastPlayed"] = new Long("lastPlayed", floor(microtime(true) * 1000));
+			$this->namedtag["lastPlayed"] = new LongTag("lastPlayed", floor(microtime(true) * 1000));
+			$this->namedtag["Hunger"] = new ShortTag("Hunger", $this->food);
+			$this->namedtag["Health"] = new ShortTag("Health", $this->getHealth());
+			$this->namedtag["MaxHealth"] = new ShortTag("MaxHealth", $this->getMaxHealth());
+			$this->namedtag["Experience"] = new LongTag("Experience", $this->experience);
+			$this->namedtag["ExpLevel"] = new LongTag("ExpLevel", $this->explevel);
 
-			if($this->username != "" and $this->namedtag instanceof Compound){
+			if($this->username != "" and $this->namedtag instanceof CompoundTag){
 				$this->server->saveOfflinePlayerData($this->username, $this->namedtag, $async);
 			}
 		}
@@ -3239,7 +3987,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 		$this->server->getPluginManager()->callEvent($ev = new PlayerDeathEvent($this, $this->getDrops(), new TranslationContainer($message, $params)));
 
-		if(!$ev->getKeepInventory()){
+		if(!$ev->getKeepInventory() and !$this->server->keepInventory){
 			foreach($ev->getDrops() as $item){
 				$this->level->dropItem($this, $item);
 			}
@@ -3249,13 +3997,28 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			}
 		}
 
+		if($this->server->expEnabled and (!$ev->getKeepExperience() and !$this->server->keepInventory)){
+			$exp = $this->getExperience();
+			if($exp > 100) $exp = 100;
+			$this->getLevel()->addExperienceOrb($this->add(0, 0.2, 0), $exp);
+			$this->setExperienceAndLevel(0, 0);
+		}
+
 		if($ev->getDeathMessage() != ""){
 			$this->server->broadcast($ev->getDeathMessage(), Server::BROADCAST_CHANNEL_USERS);
 		}
 
+		$pos = $this->getSpawn();
+
+		if($this->server->netherEnabled){
+			if($this->level == $this->server->netherLevel){
+				$this->teleport($pos = $this->server->getDefaultLevel()->getSafeSpawn());
+			}
+		}
+
+		$this->setHealth(0);
 
 		$pk = new RespawnPacket();
-		$pos = $this->getSpawn();
 		$pk->x = $pos->x;
 		$pk->y = $pos->y;
 		$pk->z = $pos->z;
@@ -3265,10 +4028,87 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	public function setHealth($amount){
 		parent::setHealth($amount);
 		if($this->spawned === true){
-			$pk = new SetHealthPacket();
-			$pk->health = $this->getHealth();
-			$this->dataPacket($pk);
+			$this->foodTick = 0;
+			$this->getAttribute()->getAttribute(AttributeManager::MAX_HEALTH)->setMaxValue($this->getMaxHealth())->setValue($amount);
+
 		}
+	}
+
+	protected $movementSpeed = 0.1;
+
+	/**
+	 * Set movement speed to the player
+	 *
+	 * @param $amount
+	 */
+	public function setMovementSpeed($amount){
+		$this->movementSpeed = $amount;
+		$this->getAttribute()->getAttribute(AttributeManager::MOVEMENTSPEED)->setValue($amount);
+	}
+
+	/**
+	 * Get movement speed of the player
+	 *
+	 * @return float
+	 */
+	public function getMovementSpeed(){
+		return $this->movementSpeed;
+	}
+
+	protected $food = 20;
+
+	protected $foodDepletion = 0;
+
+	protected $foodEnabled = true;
+
+	public function setFoodEnabled($enabled){
+		$this->foodEnabled = $enabled;
+	}
+
+	public function getFoodEnabled(){
+		return $this->foodEnabled;
+	}
+
+	public function setFood($amount){
+		if(!$this->server->foodEnabled) $amount = 20;
+		if($amount > 20) $amount = 20;
+		if($amount < 0) $amount = 0;
+		$this->server->getPluginManager()->callEvent($ev = new PlayerHungerChangeEvent($this, $amount));
+
+		if($ev->isCancelled()) return false;
+
+		$amount = $ev->getData();
+
+		if($amount <= 6 && !($this->getFood() <= 6)){
+			$this->setDataProperty(self::DATA_FLAG_SPRINTING, self::DATA_TYPE_BYTE, false);
+		}elseif($amount > 6 && !($this->getFood() > 6)){
+			$this->setDataProperty(self::DATA_FLAG_SPRINTING, self::DATA_TYPE_BYTE, true);
+		}
+
+		$this->food = $amount;
+		$this->getAttribute()->getAttribute(AttributeManager::MAX_HUNGER)->setValue($amount);
+
+		return true;
+	}
+
+	public function getFood(){
+		return $this->food;
+	}
+
+	public function subtractFood($amount){
+		if($this->getFood() - $amount <= 6 && !($this->getFood() <= 6)){
+			$this->setDataProperty(self::DATA_FLAG_SPRINTING, self::DATA_TYPE_BYTE, false);
+			//$this->removeEffect(Effect::SLOWNESS);
+		}elseif($this->getFood() - $amount < 6 && !($this->getFood() > 6)){
+			$this->setDataProperty(self::DATA_FLAG_SPRINTING, self::DATA_TYPE_BYTE, true);
+			/*$effect = Effect::getEffect(Effect::SLOWNESS);
+			$effect->setDuration(0x7fffffff);
+			$effect->setAmplifier(2);
+			$effect->setVisible(false);
+			$this->addEffect($effect);*/
+		}
+		if($this->food - $amount < 0) return;
+		$this->setFood($this->getFood() - $amount);
 	}
 
 	public function attack($damage, EntityDamageEvent $source){
@@ -3276,13 +4116,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			return;
 		}
 
-        if($this->isCreative()
-            and $source->getCause() !== EntityDamageEvent::CAUSE_MAGIC
-            and $source->getCause() !== EntityDamageEvent::CAUSE_SUICIDE
-            and $source->getCause() !== EntityDamageEvent::CAUSE_VOID
-        ){
-            $source->setCancelled();
-        }elseif($this->allowFlight and $source->getCause() === EntityDamageEvent::CAUSE_FALL){
+		if($this->isCreative() and $source->getCause() !== EntityDamageEvent::CAUSE_SUICIDE and $source->getCause() !== EntityDamageEvent::CAUSE_VOID){
+			$source->setCancelled();
+		}elseif($this->allowFlight and $source->getCause() === EntityDamageEvent::CAUSE_FALL){
 			$source->setCancelled();
 		}
 
@@ -3381,11 +4217,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 	/**
 	 * @param Vector3|Position|Location $pos
-	 * @param float $yaw
-	 * @param float $pitch
+	 * @param float                     $yaw
+	 * @param float                     $pitch
 	 *
 	 * @return bool
-     */
+	 */
 	public function teleport(Vector3 $pos, $yaw = null, $pitch = null){
 		if(!$this->isOnline()){
 			return false;
@@ -3408,6 +4244,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			}else{
 				$this->spawnToAll();
 			}
+
 
 			$this->resetFallDistance();
 			$this->nextChunkOrderRun = 0;
@@ -3452,7 +4289,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 *
 	 * @return int
 	 */
-	public function getWindowId(Inventory $inventory){
+	public function getWindowId(Inventory $inventory) : int{
 		if($this->windows->contains($inventory)){
 			return $this->windows[$inventory];
 		}
@@ -3468,7 +4305,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 *
 	 * @return int
 	 */
-	public function addWindow(Inventory $inventory, $forceId = null){
+	public function addWindow(Inventory $inventory, int $forceId = null) : int{
 		if($this->windows->contains($inventory)){
 			return $this->windows[$inventory];
 		}
@@ -3544,11 +4381,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	}
 
 	/**
-	 * @param $chunkX
-	 * @param $chunkZ
-	 * @param $payload
-	 *
-	 * @return DataPacket
+	 * @param     $chunkX
+	 * @param     $chunkZ
+	 * @param     $payload
+	 * @param int $ordering
+	 * @return BatchPacket|FullChunkDataPacket
 	 */
 	public static function getChunkCacheFromData($chunkX, $chunkZ, $payload, $ordering = FullChunkDataPacket::ORDER_COLUMNS){
 		$pk = new FullChunkDataPacket();
@@ -3556,14 +4393,16 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$pk->chunkZ = $chunkZ;
 		$pk->order = $ordering;
 		$pk->data = $payload;
-		$pk->encode();
-
-		$batch = new BatchPacket();
-		$batch->payload = zlib_encode(Binary::writeInt(strlen($pk->getBuffer())) . $pk->getBuffer(), ZLIB_ENCODING_DEFLATE, Server::getInstance()->networkCompressionLevel);
-
-		$batch->encode();
-		$batch->isEncoded = true;
-		return $batch;
+		if(Network::$BATCH_THRESHOLD >= 0){
+			$pk->encode();
+			$batch = new BatchPacket();
+			$batch->payload = zlib_encode(Binary::writeInt(strlen($pk->getBuffer())) . $pk->getBuffer(), ZLIB_ENCODING_DEFLATE, Server::getInstance()->networkCompressionLevel);
+			$batch->encode();
+			$batch->isEncoded = true;
+			return $batch;
+		}
+		return $pk;
 	}
+
 
 }

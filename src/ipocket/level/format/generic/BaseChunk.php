@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -24,7 +24,7 @@ namespace ipocket\level\format\generic;
 use ipocket\level\format\Chunk;
 use ipocket\level\format\ChunkSection;
 use ipocket\level\format\LevelProvider;
-use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\CompoundTag;
 use ipocket\utils\Binary;
 use ipocket\utils\ChunkException;
 
@@ -40,8 +40,8 @@ abstract class BaseChunk extends BaseFullChunk implements Chunk{
 	 * @param ChunkSection[] $sections
 	 * @param int[]          $biomeColors
 	 * @param int[]          $heightMap
-	 * @param Compound[]     $entities
-	 * @param Compound[]     $tiles
+	 * @param CompoundTag[]     $entities
+	 * @param CompoundTag[]     $tiles
 	 *
 	 * @throws ChunkException
 	 */
@@ -99,7 +99,8 @@ abstract class BaseChunk extends BaseFullChunk implements Chunk{
 	}
 
 	public function getBlockId($x, $y, $z){
-		return $this->sections[$y >> 4]->getBlockId($x, $y & 0x0f, $z);
+		if(isset($this->sections[$y >> 4])) return $this->sections[$y >> 4]->getBlockId($x, $y & 0x0f, $z);
+		else return 0;
 	}
 
 	public function setBlockId($x, $y, $z, $id){

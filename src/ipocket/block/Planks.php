@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -38,7 +38,7 @@ class Planks extends Solid{
 		$this->meta = $meta;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 2;
 	}
 
@@ -46,7 +46,7 @@ class Planks extends Solid{
 		return Tool::TYPE_AXE;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		static $names = [
 			self::OAK => "Oak Wood Planks",
 			self::SPRUCE => "Spruce Wood Planks",

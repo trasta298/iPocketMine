@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -25,7 +25,7 @@ class StillLava extends Lava{
 
 	protected $id = self::STILL_LAVA;
 
-	public function getName(){
+	public function getName() : string{
 		return "Still Lava";
 	}
 

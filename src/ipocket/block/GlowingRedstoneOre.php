@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -33,11 +33,11 @@ class GlowingRedstoneOre extends Solid{
 
 	}
 
-	public function getHardness(){
-		return 15;
+	public function getHardness() {
+		return 3;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Glowing Redstone Ore";
 	}
 
@@ -59,8 +59,8 @@ class GlowingRedstoneOre extends Solid{
 		return false;
 	}
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= Tool::TIER_IRON){
+	public function getDrops(Item $item) : array {
+		if($item->isPickaxe() >= 4){
 			return [
 				[Item::REDSTONE_DUST, 0, mt_rand(4, 5)],
 			];

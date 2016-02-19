@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -25,7 +25,6 @@ use ipocket\network\protocol\Info;
 use ipocket\Server;
 use ipocket\utils\Utils;
 use ipocket\utils\VersionString;
-use ipocket\utils\UUID;
 
 class SendUsageTask extends AsyncTask{
 
@@ -40,9 +39,9 @@ class SendUsageTask extends AsyncTask{
 		$endpoint = "http://" . $server->getProperty("anonymous-statistics.host", "stats.ipocket.net") . "/";
 
 		$data = [];
-		$data["uniqueServerId"] = $server->getServerUniqueId()->toString();
-		$data["uniqueMachineId"] = Utils::getMachineUniqueId()->toString();
-		$data["uniqueRequestId"] = UUID::fromData($server->getServerUniqueId(), microtime(true))->toString();
+		$data["uniqueServerId"] = $server->getServerUniqueId();
+		$data["uniqueMachineId"] = Utils::getMachineUniqueId();
+		$data["uniqueRequestId"] = Utils::dataToUUID($server->getServerUniqueId(), microtime(true));
 
 		switch($type){
 			case self::TYPE_OPEN:
@@ -144,7 +143,7 @@ class SendUsageTask extends AsyncTask{
 				"Content-Type: application/json",
 				"Content-Length: ". strlen($this->data)
 			]);
-		}catch(\Exception $e){
+		}catch(\Throwable $e){
 
 		}
 	}

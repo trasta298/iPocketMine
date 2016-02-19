@@ -1,5 +1,4 @@
 <?php
-
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
@@ -14,24 +13,17 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
-
 namespace ipocket\utils;
-
 #include <rules/DataPacket.h>
-
 #ifndef COMPILE
-
 #endif
-
 use ipocket\item\Item;
 
-
 class BinaryStream extends \stdClass{
-
 	public $offset;
 	public $buffer;
 
@@ -65,7 +57,6 @@ class BinaryStream extends \stdClass{
 		}elseif($len === true){
 			return substr($this->buffer, $this->offset);
 		}
-
 		return $len === 1 ? $this->buffer{$this->offset++} : substr($this->buffer, ($this->offset += $len) - $len, $len);
 	}
 
@@ -145,7 +136,6 @@ class BinaryStream extends \stdClass{
 		$this->buffer .= Binary::writeLFloat($v);
 	}
 
-
 	public function getTriad(){
 		return Binary::readTriad($this->get(3));
 	}
@@ -153,7 +143,6 @@ class BinaryStream extends \stdClass{
 	public function putTriad($v){
 		$this->buffer .= Binary::writeTriad($v);
 	}
-
 
 	public function getLTriad(){
 		return Binary::readLTriad($this->get(3));
@@ -176,7 +165,6 @@ class BinaryStream extends \stdClass{
 		for($i = 1; $i <= $len and !$this->feof(); ++$i){
 			$data[] = $this->get($this->getTriad());
 		}
-
 		return $data;
 	}
 
@@ -206,14 +194,13 @@ class BinaryStream extends \stdClass{
 
 		$data = $this->getShort();
 
-		$nbtLen = $this->getShort();
+		$nbtLen = $this->getLShort();
 
 		$nbt = "";
 
 		if($nbtLen > 0){
 			$nbt = $this->get($nbtLen);
 		}
-
 		return Item::get(
 			$id,
 			$data,
@@ -232,7 +219,7 @@ class BinaryStream extends \stdClass{
 		$this->putByte($item->getCount());
 		$this->putShort($item->getDamage() === null ? -1 : $item->getDamage());
 		$nbt = $item->getCompoundTag();
-		$this->putShort(strlen($nbt));
+		$this->putLShort(strlen($nbt));
 		$this->put($nbt);
 
 	}

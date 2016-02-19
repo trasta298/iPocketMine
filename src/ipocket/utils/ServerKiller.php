@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -32,9 +32,14 @@ class ServerKiller extends Thread{
 	}
 
 	public function run(){
-		sleep($this->time);
-		echo "\nTook too long to stop, server was killed forcefully!\n";
-		@\ipocket\kill(getmypid());
+		$start = time() + 1;
+		$this->synchronized(function(){
+			$this->wait($this->time * 1000000);
+		});
+		if(time() - $start >= $this->time){
+			echo "\nTook too long to stop, server was killed forcefully!\n";
+			@\ipocket\kill(getmypid());
+		}
 	}
 
 	public function getThreadName(){

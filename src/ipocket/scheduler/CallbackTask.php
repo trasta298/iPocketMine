@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -26,8 +26,6 @@ namespace ipocket\scheduler;
  * The last parameter in the callback will be this object
  *
  * If you want to do a task in a Plugin, consider extending PluginTask to your needs
- *
- * @deprecated
  *
  */
 class CallbackTask extends Task{

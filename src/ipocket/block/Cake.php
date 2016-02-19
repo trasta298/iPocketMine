@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -36,19 +36,19 @@ class Cake extends Transparent{
 		$this->meta = $meta;
 	}
 
-	public function canBeActivated(){
+	public function canBeActivated() : bool {
 		return true;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 0.5;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Cake Block";
 	}
 
-	protected function recalculateBoundingBox(){
+	protected function recalculateBoundingBox() {
 
 		$f = (1 + $this->getDamage() * 2) / 16;
 
@@ -85,7 +85,7 @@ class Cake extends Transparent{
 		return false;
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array {
 		return [];
 	}
 
@@ -96,15 +96,13 @@ class Cake extends Transparent{
 			$ev = new EntityRegainHealthEvent($player, 3, EntityRegainHealthEvent::CAUSE_EATING);
 			$player->heal($ev->getAmount(), $ev);
 
-			if(!$ev->isCancelled()){
-				if($this->meta >= 0x06){
-					$this->getLevel()->setBlock($this, new Air(), true);
-				}else{
-					$this->getLevel()->setBlock($this, $this, true);
-				}
-
-				return true;
+			if($this->meta >= 0x06){
+				$this->getLevel()->setBlock($this, new Air(), true);
+			}else{
+				$this->getLevel()->setBlock($this, $this, true);
 			}
+
+			return true;
 		}
 
 		return false;

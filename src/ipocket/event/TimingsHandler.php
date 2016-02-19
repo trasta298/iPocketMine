@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -72,7 +72,7 @@ class TimingsHandler{
 		}
 
 		fwrite($fp, "# Version " . Server::getInstance()->getVersion() . PHP_EOL);
-		fwrite($fp, "# " . Server::getInstance()->getName() . " " . Server::getInstance()->getPocketMineVersion() . PHP_EOL);
+		fwrite($fp, "# " . Server::getInstance()->getName() . " " . Server::getInstance()->getiPocketVersion() . PHP_EOL);
 
 		$entities = 0;
 		$livingEntities = 0;

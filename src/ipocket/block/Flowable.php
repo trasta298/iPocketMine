@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -30,7 +30,7 @@ abstract class Flowable extends Transparent{
 		return true;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 0;
 	}
 

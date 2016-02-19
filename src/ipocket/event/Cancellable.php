@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -28,5 +28,5 @@ namespace ipocket\event;
 interface Cancellable{
 	public function isCancelled();
 
-	public function setCancelled($value = true);
+	public function setCancelled($forceCancel = false);
 }

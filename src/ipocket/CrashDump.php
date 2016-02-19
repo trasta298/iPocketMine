@@ -1,23 +1,5 @@
 <?php
 
-/*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author iPocket Team
- * @link http://ipocket.link/
- *
- *
-*/
 
 namespace ipocket;
 
@@ -41,10 +23,10 @@ class CrashDump{
 	public function __construct(Server $server){
 		$this->time = time();
 		$this->server = $server;
-		$this->path = $this->server->getDataPath() . "CrashDumps" . DIRECTORY_SEPARATOR . "CrashDump_" . date("D_M_j-H.i.s-T_Y", $this->time) . ".log";
+		$this->path = $this->server->getCrashPath() . "CrashDump_" . date("D_M_j-H.i.s-T_Y", $this->time) . ".log";
 		$this->fp = @fopen($this->path, "wb");
 		if(!is_resource($this->fp)){
-			throw new \RuntimeException("Could not create Crash Dump");
+			throw new RuntimeException("Could not create Crash Dump");
 		}
 		$this->data["time"] = $this->time;
 		$this->addLine($this->server->getName() . " Crash Dump " . date("D M j H:i:s T Y", $this->time));
@@ -55,7 +37,7 @@ class CrashDump{
 
 		$this->extraData();
 
-		$this->encodeData();
+		//$this->encodeData();
 	}
 
 	public function getPath(){
@@ -86,6 +68,7 @@ class CrashDump{
 		if(class_exists("ipocket\\plugin\\PluginManager", false)){
 			$this->addLine();
 			$this->addLine("Loaded plugins:");
+			$this->addLine("加载的插件:");
 			$this->data["plugins"] = [];
 			foreach($this->server->getPluginManager()->getPlugins() as $p){
 				$d = $p->getDescription();
@@ -181,6 +164,7 @@ class CrashDump{
 		if(strpos($error["file"], "src/ipocket/") === false and strpos($error["file"], "src/raklib/") === false and file_exists($error["fullFile"])){
 			$this->addLine();
 			$this->addLine("THIS CRASH WAS CAUSED BY A PLUGIN");
+			$this->addLine("此次出错由插件引起");
 			$this->data["plugin"] = true;
 
 			$reflection = new \ReflectionClass(PluginBase::class);
@@ -190,7 +174,7 @@ class CrashDump{
 				$filePath = \ipocket\cleanPath($file->getValue($plugin));
 				if(strpos($error["file"], $filePath) === 0){
 					$this->data["plugin"] = $plugin->getName();
-					$this->addLine("BAD PLUGIN: " . $plugin->getDescription()->getFullName());
+					$this->addLine("BAD PLUGIN : " . $plugin->getDescription()->getFullName());
 					break;
 				}
 			}
@@ -232,10 +216,9 @@ class CrashDump{
 		$this->data["general"]["zend"] = zend_version();
 		$this->data["general"]["php_os"] = PHP_OS;
 		$this->data["general"]["os"] = Utils::getOS();
-		$this->addLine("iPocket version: " . $version->get(false) . " #" . $version->getBuild() . " [Protocol " . Info::CURRENT_PROTOCOL . "; API " . API_VERSION . "]");
-		$this->addLine("Git commit: " . GIT_COMMIT);
+		$this->addLine("Genisys version: " . $version->get(false) . " #" . $version->getBuild() . " [Protocol " . Info::CURRENT_PROTOCOL . "; API " . API_VERSION . "]");
 		$this->addLine("uname -a: " . php_uname("a"));
-		$this->addLine("PHP Version: " . phpversion());
+		$this->addLine("PHP version: " . phpversion());
 		$this->addLine("Zend version: " . zend_version());
 		$this->addLine("OS : " . PHP_OS . ", " . Utils::getOS());
 	}

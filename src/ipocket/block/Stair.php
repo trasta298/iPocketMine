@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -104,7 +104,7 @@ abstract class Stair extends Transparent{
 	}
 	*/
 
-	protected function recalculateBoundingBox(){
+	protected function recalculateBoundingBox() {
 
 		if(($this->getDamage() & 0x04) > 0){
 			return new AxisAlignedBB(
@@ -143,7 +143,7 @@ abstract class Stair extends Transparent{
 		return true;
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array {
 		if($item->isPickaxe() >= Tool::TIER_WOODEN){
 			return [
 				[$this->getId(), 0, 1],

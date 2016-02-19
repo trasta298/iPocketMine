@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -29,8 +29,8 @@ use ipocket\level\format\FullChunk;
 use ipocket\math\Vector3;
 use ipocket\nbt\NBT;
 
-use ipocket\nbt\tag\Compound;
-use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\CompoundTag;
+use ipocket\nbt\tag\EnumTag;
 use ipocket\nbt\tag\IntTag;
 
 use ipocket\nbt\tag\StringTag;
@@ -42,12 +42,12 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 	/** @var DoubleChestInventory */
 	protected $doubleInventory = null;
 
-	public function __construct(FullChunk $chunk, Compound $nbt){
+	public function __construct(FullChunk $chunk, CompoundTag $nbt){
 		parent::__construct($chunk, $nbt);
 		$this->inventory = new ChestInventory($this);
 
-		if(!isset($this->namedtag->Items) or !($this->namedtag->Items instanceof Enum)){
-			$this->namedtag->Items = new Enum("Items", []);
+		if(!isset($this->namedtag->Items) or !($this->namedtag->Items instanceof EnumTag)){
+			$this->namedtag->Items = new EnumTag("Items", []);
 			$this->namedtag->Items->setTagType(NBT::TAG_Compound);
 		}
 
@@ -70,7 +70,7 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 	}
 
 	public function saveNBT(){
-		$this->namedtag->Items = new Enum("Items", []);
+		$this->namedtag->Items = new EnumTag("Items", []);
 		$this->namedtag->Items->setTagType(NBT::TAG_Compound);
 		for($index = 0; $index < $this->getSize(); ++$index){
 			$this->setItem($index, $this->inventory->getItem($index));
@@ -182,7 +182,7 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 		}
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return isset($this->namedtag->CustomName) ? $this->namedtag->CustomName->getValue() : "Chest";
 	}
 
@@ -265,7 +265,7 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 
 	public function getSpawnCompound(){
 		if($this->isPaired()){
-			$c = new Compound("", [
+			$c = new CompoundTag("", [
 				new StringTag("id", Tile::CHEST),
 				new IntTag("x", (int) $this->x),
 				new IntTag("y", (int) $this->y),
@@ -274,7 +274,7 @@ class Chest extends Spawnable implements InventoryHolder, Container, Nameable{
 				new IntTag("pairz", (int) $this->namedtag["pairz"])
 			]);
 		}else{
-			$c = new Compound("", [
+			$c = new CompoundTag("", [
 				new StringTag("id", Tile::CHEST),
 				new IntTag("x", (int) $this->x),
 				new IntTag("y", (int) $this->y),

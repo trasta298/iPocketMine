@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -25,9 +25,9 @@ use ipocket\level\format\FullChunk;
 use ipocket\level\format\mcregion\McRegion;
 use ipocket\level\Level;
 use ipocket\nbt\NBT;
-use ipocket\nbt\tag\Byte;
-use ipocket\nbt\tag\ByteArray;
-use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\ByteTag;
+use ipocket\nbt\tag\ByteArrayTag;
+use ipocket\nbt\tag\CompoundTag;
 use ipocket\network\protocol\FullChunkDataPacket;
 use ipocket\tile\Spawnable;
 use ipocket\utils\BinaryStream;
@@ -76,37 +76,42 @@ class Anvil extends McRegion{
 			throw new ChunkException("Invalid Chunk sent");
 		}
 
-		$tiles = "";
+		if($this->getServer()->asyncChunkRequest){
+			$task = new ChunkRequestTask($this->getLevel(), $chunk);
+			$this->getServer()->getScheduler()->scheduleAsyncTask($task);
+		}else{
+			$tiles = "";
 
-		if(count($chunk->getTiles()) > 0){
-			$nbt = new NBT(NBT::LITTLE_ENDIAN);
-			$list = [];
-			foreach($chunk->getTiles() as $tile){
-				if($tile instanceof Spawnable){
-					$list[] = $tile->getSpawnCompound();
+			if(count($chunk->getTiles()) > 0){
+				$nbt = new NBT(NBT::LITTLE_ENDIAN);
+				$list = [];
+				foreach($chunk->getTiles() as $tile){
+					if($tile instanceof Spawnable){
+						$list[] = $tile->getSpawnCompound();
+					}
 				}
+				$nbt->setData($list);
+				$tiles = $nbt->write();
 			}
-			$nbt->setData($list);
-			$tiles = $nbt->write();
+
+			$extraData = new BinaryStream();
+			$extraData->putLInt(count($chunk->getBlockExtraDataArray()));
+			foreach($chunk->getBlockExtraDataArray() as $key => $value){
+				$extraData->putLInt($key);
+				$extraData->putLShort($value);
+			}
+
+			$ordered = $chunk->getBlockIdArray() .
+				$chunk->getBlockDataArray() .
+				$chunk->getBlockSkyLightArray() .
+				$chunk->getBlockLightArray() .
+				pack("C*", ...$chunk->getHeightMapArray()) .
+				pack("N*", ...$chunk->getBiomeColorArray()) .
+				$extraData->getBuffer() .
+				$tiles;
+
+			$this->getLevel()->chunkRequestCallback($x, $z, $ordered, FullChunkDataPacket::ORDER_LAYERED);
 		}
-
-		$extraData = new BinaryStream();
-		$extraData->putLInt(count($chunk->getBlockExtraDataArray()));
-		foreach($chunk->getBlockExtraDataArray() as $key => $value){
-			$extraData->putLInt($key);
-			$extraData->putLShort($value);
-		}
-
-		$ordered = $chunk->getBlockIdArray() .
-			$chunk->getBlockDataArray() .
-			$chunk->getBlockSkyLightArray() .
-			$chunk->getBlockLightArray() .
-			pack("C*", ...$chunk->getHeightMapArray()) .
-			pack("N*", ...$chunk->getBiomeColorArray()) .
-			$extraData->getBuffer() .
-			$tiles;
-
-		$this->getLevel()->chunkRequestCallback($x, $z, $ordered, FullChunkDataPacket::ORDER_LAYERED);
 
 		return null;
 	}
@@ -152,12 +157,12 @@ class Anvil extends McRegion{
 	}
 
 	public static function createChunkSection($Y){
-		return new ChunkSection(new Compound("", [
-			"Y" => new Byte("Y", $Y),
-			"Blocks" => new ByteArray("Blocks", str_repeat("\x00", 4096)),
-			"Data" => new ByteArray("Data", str_repeat("\x00", 2048)),
-			"SkyLight" => new ByteArray("SkyLight", str_repeat("\xff", 2048)),
-			"BlockLight" => new ByteArray("BlockLight", str_repeat("\x00", 2048))
+		return new ChunkSection(new CompoundTag("", [
+			"Y" => new ByteTag("Y", $Y),
+			"Blocks" => new ByteArrayTag("Blocks", str_repeat("\x00", 4096)),
+			"Data" => new ByteArrayTag("Data", str_repeat("\x00", 2048)),
+			"SkyLight" => new ByteArrayTag("SkyLight", str_repeat("\xff", 2048)),
+			"BlockLight" => new ByteArrayTag("BlockLight", str_repeat("\x00", 2048))
 		]));
 	}
 

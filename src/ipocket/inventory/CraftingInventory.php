@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -37,7 +37,7 @@ class CraftingInventory extends BaseInventory{
 	 * @param Inventory       $resultInventory
 	 * @param InventoryType   $inventoryType
 	 *
-	 * @throws \Exception
+	 * @throws \Throwable
 	 */
 	public function __construct(InventoryHolder $holder, Inventory $resultInventory, InventoryType $inventoryType){
 		if($inventoryType->getDefaultTitle() !== "Crafting"){

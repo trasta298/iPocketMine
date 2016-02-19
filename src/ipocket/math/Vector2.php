@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -22,7 +22,7 @@
 namespace ipocket\math;
 
 /**
- * WARNING: This class is available on the iPocket Zephir project.
+ * WARNING: This class is available on the iPocket-MP Zephir project.
  * If this class is modified, remember to modify the PHP C extension.
  */
 class Vector2{

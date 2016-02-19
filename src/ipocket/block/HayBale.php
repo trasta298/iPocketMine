@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -32,11 +32,11 @@ class HayBale extends Solid{
 		$this->meta = $meta;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Hay Bale";
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 0.5;
 	}
 
@@ -56,7 +56,7 @@ class HayBale extends Solid{
 		return true;
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array {
 		return [
 			[$this->id, 0, 1],
 		];

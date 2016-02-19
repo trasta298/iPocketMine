@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -26,7 +26,7 @@ class FenceGateAcacia extends FenceGate{
 
 	protected $id = self::FENCE_GATE_ACACIA;
 
-	public function getName(){
+	public function getName() : string{
 		return "Acacia Fence Gate";
 	}
 }

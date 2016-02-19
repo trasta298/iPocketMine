@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -33,7 +33,7 @@ class DesertBiome extends SandyBiome{
 		$this->rainfall = 0;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Desert";
 	}
 }

@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -85,6 +85,10 @@ class PluginLogger implements \AttachableLogger{
 
 	public function debug($message){
 		$this->log(LogLevel::DEBUG, $message);
+	}
+
+	public function logException(\Throwable $e, $trace = null){
+		Server::getInstance()->getLogger()->logException($e, $trace);
 	}
 
 	public function log($level, $message){

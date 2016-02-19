@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -46,7 +46,7 @@ class FormattedCommandAlias extends Command{
 		foreach($this->formatStrings as $formatString){
 			try{
 				$commands[] = $this->buildCommand($formatString, $args);
-			}catch(\Exception $e){
+			}catch(\Throwable $e){
 				if($e instanceof \InvalidArgumentException){
 					$sender->sendMessage(TextFormat::RED . $e->getMessage());
 				}else{

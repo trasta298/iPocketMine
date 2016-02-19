@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -26,7 +26,7 @@ use ipocket\level\generator\Generator;
 use ipocket\level\Level;
 use ipocket\math\Vector3;
 use ipocket\nbt\NBT;
-use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\CompoundTag;
 use ipocket\nbt\tag\IntTag;
 use ipocket\nbt\tag\StringTag;
 use ipocket\utils\LevelException;
@@ -36,7 +36,7 @@ abstract class BaseLevelProvider implements LevelProvider{
 	protected $level;
 	/** @var string */
 	protected $path;
-	/** @var Compound */
+	/** @var CompoundTag */
 	protected $levelData;
 
 	public function __construct(Level $level, $path){
@@ -48,7 +48,7 @@ abstract class BaseLevelProvider implements LevelProvider{
 		$nbt = new NBT(NBT::BIG_ENDIAN);
 		$nbt->readCompressed(file_get_contents($this->getPath() . "level.dat"));
 		$levelData = $nbt->getData();
-		if($levelData->Data instanceof Compound){
+		if($levelData->Data instanceof CompoundTag){
 			$this->levelData = $levelData->Data;
 		}else{
 			throw new LevelException("Invalid level.dat");
@@ -75,7 +75,7 @@ abstract class BaseLevelProvider implements LevelProvider{
 		return $this->level;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return $this->levelData["LevelName"];
 	}
 
@@ -118,7 +118,7 @@ abstract class BaseLevelProvider implements LevelProvider{
 
 	public function saveLevelData(){
 		$nbt = new NBT(NBT::BIG_ENDIAN);
-		$nbt->setData(new Compound("", [
+		$nbt->setData(new CompoundTag("", [
 			"Data" => $this->levelData
 		]));
 		$buffer = $nbt->writeCompressed();

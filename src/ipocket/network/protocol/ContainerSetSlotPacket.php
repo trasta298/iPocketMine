@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -30,9 +30,9 @@ class ContainerSetSlotPacket extends DataPacket{
 
 	public $windowid;
 	public $slot;
-	public $hotbarSlot;
 	/** @var Item */
 	public $item;
+	public $hotbarSlot;
 
 	public function decode(){
 		$this->windowid = $this->getByte();

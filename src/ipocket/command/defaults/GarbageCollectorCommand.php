@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -58,14 +58,12 @@ class GarbageCollectorCommand extends VanillaCommand{
 		}
 
 		$cyclesCollected = $sender->getServer()->getMemoryManager()->triggerGarbageCollector();
-
-		$sender->sendMessage(TextFormat::GREEN . "---- " . TextFormat::WHITE . "Garbage collection result" . TextFormat::GREEN . " ----");
-		$sender->sendMessage(TextFormat::GOLD . "Chunks: " . TextFormat::RED . number_format($chunksCollected));
-		$sender->sendMessage(TextFormat::GOLD . "Entities: " . TextFormat::RED . number_format($entitiesCollected));
-		$sender->sendMessage(TextFormat::GOLD . "Tiles: " . TextFormat::RED . number_format($tilesCollected));
-
-		$sender->sendMessage(TextFormat::GOLD . "Cycles: " . TextFormat::RED . number_format($cyclesCollected));
-		$sender->sendMessage(TextFormat::GOLD . "Memory freed: " . TextFormat::RED . number_format(round((($memory - memory_get_usage()) / 1024) / 1024, 2))." MB");
+		$sender->sendMessage(TextFormat::GREEN . "---- " . TextFormat::WHITE . "%ipocket.command.gc.title" . TextFormat::GREEN . " ----");
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.gc.chunks" . TextFormat::RED . \number_format($chunksCollected));
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.gc.entities" . TextFormat::RED . \number_format($entitiesCollected));
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.gc.tiles" . TextFormat::RED . \number_format($tilesCollected));
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.gc.cycles" . TextFormat::RED . \number_format($cyclesCollected));
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.gc.memory" . TextFormat::RED . \number_format(\round((($memory - \memory_get_usage()) / 1024) / 1024, 2))." MB");
 		return true;
 	}
 }

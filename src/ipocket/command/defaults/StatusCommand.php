@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -41,11 +41,12 @@ class StatusCommand extends VanillaCommand{
 			return true;
 		}
 
-		$rUsage = Utils::getRealMemoryUsage();
 		$mUsage = Utils::getMemoryUsage(true);
+		$rUsage = Utils::getRealMemoryUsage();
 
 		$server = $sender->getServer();
-		$sender->sendMessage(TextFormat::GREEN . "---- " . TextFormat::WHITE . "Server status" . TextFormat::GREEN . " ----");
+		$sender->sendMessage(TextFormat::GREEN . "---- " . TextFormat::WHITE . "%ipocket.command.status.title" . TextFormat::GREEN . " ----");
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.status.player" . TextFormat::GREEN ." ". \count($sender->getServer()->getOnlinePlayers()) . "/" . $sender->getServer()->getMaxPlayers());
 
 		$time = microtime(true) - \ipocket\START_TIME;
 
@@ -67,43 +68,50 @@ class StatusCommand extends VanillaCommand{
 		$uptime = ($minutes !== null ?
 				($hours !== null ?
 					($days !== null ?
-						"$days days "
-					: "") . "$hours hours "
-					: "") . "$minutes minutes "
-			: "") . "$seconds seconds";
+						"$days %ipocket.command.status.days "
+						: "") . "$hours %ipocket.command.status.hours "
+					: "") . "$minutes %ipocket.command.status.minutes "
+				: "") . "$seconds %ipocket.command.status.seconds";
 
-		$sender->sendMessage(TextFormat::GOLD . "Uptime: " . TextFormat::RED . $uptime);
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.status.uptime " . TextFormat::RED . $uptime);
 
 		$tpsColor = TextFormat::GREEN;
-		if($server->getTicksPerSecond() < 17){
+		if($server->getTicksPerSecondAverage() < 10){
 			$tpsColor = TextFormat::GOLD;
-		}elseif($server->getTicksPerSecond() < 12){
+		}elseif($server->getTicksPerSecondAverage() < 1){
 			$tpsColor = TextFormat::RED;
 		}
 
-		$sender->sendMessage(TextFormat::GOLD . "Current TPS: " . $tpsColor . $server->getTicksPerSecond() . " (".$server->getTickUsage()."%)");
-
-		$sender->sendMessage(TextFormat::GOLD . "Network upload: " . TextFormat::RED . round($server->getNetwork()->getUpload() / 1024, 2) . " kB/s");
-		$sender->sendMessage(TextFormat::GOLD . "Network download: " . TextFormat::RED . round($server->getNetwork()->getDownload() / 1024, 2) . " kB/s");
-
-		$sender->sendMessage(TextFormat::GOLD . "Thread count: " . TextFormat::RED . Utils::getThreadCount());
-
-		$sender->sendMessage(TextFormat::GOLD . "Main thread memory: " . TextFormat::RED . number_format(round(($mUsage[0] / 1024) / 1024, 2)) . " MB.");
-		$sender->sendMessage(TextFormat::GOLD . "Total memory: " . TextFormat::RED . number_format(round(($mUsage[1] / 1024) / 1024, 2)) . " MB.");
-		$sender->sendMessage(TextFormat::GOLD . "Total virtual memory: " . TextFormat::RED . number_format(round(($mUsage[2] / 1024) / 1024, 2)) . " MB.");
-		$sender->sendMessage(TextFormat::GOLD . "Heap memory: " . TextFormat::RED . number_format(round(($rUsage[0] / 1024) / 1024, 2)) . " MB.");
-		$sender->sendMessage(TextFormat::GOLD . "Maximum memory (system): " . TextFormat::RED . number_format(round(($mUsage[2] / 1024) / 1024, 2)) . " MB.");
-
-		if($server->getProperty("memory.global-limit") > 0){
-			$sender->sendMessage(TextFormat::GOLD . "Maximum memory (manager): " . TextFormat::RED . number_format(round($server->getProperty("memory.global-limit"), 2)) . " MB.");
+		$tpsColour = TextFormat::GREEN;
+		if($server->getTicksPerSecond() < 10){
+			$tpsColour = TextFormat::GOLD;
+		}elseif($server->getTicksPerSecond() < 1){
+			$tpsColour = TextFormat::RED;
 		}
 
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.status.AverageTPS " . $tpsColor . $server->getTicksPerSecondAverage() . " (" . $server->getTickUsageAverage() . "%)");
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.status.CurrentTPS " . $tpsColour . $server->getTicksPerSecond() . " (" . $server->getTickUsage() . "%)");
+
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.status.Networkupload " . TextFormat::RED . \round($server->getNetwork()->getUpload() / 1024, 2) . " kB/s");
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.status.Networkdownload " . TextFormat::RED . \round($server->getNetwork()->getDownload() / 1024, 2) . " kB/s");
+
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.status.Threadcount " . TextFormat::RED . Utils::getThreadCount());
+
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.status.Mainmemory " . TextFormat::RED . number_format(round(($mUsage[0] / 1024) / 1024, 2)) . " MB.");
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.status.Totalmemory " . TextFormat::RED . number_format(round(($mUsage[1] / 1024) / 1024, 2)) . " MB.");
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.status.Totalvirtualmemory " . TextFormat::RED . number_format(round(($mUsage[2] / 1024) / 1024, 2)) . " MB.");
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.status.Heapmemory " . TextFormat::RED . number_format(round(($rUsage[0] / 1024) / 1024, 2)) . " MB.");
+		$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.status.Maxmemorysystem " . TextFormat::RED . number_format(round(($mUsage[2] / 1024) / 1024, 2)) . " MB.");
+
+		if($server->getProperty("memory.global-limit") > 0){
+			$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.status.Maxmemorymanager " . TextFormat::RED . number_format(round($server->getProperty("memory.global-limit"), 2)) . " MB.");
+		}
 		foreach($server->getLevels() as $level){
-			$sender->sendMessage(TextFormat::GOLD . "World \"".$level->getFolderName()."\"".($level->getFolderName() !== $level->getName() ? " (".$level->getName().")" : "").": " .
-			TextFormat::RED . number_format(count($level->getChunks())) . TextFormat::GREEN . " chunks, " .
-			TextFormat::RED . number_format(count($level->getEntities())) . TextFormat::GREEN . " entities, " .
-			TextFormat::RED . number_format(count($level->getTiles())) . TextFormat::GREEN . " tiles. ".
-			"Time " . (($level->getTickRate() > 1 or $level->getTickRateTime() > 40) ? TextFormat::RED : TextFormat::YELLOW) . round($level->getTickRateTime(), 2)."ms" . ($level->getTickRate() > 1 ? " (tick rate ". $level->getTickRate() .")" : "")
+			$sender->sendMessage(TextFormat::GOLD . "%ipocket.command.status.World \"" . $level->getFolderName() . "\"" . ($level->getFolderName() !== $level->getName() ? " (" . $level->getName() . ")" : "") . ": " .
+				TextFormat::RED . number_format(count($level->getChunks())) . TextFormat::GREEN . " %ipocket.command.status.chunks " .
+				TextFormat::RED . number_format(count($level->getEntities())) . TextFormat::GREEN . " %ipocket.command.status.entities " .
+				TextFormat::RED . number_format(count($level->getTiles())) . TextFormat::GREEN . " %ipocket.command.status.tiles " .
+				"%ipocket.command.status.Time " . (($level->getTickRate() > 1 or $level->getTickRateTime() > 40) ? TextFormat::RED : TextFormat::YELLOW) . round($level->getTickRateTime(), 2) . "%ipocket.command.status.ms" . ($level->getTickRate() > 1 ? " (tick rate " . $level->getTickRate() . ")" : "")
 			);
 		}
 

@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -32,7 +32,7 @@ class Coal extends Solid{
 
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 5;
 	}
 
@@ -40,12 +40,12 @@ class Coal extends Solid{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Coal Block";
 	}
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= Tool::TIER_WOODEN){
+	public function getDrops(Item $item) : array {
+		if($item->isPickaxe() >= 1){
 			return [
 				[Item::COAL_BLOCK, 0, 1],
 			];

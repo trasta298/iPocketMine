@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -25,7 +25,7 @@ class StillWater extends Water{
 
 	protected $id = self::STILL_WATER;
 
-	public function getName(){
+	public function getName() : string{
 		return "Still Water";
 	}
 }

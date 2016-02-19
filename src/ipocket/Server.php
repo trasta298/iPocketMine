@@ -14,15 +14,11 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
 
-/**
- * iPocket is the Minecraft: PE multiplayer server software
- * Homepage: http://ipocket.link/
- */
 namespace ipocket;
 
 use ipocket\block\Block;
@@ -34,15 +30,19 @@ use ipocket\command\SimpleCommandMap;
 use ipocket\entity\Arrow;
 use ipocket\entity\Attribute;
 use ipocket\entity\Effect;
+use ipocket\entity\Egg;
 use ipocket\entity\Entity;
 use ipocket\entity\FallingSand;
+use ipocket\entity\FishingHook;
 use ipocket\entity\Human;
 use ipocket\entity\Item as DroppedItem;
 use ipocket\entity\PrimedTNT;
+use ipocket\entity\Rabbit;
 use ipocket\entity\Snowball;
 use ipocket\entity\Squid;
 use ipocket\entity\Villager;
 use ipocket\entity\Zombie;
+use ipocket\entity\ZombieVillager;
 use ipocket\event\HandlerList;
 use ipocket\event\level\LevelInitEvent;
 use ipocket\event\level\LevelLoadEvent;
@@ -57,6 +57,7 @@ use ipocket\inventory\Recipe;
 use ipocket\inventory\ShapedRecipe;
 use ipocket\inventory\ShapelessRecipe;
 use ipocket\item\enchantment\Enchantment;
+use ipocket\item\enchantment\EnchantmentLevelTable;
 use ipocket\item\Item;
 use ipocket\lang\BaseLang;
 use ipocket\level\format\anvil\Anvil;
@@ -65,6 +66,7 @@ use ipocket\level\format\LevelProviderManager;
 use ipocket\level\format\mcregion\McRegion;
 use ipocket\level\generator\biome\Biome;
 use ipocket\level\generator\Flat;
+use ipocket\level\generator\Void;
 use ipocket\level\generator\Generator;
 use ipocket\level\generator\hell\Nether;
 use ipocket\level\generator\normal\Normal;
@@ -73,14 +75,14 @@ use ipocket\metadata\EntityMetadataStore;
 use ipocket\metadata\LevelMetadataStore;
 use ipocket\metadata\PlayerMetadataStore;
 use ipocket\nbt\NBT;
-use ipocket\nbt\tag\Byte;
-use ipocket\nbt\tag\Compound;
-use ipocket\nbt\tag\Double;
-use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\ByteTag;
+use ipocket\nbt\tag\CompoundTag;
+use ipocket\nbt\tag\DoubleTag;
+use ipocket\nbt\tag\EnumTag;
 use ipocket\nbt\tag\FloatTag;
 use ipocket\nbt\tag\IntTag;
-use ipocket\nbt\tag\Long;
-use ipocket\nbt\tag\Short;
+use ipocket\nbt\tag\LongTag;
+use ipocket\nbt\tag\ShortTag;
 use ipocket\nbt\tag\StringTag;
 use ipocket\network\CompressBatchedTask;
 use ipocket\network\Network;
@@ -95,6 +97,7 @@ use ipocket\network\SourceInterface;
 use ipocket\network\upnp\UPnP;
 use ipocket\permission\BanList;
 use ipocket\permission\DefaultPermissions;
+use ipocket\plugin\FolderPluginLoader;
 use ipocket\plugin\PharPluginLoader;
 use ipocket\plugin\Plugin;
 use ipocket\plugin\PluginLoadOrder;
@@ -103,10 +106,18 @@ use ipocket\plugin\ScriptPluginLoader;
 use ipocket\scheduler\FileWriteTask;
 use ipocket\scheduler\SendUsageTask;
 use ipocket\scheduler\ServerScheduler;
+use ipocket\tile\BrewingStand;
 use ipocket\tile\Chest;
+use ipocket\tile\Dispenser;
+use ipocket\tile\DLDetector;
+use ipocket\tile\Dropper;
 use ipocket\tile\EnchantTable;
+use ipocket\tile\FlowerPot;
 use ipocket\tile\Furnace;
+use ipocket\tile\ItemFrame;
+use ipocket\tile\MobSpawner;
 use ipocket\tile\Sign;
+use ipocket\tile\Skull;
 use ipocket\tile\Tile;
 use ipocket\updater\AutoUpdater;
 use ipocket\utils\Binary;
@@ -117,10 +128,45 @@ use ipocket\utils\ServerException;
 use ipocket\utils\ServerKiller;
 use ipocket\utils\Terminal;
 use ipocket\utils\TextFormat;
-use ipocket\utils\TextWrapper;
+//use ipocket\utils\TextWrapper;
 use ipocket\utils\Utils;
 use ipocket\utils\UUID;
 use ipocket\utils\VersionString;
+
+use ipocket\entity\Chicken;
+use ipocket\entity\Cow;
+use ipocket\entity\Pig;
+use ipocket\entity\Sheep;
+use ipocket\entity\Wolf;
+use ipocket\entity\Mooshroom;
+use ipocket\entity\Creeper;
+use ipocket\entity\Skeleton;
+use ipocket\entity\Spider;
+use ipocket\entity\PigZombie;
+use ipocket\entity\Slime;
+use ipocket\entity\Enderman;
+use ipocket\entity\Silverfish;
+use ipocket\entity\CaveSpider;
+use ipocket\entity\Ghast;
+use ipocket\entity\LavaSlime;
+use ipocket\entity\Bat;
+use ipocket\entity\Blaze;
+use ipocket\entity\Ocelot;
+use ipocket\entity\IronGolem;
+use ipocket\entity\SnowGolem;
+use ipocket\entity\Lightning;
+use ipocket\entity\ExperienceOrb;
+use ipocket\level\weather\WeatherManager;
+use ipocket\network\protocol\StrangePacket;
+use ipocket\event\player\PlayerTransferEvent;
+use ipocket\entity\ai\AIHolder;
+use ipocket\entity\ThrownExpBottle;
+use ipocket\entity\Boat;
+use ipocket\entity\Minecart;
+use ipocket\entity\ThrownPotion;
+use ipocket\entity\Painting;
+use ipocket\scheduler\DServerTask;
+use ipocket\scheduler\CallbackTask;
 
 /**
  * The class that manages everything
@@ -129,14 +175,24 @@ class Server{
 	const BROADCAST_CHANNEL_ADMINISTRATIVE = "ipocket.broadcast.admin";
 	const BROADCAST_CHANNEL_USERS = "ipocket.broadcast.user";
 
+	const PLAYER_MSG_TYPE_MESSAGE = 0;
+	const PLAYER_MSG_TYPE_TIP = 1;
+	const PLAYER_MSG_TYPE_POPUP = 2;
+
 	/** @var Server */
 	private static $instance = null;
+
+	/** @var \Threaded */
+	private static $sleeper = null;
 
 	/** @var BanList */
 	private $banByName = null;
 
 	/** @var BanList */
 	private $banByIP = null;
+
+	/** @var BanList */
+	private $banByCID = \null;
 
 	/** @var Config */
 	private $operators = null;
@@ -184,7 +240,7 @@ class Server{
 
 	/** @var CommandReader */
 	private $console = null;
-	private $consoleThreaded;
+	//private $consoleThreaded;
 
 	/** @var SimpleCommandMap */
 	private $commandMap = null;
@@ -269,11 +325,58 @@ class Server{
 	/** @var Level */
 	private $levelDefault = null;
 
+	/** Advanced Config */
+	public $advancedConfig = null;
+
+	public $weatherEnabled = true;
+	public $foodEnabled = true;
+	public $expEnabled = true;
+	public $keepInventory = false;
+	public $netherEnabled = false;
+	public $netherName = "nether";
+	public $netherLevel = null;
+	public $weatherChangeTime = 12000;
+	public $lookup = [];
+	public $hungerHealth = 10;
+	public $lightningTime = 100;
+	public $expCache = [];
+	public $expWriteAhead = 200;
+	public $aiConfig = [];
+	public $aiEnabled = false;
+	public $aiHolder = null;
+	public $inventoryNum = 36;
+	public $hungerTimer = 80;
+	public $weatherLastTime = 1200;
+	public $version;
+	public $allowSnowGolem;
+	public $allowIronGolem;
+	public $autoClearInv = true;
+	public $dserverConfig = [];
+	public $dserverPlayers = 0;
+	public $dserverAllPlayers = 0;
+	public $redstoneEnabled = false;
+	public $allowFrequencyPulse = false;
+	public $anviletEnabled = false;
+	public $pulseFrequency = 20;
+	public $playerMsgType = self::PLAYER_MSG_TYPE_MESSAGE;
+	public $playerLoginMsg = "";
+	public $playerLogoutMsg = "";
+	public $antiFly = false;
+	public $asyncChunkRequest = true;
+	public $recipesFromJson = false;
+	public $creativeItemsFromJson = false;
+	public $minecartMovingType = 0;
+	public $checkMovement = false;
+	public $keepExperience = false;
+
+	/** @var CraftingDataPacket */
+	private $recipeList = null;
+
 	/**
 	 * @return string
 	 */
-	public function getName(){
-		return "iPocket";
+	public function getName() : string{
+		return "Genisys";
 	}
 
 	/**
@@ -286,7 +389,7 @@ class Server{
 	/**
 	 * @return string
 	 */
-	public function getPocketMineVersion(){
+	public function getiPocketVersion(){
 		return \ipocket\VERSION;
 	}
 
@@ -309,6 +412,11 @@ class Server{
 	 */
 	public function getApiVersion(){
 		return \ipocket\API_VERSION;
+	}
+
+
+	public function getiTXApiVersion(){
+		return \ipocket\iTX_API_VERSION;
 	}
 
 	/**
@@ -558,7 +666,7 @@ class Server{
 	}
 
 	/**
-	 * @return \AttachableThreadedLogger
+	 * @return MainLogger
 	 */
 	public function getLogger(){
 		return $this->logger;
@@ -618,6 +726,10 @@ class Server{
 	 */
 	public function getTick(){
 		return $this->tickCounter;
+	}
+
+	public function getAIHolder(){
+		return $this->aiHolder;
 	}
 
 	/**
@@ -722,6 +834,7 @@ class Server{
 
 	public function addRecipe(Recipe $recipe){
 		$this->craftingManager->registerRecipe($recipe);
+		$this->generateRecipeList();
 	}
 
 	/**
@@ -743,7 +856,7 @@ class Server{
 	/**
 	 * @param string $name
 	 *
-	 * @return Compound
+	 * @return CompoundTag
 	 */
 	public function getOfflinePlayerData($name){
 		$name = strtolower($name);
@@ -754,7 +867,7 @@ class Server{
 				$nbt->readCompressed(file_get_contents($path . "$name.dat"));
 
 				return $nbt->getData();
-			}catch(\Exception $e){ //zlib decode error / corrupt data
+			}catch(\Throwable $e){ //zlib decode error / corrupt data
 				rename($path . "$name.dat", $path . "$name.dat.bak");
 				$this->logger->notice($this->getLanguage()->translateString("ipocket.data.playerCorrupted", [$name]));
 			}
@@ -762,45 +875,50 @@ class Server{
 			$this->logger->notice($this->getLanguage()->translateString("ipocket.data.playerNotFound", [$name]));
 		}
 		$spawn = $this->getDefaultLevel()->getSafeSpawn();
-		$nbt = new Compound("", [
-			new Long("firstPlayed", floor(microtime(true) * 1000)),
-			new Long("lastPlayed", floor(microtime(true) * 1000)),
-			new Enum("Pos", [
-				new Double(0, $spawn->x),
-				new Double(1, $spawn->y),
-				new Double(2, $spawn->z)
+		$nbt = new CompoundTag("", [
+			new LongTag("firstPlayed", floor(microtime(true) * 1000)),
+			new LongTag("lastPlayed", floor(microtime(true) * 1000)),
+			new EnumTag("Pos", [
+				new DoubleTag(0, $spawn->x),
+				new DoubleTag(1, $spawn->y),
+				new DoubleTag(2, $spawn->z)
 			]),
 			new StringTag("Level", $this->getDefaultLevel()->getName()),
 			//new StringTag("SpawnLevel", $this->getDefaultLevel()->getName()),
 			//new IntTag("SpawnX", (int) $spawn->x),
 			//new IntTag("SpawnY", (int) $spawn->y),
 			//new IntTag("SpawnZ", (int) $spawn->z),
-			//new Byte("SpawnForced", 1), //TODO
-			new Enum("Inventory", []),
-			new Compound("Achievements", []),
+			//new ByteTag("SpawnForced", 1), //TODO
+			new EnumTag("Inventory", []),
+			new CompoundTag("Achievements", []),
 			new IntTag("playerGameType", $this->getGamemode()),
-			new Enum("Motion", [
-				new Double(0, 0.0),
-				new Double(1, 0.0),
-				new Double(2, 0.0)
+			new EnumTag("Motion", [
+				new DoubleTag(0, 0.0),
+				new DoubleTag(1, 0.0),
+				new DoubleTag(2, 0.0)
 			]),
-			new Enum("Rotation", [
+			new EnumTag("Rotation", [
 				new FloatTag(0, 0.0),
 				new FloatTag(1, 0.0)
 			]),
 			new FloatTag("FallDistance", 0.0),
-			new Short("Fire", 0),
-			new Short("Air", 300),
-			new Byte("OnGround", 1),
-			new Byte("Invulnerable", 0),
+			new ShortTag("Fire", 0),
+			new ShortTag("Air", 300),
+			new ByteTag("OnGround", 1),
+			new ByteTag("Invulnerable", 0),
 			new StringTag("NameTag", $name),
+			new ShortTag("Hunger", 20),
+			new ShortTag("Health", 20),
+			new ShortTag("MaxHealth", 20),
+			new LongTag("Experience", 0),
+			new LongTag("ExpLevel", 0),
 		]);
 		$nbt->Pos->setTagType(NBT::TAG_Double);
 		$nbt->Inventory->setTagType(NBT::TAG_Compound);
 		$nbt->Motion->setTagType(NBT::TAG_Double);
 		$nbt->Rotation->setTagType(NBT::TAG_Float);
 
-		if(file_exists($path . "$name.yml")){ //Importing old iPocket files
+		if(file_exists($path . "$name.yml")){ //Importing old iPocket-MP files
 			$data = new Config($path . "$name.yml", Config::YAML, []);
 			$nbt["playerGameType"] = (int) $data->get("gamemode");
 			$nbt["Level"] = $data->get("position")["level"];
@@ -814,39 +932,39 @@ class Server{
 			$this->logger->notice($this->getLanguage()->translateString("ipocket.data.playerOld", [$name]));
 			foreach($data->get("inventory") as $slot => $item){
 				if(count($item) === 3){
-					$nbt->Inventory[$slot + 9] = new Compound("", [
-						new Short("id", $item[0]),
-						new Short("Damage", $item[1]),
-						new Byte("Count", $item[2]),
-						new Byte("Slot", $slot + 9),
-						new Byte("TrueSlot", $slot + 9)
+					$nbt->Inventory[$slot + 9] = new CompoundTag("", [
+						new ShortTag("id", $item[0]),
+						new ShortTag("Damage", $item[1]),
+						new ByteTag("Count", $item[2]),
+						new ByteTag("Slot", $slot + 9),
+						new ByteTag("TrueSlot", $slot + 9)
 					]);
 				}
 			}
 			foreach($data->get("hotbar") as $slot => $itemSlot){
 				if(isset($nbt->Inventory[$itemSlot + 9])){
 					$item = $nbt->Inventory[$itemSlot + 9];
-					$nbt->Inventory[$slot] = new Compound("", [
-						new Short("id", $item["id"]),
-						new Short("Damage", $item["Damage"]),
-						new Byte("Count", $item["Count"]),
-						new Byte("Slot", $slot),
-						new Byte("TrueSlot", $item["TrueSlot"])
+					$nbt->Inventory[$slot] = new CompoundTag("", [
+						new ShortTag("id", $item["id"]),
+						new ShortTag("Damage", $item["Damage"]),
+						new ByteTag("Count", $item["Count"]),
+						new ByteTag("Slot", $slot),
+						new ByteTag("TrueSlot", $item["TrueSlot"])
 					]);
 				}
 			}
 			foreach($data->get("armor") as $slot => $item){
 				if(count($item) === 2){
-					$nbt->Inventory[$slot + 100] = new Compound("", [
-						new Short("id", $item[0]),
-						new Short("Damage", $item[1]),
-						new Byte("Count", 1),
-						new Byte("Slot", $slot + 100)
+					$nbt->Inventory[$slot + 100] = new CompoundTag("", [
+						new ShortTag("id", $item[0]),
+						new ShortTag("Damage", $item[1]),
+						new ByteTag("Count", 1),
+						new ByteTag("Slot", $slot + 100)
 					]);
 				}
 			}
 			foreach($data->get("achievements") as $achievement => $status){
-				$nbt->Achievements[$achievement] = new Byte($achievement, $status == true ? 1 : 0);
+				$nbt->Achievements[$achievement] = new ByteTag($achievement, $status == true ? 1 : 0);
 			}
 			unlink($path . "$name.yml");
 		}
@@ -857,11 +975,11 @@ class Server{
 	}
 
 	/**
-	 * @param string   $name
-	 * @param Compound $nbtTag
-	 * @param bool $async
+	 * @param string      $name
+	 * @param CompoundTag $nbtTag
+	 * @param bool        $async
 	 */
-	public function saveOfflinePlayerData($name, Compound $nbtTag, $async = false){
+	public function saveOfflinePlayerData($name, CompoundTag $nbtTag, $async = false){
 		$nbt = new NBT(NBT::BIG_ENDIAN);
 		try{
 			$nbt->setData($nbtTag);
@@ -871,7 +989,7 @@ class Server{
 			}else{
 				file_put_contents($this->getDataPath() . "players/" . strtolower($name) . ".dat", $nbt->writeCompressed());
 			}
-		}catch(\Exception $e){
+		}catch(\Throwable $e){
 			$this->logger->critical($this->getLanguage()->translateString("ipocket.data.saveError", [$name, $e->getMessage()]));
 			if(\ipocket\DEBUG > 1 and $this->logger instanceof MainLogger){
 				$this->logger->logException($e);
@@ -1080,7 +1198,7 @@ class Server{
 
 		try{
 			$level = new Level($this, $name, $path, $provider);
-		}catch(\Exception $e){
+		}catch(\Throwable $e){
 
 			$this->logger->error($this->getLanguage()->translateString("ipocket.level.loadError", [$name, $e->getMessage()]));
 			if($this->logger instanceof MainLogger){
@@ -1140,7 +1258,7 @@ class Server{
 			$level->initLevel();
 
 			$level->setTickRate($this->baseTickRate);
-		}catch(\Exception $e){
+		}catch(\Throwable $e){
 			$this->logger->error($this->getLanguage()->translateString("ipocket.level.generateError", [$name, $e->getMessage()]));
 			if($this->logger instanceof MainLogger){
 				$this->logger->logException($e);
@@ -1335,6 +1453,10 @@ class Server{
 		return $this->banByIP;
 	}
 
+	public function getCIDBans(){
+		return $this->banByCID;
+	}
+
 	/**
 	 * @param string $name
 	 */
@@ -1381,7 +1503,7 @@ class Server{
 	 * @return bool
 	 */
 	public function isWhitelisted($name){
-		return !$this->hasWhitelist() or $this->operators->exists($name, true) or $this->whitelist->exists($name, true);
+		return !$this->hasWhitelist() or $this->whitelist->exists($name, true);
 	}
 
 	/**
@@ -1433,11 +1555,133 @@ class Server{
 		return $result;
 	}
 
+	public function getCrashPath(){
+		return $this->dataPath . "crashdumps/";
+	}
+
 	/**
 	 * @return Server
 	 */
-	public static function getInstance(){
+	public static function getInstance() : Server{
 		return self::$instance;
+	}
+
+	public static function microSleep(int $microseconds){
+		Server::$sleeper->synchronized(function(int $ms){
+			Server::$sleeper->wait($ms);
+		}, $microseconds);
+	}
+
+	public function getExpectedExperience($level){
+		if(isset($this->expCache[$level])) return $this->expCache[$level];
+		$levelSquared = $level ** 2;
+		if($level < 16) $this->expCache[$level] = $levelSquared + 6 * $level;
+		elseif($level < 31) $this->expCache[$level] = 2.5 * $levelSquared - 40.5 * $level + 360;
+		else $this->expCache[$level] = 4.5 * $levelSquared - 162.5 * $level + 2220;
+		return $this->expCache[$level];
+	}
+
+	public function loadAdvancedConfig(){
+		$this->playerMsgType = $this->getAdvancedProperty("server.player-msg-type", self::PLAYER_MSG_TYPE_MESSAGE);
+		$this->playerLoginMsg = $this->getAdvancedProperty("server.login-msg", "§3@player joined the game");
+		$this->playerLogoutMsg = $this->getAdvancedProperty("server.logout-msg", "§3@player left the game");
+		$this->weatherEnabled = $this->getAdvancedProperty("level.weather", true);
+		$this->foodEnabled = $this->getAdvancedProperty("player.hunger", true);
+		$this->expEnabled = $this->getAdvancedProperty("player.experience", true);
+		$this->keepInventory = $this->getAdvancedProperty("player.keep-inventory", false);
+		$this->keepExperience = $this->getAdvancedProperty("player.keep-experience", false);
+		$this->netherEnabled = $this->getAdvancedProperty("nether.allow-nether", false);
+		$this->netherName = $this->getAdvancedProperty("nether.level-name", "nether");
+		$this->weatherChangeTime = $this->getAdvancedProperty("level.weather-change-time", 12000);
+		$this->hungerHealth = $this->getAdvancedProperty("player.hunger-health", 10);
+		$this->lightningTime = $this->getAdvancedProperty("level.lightning-time", 100);
+		$this->expWriteAhead = $this->getAdvancedProperty("server.experience-cache", 200);
+		$this->aiEnabled = $this->getAdvancedProperty("ai.enable", false);
+		$this->aiConfig = array(
+			"cow" => $this->getAdvancedProperty("ai.cow", true),
+			"chicken" => $this->getAdvancedProperty("ai.chicken", true),
+			"zombie" => $this->getAdvancedProperty("ai.zombie", 1),
+			"skeleton" => $this->getAdvancedProperty("ai.skeleton", true),
+			"pig" => $this->getAdvancedProperty("ai.pig", true),
+			"sheep" => $this->getAdvancedProperty("ai.sheep", true),
+			"creeper" => $this->getAdvancedProperty("ai.creeper", true),
+			"irongolem" => $this->getAdvancedProperty("ai.iron-golem", true),
+			"snowgolem" => $this->getAdvancedProperty("ai.snow-golem", true),
+			"pigzombie" => $this->getAdvancedProperty("ai.pigzombie", true),
+			"creeperexplode" => $this->getAdvancedProperty("ai.creeper-explode-destroy-block", false),
+			"mobgenerate" => $this->getAdvancedProperty("ai.mobgenerate", false),
+		);
+		$this->inventoryNum = $this->getAdvancedProperty("player.inventory-num", 36);
+		$this->hungerTimer = $this->getAdvancedProperty("player.hunger-timer", 80);
+		$this->weatherLastTime = $this->getAdvancedProperty("level.weather-last-time", 1200);
+		$this->allowSnowGolem = $this->getAdvancedProperty("server.allow-snow-golem", false);
+		$this->allowIronGolem = $this->getAdvancedProperty("server.allow-iron-golem", false);
+		$this->autoClearInv = $this->getAdvancedProperty("player.auto-clear-inventory", true);
+		$this->dserverConfig = [
+			"enable" => $this->getAdvancedProperty("dserver.enable", false),
+			"queryAutoUpdate" => $this->getAdvancedProperty("dserver.query-auto-update", false),
+			"queryTickUpdate" => $this->getAdvancedProperty("dserver.query-tick-update", true),
+			"motdMaxPlayers" => $this->getAdvancedProperty("dserver.motd-max-players", 0),
+			"queryMaxPlayers" => $this->getAdvancedProperty("dserver.query-max-players", 0),
+			"motdAllPlayers" => $this->getAdvancedProperty("dserver.motd-all-players", false),
+			"queryAllPlayers" => $this->getAdvancedProperty("dserver.query-all-players", false),
+			"motdPlayers" => $this->getAdvancedProperty("dserver.motd-players", false),
+			"queryPlayers" => $this->getAdvancedProperty("dserver.query-players", false),
+			"timer" => $this->getAdvancedProperty("dserver.time", 40),
+			"retryTimes" => $this->getAdvancedProperty("dserver.retry-times", 3),
+			"serverList" => explode(";", $this->getAdvancedProperty("dserver.server-list", ""))
+		];
+		$this->redstoneEnabled = $this->getAdvancedProperty("redstone.enable", false);
+		$this->allowFrequencyPulse = $this->getAdvancedProperty("redstone.allow-frequency-pulse", false);
+		$this->pulseFrequency = $this->getAdvancedProperty("redstone.pulse-frequency", 20);
+		$this->anviletEnabled = $this->getAdvancedProperty("server.allow-anvilandenchanttable", false);
+		$this->getLogger()->setWrite(!$this->getAdvancedProperty("server.disable-log", false));
+		$this->antiFly = $this->getAdvancedProperty("server.anti-fly", true);
+		$this->asyncChunkRequest = $this->getAdvancedProperty("server.async-chunk-request", true);
+		$this->recipesFromJson = $this->getAdvancedProperty("server.recipes-from-json", false);
+		$this->creativeItemsFromJson = $this->getAdvancedProperty("server.creative-items-from-json", false);
+		$this->minecartMovingType = $this->getAdvancedProperty("server.minecart-moving-type", 0);
+		$this->checkMovement = $this->getAdvancedProperty("server.check-movement", true);
+	}
+
+	/**
+	 * @return int
+	 *
+	 * Get DServer max players
+	 */
+	public function getDServerMaxPlayers(){
+		return ($this->dserverAllPlayers + $this->getMaxPlayers());
+	}
+
+	/**
+	 * @return int
+	 *
+	 * Get DServer all online player count
+	 */
+	public function getDServerOnlinePlayers(){
+		return ($this->dserverPlayers + count($this->getOnlinePlayers()));
+	}
+
+	public function isDServerEnabled(){
+		return $this->dserverConfig["enable"];
+	}
+
+	public function updateDServerInfo(){
+		$this->scheduler->scheduleAsyncTask(new DServerTask($this->dserverConfig["serverList"], $this->dserverConfig["retryTimes"]));
+	}
+
+	public function generateExpCache($level){
+		for($i = 0; $i <= $level; $i++){
+			$this->getExpectedExperience($i);
+		}
+	}
+
+	public function getBuild(){
+		return $this->version->getBuild();
+	}
+
+	public function getGameVersion(){
+		return $this->version->getRelease();
 	}
 
 	/**
@@ -1449,261 +1693,363 @@ class Server{
 	 */
 	public function __construct(\ClassLoader $autoloader, \ThreadedLogger $logger, $filePath, $dataPath, $pluginPath){
 		self::$instance = $this;
-
+		self::$sleeper = new \Threaded;
 		$this->autoloader = $autoloader;
 		$this->logger = $logger;
 		$this->filePath = $filePath;
-		if(!file_exists($dataPath . "worlds/")){
-			mkdir($dataPath . "worlds/", 0777);
-		}
-
-		if(!file_exists($dataPath . "players/")){
-			mkdir($dataPath . "players/", 0777);
-		}
-
-		if(!file_exists($dataPath . "CrashDumps/")){
-			mkdir($dataPath . "CrashDumps/", 0777);
-		}
-
-		if(!file_exists($pluginPath)){
-			mkdir($pluginPath, 0777);
-		}
-
-		$this->dataPath = realpath($dataPath) . DIRECTORY_SEPARATOR;
-		$this->pluginPath = realpath($pluginPath) . DIRECTORY_SEPARATOR;
-
-		$this->console = new CommandReader();
-
-		$version = new VersionString($this->getPocketMineVersion());
-
-		$this->logger->info("Loading ipocket.yml...");
-		if(!file_exists($this->dataPath . "ipocket.yml")){
-			$content = file_get_contents($this->filePath . "src/ipocket/resources/ipocket.yml");
-			if($version->isDev()){
-				$content = str_replace("preferred-channel: stable", "preferred-channel: beta", $content);
+		try{
+			if(!file_exists($dataPath . "worlds/")){
+				mkdir($dataPath . "worlds/", 0777);
 			}
-			@file_put_contents($this->dataPath . "ipocket.yml", $content);
-		}
-		$this->config = new Config($this->dataPath . "ipocket.yml", Config::YAML, []);
 
-		$this->logger->info("Loading server properties...");
-		$this->properties = new Config($this->dataPath . "server.properties", Config::PROPERTIES, [
-			"motd" => "Minecraft: PE Server",
-			"server-port" => 19132,
-			"white-list" => false,
-			"announce-player-achievements" => true,
-			"spawn-protection" => 16,
-			"max-players" => 20,
-			"allow-flight" => false,
-			"spawn-animals" => true,
-			"spawn-mobs" => true,
-			"gamemode" => 0,
-			"force-gamemode" => false,
-			"hardcore" => false,
-			"pvp" => true,
-			"difficulty" => 1,
-			"generator-settings" => "",
-			"level-name" => "world",
-			"level-seed" => "",
-			"level-type" => "DEFAULT",
-			"enable-query" => true,
-			"enable-rcon" => false,
-			"rcon.password" => substr(base64_encode(@Utils::getRandomBytes(20, false)), 3, 10),
-			"auto-save" => true,
-		]);
-
-		$this->forceLanguage = $this->getProperty("settings.force-language", false);
-		$this->baseLang = new BaseLang($this->getProperty("settings.language", BaseLang::FALLBACK_LANGUAGE));
-		$this->logger->info($this->getLanguage()->translateString("language.selected", [$this->getLanguage()->getName(), $this->getLanguage()->getLang()]));
-
-		$this->memoryManager = new MemoryManager($this);
-
-		$this->logger->info($this->getLanguage()->translateString("ipocket.server.start", [TextFormat::AQUA . $this->getVersion()]));
-
-		if(($poolSize = $this->getProperty("settings.async-workers", "auto")) === "auto"){
-			$poolSize = ServerScheduler::$WORKERS;
-			$processors = Utils::getCoreCount() - 2;
-
-			if($processors > 0){
-				$poolSize = max(1, $processors);
+			if(!file_exists($dataPath . "players/")){
+				mkdir($dataPath . "players/", 0777);
 			}
-		}
 
-		ServerScheduler::$WORKERS = $poolSize;
+			if(!file_exists($pluginPath)){
+				mkdir($pluginPath, 0777);
+			}
 
-		if($this->getProperty("network.batch-threshold", 256) >= 0){
-			Network::$BATCH_THRESHOLD = (int) $this->getProperty("network.batch-threshold", 256);
-		}else{
-			Network::$BATCH_THRESHOLD = -1;
-		}
-		$this->networkCompressionLevel = $this->getProperty("network.compression-level", 7);
-		$this->networkCompressionAsync = $this->getProperty("network.async-compression", true);
+			if(!file_exists($dataPath . "crashdumps/")){
+				mkdir($dataPath . "crashdumps/", 0777);
+			}
 
-		$this->autoTickRate = (bool) $this->getProperty("level-settings.auto-tick-rate", true);
-		$this->autoTickRateLimit = (int) $this->getProperty("level-settings.auto-tick-rate-limit", 20);
-		$this->alwaysTickPlayers = (int) $this->getProperty("level-settings.always-tick-players", false);
-		$this->baseTickRate = (int) $this->getProperty("level-settings.base-tick-rate", 1);
+			$this->dataPath = realpath($dataPath) . DIRECTORY_SEPARATOR;
+			$this->pluginPath = realpath($pluginPath) . DIRECTORY_SEPARATOR;
 
-		$this->scheduler = new ServerScheduler();
+			$this->console = new CommandReader();
 
-		if($this->getConfigBoolean("enable-rcon", false) === true){
-			$this->rcon = new RCON($this, $this->getConfigString("rcon.password", ""), $this->getConfigInt("rcon.port", $this->getPort()), ($ip = $this->getIp()) != "" ? $ip : "0.0.0.0", $this->getConfigInt("rcon.threads", 1), $this->getConfigInt("rcon.clients-per-thread", 50));
-		}
+			$version = new VersionString($this->getiPocketVersion());
+			$this->version = $version;
 
-		$this->entityMetadata = new EntityMetadataStore();
-		$this->playerMetadata = new PlayerMetadataStore();
-		$this->levelMetadata = new LevelMetadataStore();
+			$this->logger->info("Loading ipocket.yml...");
+			if(!file_exists($this->dataPath . "ipocket.yml")){
+				$content = file_get_contents($this->filePath . "src/ipocket/resources/ipocket.yml");
+				if($version->isDev()){
+					$content = str_replace("preferred-channel: stable", "preferred-channel: beta", $content);
+				}
+				@file_put_contents($this->dataPath . "ipocket.yml", $content);
+			}
+			$this->config = new Config($this->dataPath . "ipocket.yml", Config::YAML, []);
 
-		$this->operators = new Config($this->dataPath . "ops.txt", Config::ENUM);
-		$this->whitelist = new Config($this->dataPath . "white-list.txt", Config::ENUM);
-		if(file_exists($this->dataPath . "banned.txt") and !file_exists($this->dataPath . "banned-players.txt")){
-			@rename($this->dataPath . "banned.txt", $this->dataPath . "banned-players.txt");
-		}
-		@touch($this->dataPath . "banned-players.txt");
-		$this->banByName = new BanList($this->dataPath . "banned-players.txt");
-		$this->banByName->load();
-		@touch($this->dataPath . "banned-ips.txt");
-		$this->banByIP = new BanList($this->dataPath . "banned-ips.txt");
-		$this->banByIP->load();
+			$this->logger->info("Loading genisys.yml...");
 
-		$this->maxPlayers = $this->getConfigInt("max-players", 20);
-		$this->setAutoSave($this->getConfigBoolean("auto-save", true));
+			$lang = $this->getProperty("settings.language", BaseLang::FALLBACK_LANGUAGE);
+			if(file_exists($this->filePath . "src/ipocket/resources/genisys_$lang.yml")){
+				$content = file_get_contents($file = $this->filePath . "src/ipocket/resources/genisys_$lang.yml");
+			}else{
+				$content = file_get_contents($file = $this->filePath . "src/ipocket/resources/genisys_eng.yml");
+			}
 
-		if($this->getConfigBoolean("hardcore", false) === true and $this->getDifficulty() < 3){
-			$this->setConfigInt("difficulty", 3);
-		}
+			if(!file_exists($this->dataPath . "genisys.yml")){
+				@file_put_contents($this->dataPath . "genisys.yml", $content);
+			}
+			$internelConfig = new Config($file, Config::YAML, []);
+			$this->advancedConfig = new Config($this->dataPath . "genisys.yml", Config::YAML, []);
+			$cfgVer = $this->getAdvancedProperty("config.version", 0, $internelConfig);
+			$advVer = $this->getAdvancedProperty("config.version", 0);
 
-		define("ipocket\\DEBUG", (int) $this->getProperty("debug.level", 1));
-		if($this->logger instanceof MainLogger){
-			$this->logger->setLogDebug(\ipocket\DEBUG > 1);
-		}
+			$this->loadAdvancedConfig();
 
-		if(\ipocket\DEBUG >= 0){
-			@cli_set_process_title($this->getName() . " " . $this->getPocketMineVersion());
-		}
+			if($this->expWriteAhead > 0) $this->generateExpCache($this->expWriteAhead);
 
-		$this->logger->info($this->getLanguage()->translateString("ipocket.server.networkStart", [$this->getIp() === "" ? "*" : $this->getIp(), $this->getPort()]));
-		define("BOOTUP_RANDOM", @Utils::getRandomBytes(16));
-		$this->serverID = Utils::getMachineUniqueId($this->getIp() . $this->getPort());
+			$this->logger->info("Loading server properties...");
+			$this->properties = new Config($this->dataPath . "server.properties", Config::PROPERTIES, [
+				"motd" => "Minecraft: PE Server",
+				"server-port" => 19132,
+				"white-list" => false,
+				"announce-player-achievements" => true,
+				"spawn-protection" => 16,
+				"max-players" => 20,
+				"allow-flight" => false,
+				"spawn-animals" => true,
+				"spawn-mobs" => true,
+				"gamemode" => 0,
+				"force-gamemode" => false,
+				"hardcore" => false,
+				"pvp" => true,
+				"difficulty" => 1,
+				"generator-settings" => "",
+				"level-name" => "world",
+				"level-seed" => "",
+				"level-type" => "DEFAULT",
+				"enable-query" => true,
+				"enable-rcon" => false,
+				"rcon.password" => substr(base64_encode(@Utils::getRandomBytes(20, false)), 3, 10),
+				"auto-save" => true,
+			]);
 
-		$this->getLogger()->debug("Server unique id: " . $this->getServerUniqueId());
-		$this->getLogger()->debug("Machine unique id: " . Utils::getMachineUniqueId());
+			$this->forceLanguage = $this->getProperty("settings.force-language", false);
+			$this->baseLang = new BaseLang($this->getProperty("settings.language", BaseLang::FALLBACK_LANGUAGE));
+			$this->logger->info($this->getLanguage()->translateString("language.selected", [$this->getLanguage()->getName(), $this->getLanguage()->getLang()]));
 
-		$this->network = new Network($this);
-		$this->network->setName($this->getMotd());
+			$this->memoryManager = new MemoryManager($this);
+
+			$this->logger->info($this->getLanguage()->translateString("ipocket.server.start", [TextFormat::AQUA . $this->getVersion()]));
+
+			if(($poolSize = $this->getProperty("settings.async-workers", "auto")) === "auto"){
+				$poolSize = ServerScheduler::$WORKERS;
+				$processors = Utils::getCoreCount() - 2;
+
+				if($processors > 0){
+					$poolSize = max(1, $processors);
+				}
+			}
+
+			ServerScheduler::$WORKERS = $poolSize;
+
+			if($this->getProperty("network.batch-threshold", 256) >= 0){
+				Network::$BATCH_THRESHOLD = (int) $this->getProperty("network.batch-threshold", 256);
+			}else{
+				Network::$BATCH_THRESHOLD = -1;
+			}
+			$this->networkCompressionLevel = $this->getProperty("network.compression-level", 7);
+			$this->networkCompressionAsync = $this->getProperty("network.async-compression", true);
+
+			$this->autoTickRate = (bool) $this->getProperty("level-settings.auto-tick-rate", true);
+			$this->autoTickRateLimit = (int) $this->getProperty("level-settings.auto-tick-rate-limit", 20);
+			$this->alwaysTickPlayers = (int) $this->getProperty("level-settings.always-tick-players", false);
+			$this->baseTickRate = (int) $this->getProperty("level-settings.base-tick-rate", 1);
+
+			$this->scheduler = new ServerScheduler();
+
+			if($this->getConfigBoolean("enable-rcon", false) === true){
+				$this->rcon = new RCON($this, $this->getConfigString("rcon.password", ""), $this->getConfigInt("rcon.port", $this->getPort()), ($ip = $this->getIp()) != "" ? $ip : "0.0.0.0", $this->getConfigInt("rcon.threads", 1), $this->getConfigInt("rcon.clients-per-thread", 50));
+			}
+
+			$this->entityMetadata = new EntityMetadataStore();
+			$this->playerMetadata = new PlayerMetadataStore();
+			$this->levelMetadata = new LevelMetadataStore();
+
+			$this->operators = new Config($this->dataPath . "ops.txt", Config::ENUM);
+			$this->whitelist = new Config($this->dataPath . "white-list.txt", Config::ENUM);
+			if(file_exists($this->dataPath . "banned.txt") and !file_exists($this->dataPath . "banned-players.txt")){
+				@rename($this->dataPath . "banned.txt", $this->dataPath . "banned-players.txt");
+			}
+			@touch($this->dataPath . "banned-players.txt");
+			$this->banByName = new BanList($this->dataPath . "banned-players.txt");
+			$this->banByName->load();
+			@touch($this->dataPath . "banned-ips.txt");
+			$this->banByIP = new BanList($this->dataPath . "banned-ips.txt");
+			$this->banByIP->load();
+			@touch($this->dataPath . "banned-cids.txt");
+			$this->banByCID = new BanList($this->dataPath . "banned-cids.txt");
+			$this->banByCID->load();
+
+			$this->maxPlayers = $this->getConfigInt("max-players", 20);
+			$this->setAutoSave($this->getConfigBoolean("auto-save", true));
+
+			if($this->getConfigBoolean("hardcore", false) === true and $this->getDifficulty() < 3){
+				$this->setConfigInt("difficulty", 3);
+			}
+
+			define("ipocket\\DEBUG", (int) $this->getProperty("debug.level", 1));
+			if($this->logger instanceof MainLogger){
+				$this->logger->setLogDebug(\ipocket\DEBUG > 1);
+			}
+
+			if(\ipocket\DEBUG >= 0){
+				@cli_set_process_title($this->getName() . " " . $this->getiPocketVersion());
+			}
+
+			$this->logger->info($this->getLanguage()->translateString("ipocket.server.networkStart", [$this->getIp() === "" ? "*" : $this->getIp(), $this->getPort()]));
+			define("BOOTUP_RANDOM", @Utils::getRandomBytes(16));
+			$this->serverID = Utils::getMachineUniqueId($this->getIp() . $this->getPort());
+
+			$this->getLogger()->debug("Server unique id: " . $this->getServerUniqueId());
+			$this->getLogger()->debug("Machine unique id: " . Utils::getMachineUniqueId());
+
+			$this->network = new Network($this);
+			$this->network->setName($this->getMotd());
 
 
-		$this->logger->info($this->getLanguage()->translateString("ipocket.server.info", [
-			$this->getName(),
-			($version->isDev() ? TextFormat::YELLOW : "") . $version->get(true) . TextFormat::WHITE,
-			$this->getCodename(),
-			$this->getApiVersion()
-		]));
-		$this->logger->info($this->getLanguage()->translateString("ipocket.server.license", [$this->getName()]));
+			$this->logger->info($this->getLanguage()->translateString("ipocket.server.info", [
+				$this->getName(),
+				$this->getiPocketVersion(),
+				$this->getCodename(),
+				$this->getApiVersion()
+			]));
+			$this->logger->info($this->getLanguage()->translateString("ipocket.server.license", [$this->getName()]));
 
-		Timings::init();
+			Timings::init();
 
-		$this->consoleSender = new ConsoleCommandSender();
-		$this->commandMap = new SimpleCommandMap($this);
+			$this->consoleSender = new ConsoleCommandSender();
+			$this->commandMap = new SimpleCommandMap($this);
 
-		$this->registerEntities();
-		$this->registerTiles();
+			$this->registerEntities();
+			$this->registerTiles();
 
-		InventoryType::init();
-		Block::init();
-		Item::init();
-		Biome::init();
-		Effect::init();
-		Enchantment::init();
-		Attribute::init();
-		/** TODO: @deprecated */
-		TextWrapper::init();
-		$this->craftingManager = new CraftingManager();
+			InventoryType::init(min(32, $this->inventoryNum)); //Bigger than 32 with cause problems
+			Block::init();
+			Item::init($this->creativeItemsFromJson);
+			Biome::init();
+			Effect::init();
+			Enchantment::init();
+			Attribute::init();
+			EnchantmentLevelTable::init();
+			//TextWrapper::init();
+			$this->craftingManager = new CraftingManager($this->recipesFromJson);
 
-		$this->pluginManager = new PluginManager($this, $this->commandMap);
-		$this->pluginManager->subscribeToPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE, $this->consoleSender);
-		$this->pluginManager->setUseTimings($this->getProperty("settings.enable-profiling", false));
-		$this->profilingTickRate = (float) $this->getProperty("settings.profile-report-trigger", 20);
-		$this->pluginManager->registerInterface(PharPluginLoader::class);
-		$this->pluginManager->registerInterface(ScriptPluginLoader::class);
+			$this->pluginManager = new PluginManager($this, $this->commandMap);
+			$this->pluginManager->subscribeToPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE, $this->consoleSender);
+			$this->pluginManager->setUseTimings($this->getProperty("settings.enable-profiling", false));
+			$this->profilingTickRate = (float) $this->getProperty("settings.profile-report-trigger", 20);
+			$this->pluginManager->registerInterface(PharPluginLoader::class);
+			$this->pluginManager->registerInterface(FolderPluginLoader::class);
+			$this->pluginManager->registerInterface(ScriptPluginLoader::class);
 
-		set_exception_handler([$this, "exceptionHandler"]);
-		register_shutdown_function([$this, "crashDump"]);
+			//set_exception_handler([$this, "exceptionHandler"]);
+			register_shutdown_function([$this, "crashDump"]);
 
-		$this->queryRegenerateTask = new QueryRegenerateEvent($this, 5);
+			$this->queryRegenerateTask = new QueryRegenerateEvent($this, 5);
 
-		$this->network->registerInterface(new RakLibInterface($this));
+			$this->network->registerInterface(new RakLibInterface($this));
 
-		$this->pluginManager->loadPlugins($this->pluginPath);
+			$this->pluginManager->loadPlugins($this->pluginPath);
 
-		$this->updater = new AutoUpdater($this, $this->getProperty("auto-updater.host", "ipocket.link"));
+			$this->updater = new AutoUpdater($this, $this->getProperty("auto-updater.host", "www.ipocket.net"));
 
-		$this->enablePlugins(PluginLoadOrder::STARTUP);
+			$this->enablePlugins(PluginLoadOrder::STARTUP);
 
-		LevelProviderManager::addProvider($this, Anvil::class);
-		LevelProviderManager::addProvider($this, McRegion::class);
-		if(extension_loaded("leveldb")){
-			$this->logger->debug($this->getLanguage()->translateString("ipocket.debug.enable"));
-			LevelProviderManager::addProvider($this, LevelDB::class);
-		}
+			LevelProviderManager::addProvider($this, Anvil::class);
+			LevelProviderManager::addProvider($this, McRegion::class);
+			if(extension_loaded("leveldb")){
+				$this->logger->debug($this->getLanguage()->translateString("ipocket.debug.enable"));
+				LevelProviderManager::addProvider($this, LevelDB::class);
+			}
 
 
-		Generator::addGenerator(Flat::class, "flat");
-		Generator::addGenerator(Normal::class, "normal");
-		Generator::addGenerator(Normal::class, "default");
-		Generator::addGenerator(Nether::class, "hell");
-		Generator::addGenerator(Nether::class, "nether");
+			Generator::addGenerator(Flat::class, "flat");
+			Generator::addGenerator(Normal::class, "normal");
+			Generator::addGenerator(Normal::class, "default");
+			Generator::addGenerator(Nether::class, "hell");
+			Generator::addGenerator(Nether::class, "nether");
+			Generator::addGenerator(Void::class,"void");
 
-		foreach((array) $this->getProperty("worlds", []) as $name => $worldSetting){
-			if($this->loadLevel($name) === false){
-				$seed = $this->getProperty("worlds.$name.seed", time());
-				$options = explode(":", $this->getProperty("worlds.$name.generator", Generator::getGenerator("default")));
-				$generator = Generator::getGenerator(array_shift($options));
-				if(count($options) > 0){
-					$options = [
-						"preset" => implode(":", $options),
-					];
-				}else{
-					$options = [];
+			foreach((array) $this->getProperty("worlds", []) as $name => $worldSetting){
+				if($this->loadLevel($name) === false){
+					$seed = $this->getProperty("worlds.$name.seed", time());
+					$options = explode(":", $this->getProperty("worlds.$name.generator", Generator::getGenerator("default")));
+					$generator = Generator::getGenerator(array_shift($options));
+					if(count($options) > 0){
+						$options = [
+							"preset" => implode(":", $options),
+						];
+					}else{
+						$options = [];
+					}
+
+					$this->generateLevel($name, $seed, $generator, $options);
+				}
+			}
+
+			if($this->getDefaultLevel() === null){
+				$default = $this->getConfigString("level-name", "world");
+				if(trim($default) == ""){
+					$this->getLogger()->warning("level-name cannot be null, using default");
+					$default = "world";
+					$this->setConfigString("level-name", "world");
+				}
+				if($this->loadLevel($default) === false){
+					$seed = $this->getConfigInt("level-seed", time());
+					$this->generateLevel($default, $seed === 0 ? time() : $seed);
 				}
 
-				$this->generateLevel($name, $seed, $generator, $options);
-			}
-		}
-
-		if($this->getDefaultLevel() === null){
-			$default = $this->getConfigString("level-name", "world");
-			if(trim($default) == ""){
-				$this->getLogger()->warning("level-name cannot be null, using default");
-				$default = "world";
-				$this->setConfigString("level-name", "world");
-			}
-			if($this->loadLevel($default) === false){
-				$seed = $this->getConfigInt("level-seed", time());
-				$this->generateLevel($default, $seed === 0 ? time() : $seed);
+				$this->setDefaultLevel($this->getLevelByName($default));
 			}
 
-			$this->setDefaultLevel($this->getLevelByName($default));
+
+			$this->properties->save(true);
+
+			if(!($this->getDefaultLevel() instanceof Level)){
+				$this->getLogger()->emergency($this->getLanguage()->translateString("ipocket.level.defaultError"));
+				$this->forceShutdown();
+
+				return;
+			}
+
+			if($this->netherEnabled){
+				if(!$this->loadLevel($this->netherName)){
+					//$this->logger->info("正在生成地狱 ".$this->netherName);
+					$this->generateLevel($this->netherName, time(), Generator::getGenerator("nether"));
+				}
+				$this->netherLevel = $this->getLevelByName($this->netherName);
+			}
+
+			if($this->getProperty("ticks-per.autosave", 6000) > 0){
+				$this->autoSaveTicks = (int) $this->getProperty("ticks-per.autosave", 6000);
+			}
+
+			$this->enablePlugins(PluginLoadOrder::POSTWORLD);
+
+			if($this->aiEnabled) $this->aiHolder = new AIHolder($this);
+			if($this->dserverConfig["enable"] and ($this->getAdvancedProperty("dserver.server-list", "") != "")) $this->scheduler->scheduleRepeatingTask(new CallbackTask([
+				$this,
+				"updateDServerInfo"
+			]), $this->dserverConfig["timer"]);
+
+			if($cfgVer != $advVer){
+				$this->logger->notice("Your genisys.yml needs update");
+				$this->logger->notice("Current Version: $advVer   Latest Version: $cfgVer");
+			}
+
+			$this->generateRecipeList();
+
+			$this->start();
+		}catch(\Throwable $e){
+			$this->exceptionHandler($e);
 		}
-
-
-		$this->properties->save(true);
-
-		if(!($this->getDefaultLevel() instanceof Level)){
-			$this->getLogger()->emergency($this->getLanguage()->translateString("ipocket.level.defaultError"));
-			$this->forceShutdown();
-
-			return;
-		}
-
-		if($this->getProperty("ticks-per.autosave", 6000) > 0){
-			$this->autoSaveTicks = (int) $this->getProperty("ticks-per.autosave", 6000);
-		}
-
-		$this->enablePlugins(PluginLoadOrder::POSTWORLD);
-
-		$this->start();
 	}
+
+    //@Deprecated
+	public function transferPlayer(Player $player, $address, $port = 19132){
+		$this->logger->error("This function (transferPlayer) has been deprecated. A new method may be available soon");
+	}
+	/*$ev = new PlayerTransferEvent($player, $address, $port);
+	$this->getPluginManager()->callEvent($ev);
+	if ($ev->isCancelled()) {
+		return false;
+	}
+
+	$ip = $this->lookupAddress($ev->getAddress());
+
+	if ($ip === null) {
+		return false;
+	}
+
+	$packet = new StrangePacket();
+	$packet->address = $ip;
+	$packet->port = $ev->getPort();
+	$player->dataPacket($packet);
+	$player->setTransfered($address . ":" . $port);
+
+	return true;
+}
+
+public function cleanLookupCache() {
+	$this->lookup = [];
+}
+
+private function lookupAddress($address) {
+	//IP address
+	if (preg_match("/^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$/", $address) > 0) {
+		return $address;
+	}
+
+	$address = strtolower($address);
+
+	if (isset($this->lookup[$address])) {
+		return $this->lookup[$address];
+	}
+
+	$host = gethostbyname($address);
+	if ($host === $address) {
+		return null;
+	}
+
+	$this->lookup[$address] = $host;
+	return $host;
+}*/
 
 	/**
 	 * @param string        $message
@@ -1711,7 +2057,7 @@ class Server{
 	 *
 	 * @return int
 	 */
-	public function broadcastMessage($message, $recipients = null){
+	public function broadcastMessage($message, $recipients = null) : int{
 		if(!is_array($recipients)){
 			return $this->broadcast($message, self::BROADCAST_CHANNEL_USERS);
 		}
@@ -1730,7 +2076,7 @@ class Server{
 	 *
 	 * @return int
 	 */
-	public function broadcastTip($tip, $recipients = null){
+	public function broadcastTip(string $tip, $recipients = null) : int{
 		if(!is_array($recipients)){
 			/** @var Player[] $recipients */
 			$recipients = [];
@@ -1756,7 +2102,7 @@ class Server{
 	 *
 	 * @return int
 	 */
-	public function broadcastPopup($popup, $recipients = null){
+	public function broadcastPopup(string $popup, $recipients = null) : int{
 		if(!is_array($recipients)){
 			/** @var Player[] $recipients */
 			$recipients = [];
@@ -1782,7 +2128,7 @@ class Server{
 	 *
 	 * @return int
 	 */
-	public function broadcast($message, $permissions){
+	public function broadcast($message, string $permissions) : int{
 		/** @var CommandSender[] $recipients */
 		$recipients = [];
 		foreach(explode(";", $permissions) as $permission){
@@ -1810,7 +2156,7 @@ class Server{
 		$packet->encode();
 		$packet->isEncoded = true;
 		if(Network::$BATCH_THRESHOLD >= 0 and strlen($packet->buffer) >= Network::$BATCH_THRESHOLD){
-			Server::getInstance()->batchPackets($players, [$packet->buffer], false, $packet->getChannel());
+			Server::getInstance()->batchPackets($players, [$packet->buffer], false);
 			return;
 		}
 
@@ -1827,10 +2173,9 @@ class Server{
 	 *
 	 * @param Player[]            $players
 	 * @param DataPacket[]|string $packets
-	 * @param bool                 $forceSync
-	 * @param int                 $channel
+	 * @param bool                $forceSync
 	 */
-	public function batchPackets(array $players, array $packets, $forceSync = false, $channel = 0){
+	public function batchPackets(array $players, array $packets, $forceSync = false){
 		Timings::$playerNetworkTimer->startTiming();
 		$str = "";
 
@@ -1853,7 +2198,7 @@ class Server{
 		}
 
 		if(!$forceSync and $this->networkCompressionAsync){
-			$task = new CompressBatchedTask($str, $targets, $this->networkCompressionLevel, $channel);
+			$task = new CompressBatchedTask($str, $targets, $this->networkCompressionLevel);
 			$this->getScheduler()->scheduleAsyncTask($task);
 		}else{
 			$this->broadcastPacketsCallback(zlib_encode($str, ZLIB_ENCODING_DEFLATE, $this->networkCompressionLevel), $targets);
@@ -1879,7 +2224,7 @@ class Server{
 	/**
 	 * @param int $type
 	 */
-	public function enablePlugins($type){
+	public function enablePlugins(int $type){
 		foreach($this->pluginManager->getPlugins() as $plugin){
 			if(!$plugin->isEnabled() and $plugin->getDescription()->getOrder() === $type){
 				$this->enablePlugin($plugin);
@@ -1931,7 +2276,7 @@ class Server{
 	 *
 	 * @return bool
 	 *
-	 * @throws \Exception
+	 * @throws \Throwable
 	 */
 	public function dispatchCommand(CommandSender $sender, $commandLine){
 		if(!($sender instanceof CommandSender)){
@@ -1961,6 +2306,8 @@ class Server{
 
 		$this->logger->info("Reloading properties...");
 		$this->properties->reload();
+		$this->advancedConfig->reload();
+		$this->loadAdvancedConfig();
 		$this->maxPlayers = $this->getConfigInt("max-players", 20);
 
 		if($this->getConfigBoolean("hardcore", false) === true and $this->getDifficulty() < 3){
@@ -1969,6 +2316,7 @@ class Server{
 
 		$this->banByIP->load();
 		$this->banByName->load();
+		$this->banByCID->load();
 		$this->reloadWhitelist();
 		$this->operators->reload();
 
@@ -1979,6 +2327,7 @@ class Server{
 		}
 
 		$this->pluginManager->registerInterface(PharPluginLoader::class);
+		$this->pluginManager->registerInterface(FolderPluginLoader::class);
 		$this->pluginManager->registerInterface(ScriptPluginLoader::class);
 		$this->pluginManager->loadPlugins($this->pluginPath);
 		$this->enablePlugins(PluginLoadOrder::STARTUP);
@@ -1990,11 +2339,18 @@ class Server{
 	 * Shutdowns the server correctly
 	 */
 	public function shutdown(){
-		if($this->isRunning){
+		/*if($this->expEnabled){
+			foreach($this->getLevels() as $level){
+				foreach($level->getEntities() as $e){
+					if($e instanceof ExperienceOrb) $e->close();
+				}
+			}
+		}*/
+		/*if($this->isRunning){
 			$killer = new ServerKiller(90);
 			$killer->start();
-			$killer->detach();
-		}
+			$killer->kill();
+		}*/
 		$this->isRunning = false;
 	}
 
@@ -2043,7 +2399,8 @@ class Server{
 			$this->properties->save();
 
 			$this->getLogger()->debug("Closing console");
-			$this->console->kill();
+			$this->console->shutdown();
+			$this->console->notify();
 
 			$this->getLogger()->debug("Stopping network interfaces");
 			foreach($this->network->getInterfaces() as $interface){
@@ -2051,10 +2408,11 @@ class Server{
 				$this->network->unregisterInterface($interface);
 			}
 
-			$this->memoryManager->doObjectCleanup();
+			//$this->memoryManager->doObjectCleanup();
 
 			gc_collect_cycles();
-		}catch(\Exception $e){
+		}catch(\Throwable $e){
+			$this->logger->logException($e);
 			$this->logger->emergency("Crashed while crashing, killing process");
 			@kill(getmypid());
 		}
@@ -2066,7 +2424,7 @@ class Server{
 	}
 
 	/**
-	 * Starts the iPocket server and starts processing ticks and packets
+	 * Starts the iPocket-MP server and starts processing ticks and packets
 	 */
 	public function start(){
 		if($this->getConfigBoolean("enable-query", true) === true){
@@ -2101,6 +2459,9 @@ class Server{
 
 		$this->logger->info($this->getLanguage()->translateString("ipocket.server.startFinished", [round(microtime(true) - \ipocket\START_TIME, 3)]));
 
+		if(!file_exists($this->getPluginPath() . DIRECTORY_SEPARATOR . "iPocket-iTX"))
+			@mkdir($this->getPluginPath() . DIRECTORY_SEPARATOR . "iPocket-iTX");
+
 		$this->tickProcessor();
 		$this->forceShutdown();
 
@@ -2117,22 +2478,29 @@ class Server{
 		if($e === null){
 			return;
 		}
+
 		global $lastError;
+
 		if($trace === null){
 			$trace = $e->getTrace();
 		}
+
 		$errstr = $e->getMessage();
 		$errfile = $e->getFile();
 		$errno = $e->getCode();
 		$errline = $e->getLine();
+
 		$type = ($errno === E_ERROR or $errno === E_USER_ERROR) ? \LogLevel::ERROR : (($errno === E_USER_WARNING or $errno === E_WARNING) ? \LogLevel::WARNING : \LogLevel::NOTICE);
 		if(($pos = strpos($errstr, "\n")) !== false){
 			$errstr = substr($errstr, 0, $pos);
 		}
+
 		$errfile = cleanPath($errfile);
+
 		if($this->logger instanceof MainLogger){
 			$this->logger->logException($e, $trace);
 		}
+
 		$lastError = [
 			"type" => $type,
 			"message" => $errstr,
@@ -2141,6 +2509,7 @@ class Server{
 			"line" => $errline,
 			"trace" => @getTrace(1, $trace)
 		];
+
 		global $lastExceptionError, $lastError;
 		$lastExceptionError = $lastError;
 		$this->crashDump();
@@ -2160,7 +2529,7 @@ class Server{
 		$this->logger->emergency($this->getLanguage()->translateString("ipocket.crash.create"));
 		try{
 			$dump = new CrashDump($this);
-		}catch(\Exception $e){
+		}catch(\Throwable $e){
 			$this->logger->critical($this->getLanguage()->translateString("ipocket.crash.error", $e->getMessage()));
 			return;
 		}
@@ -2186,7 +2555,7 @@ class Server{
 			if($report){
 				$reply = Utils::postURL("http://" . $this->getProperty("auto-report.host", "crash.ipocket.net") . "/submit/api", [
 					"report" => "yes",
-					"name" => $this->getName() . " " . $this->getPocketMineVersion(),
+					"name" => $this->getName() . " " . $this->getiPocketVersion(),
 					"email" => "crash@ipocket.net",
 					"reportPaste" => base64_encode($dump->getEncodedData())
 				]);
@@ -2220,7 +2589,7 @@ class Server{
 			if($next > microtime(true)){
 				try{
 					time_sleep_until($next);
-				}catch(\Exception $e){
+				}catch(\Throwable $e){
 					//Sometimes $next is less than the current time. High load?
 				}
 			}
@@ -2282,7 +2651,8 @@ class Server{
 		$p->dataPacket($pk);
 	}
 
-	public function sendRecipeList(Player $p){
+	public function generateRecipeList(){
+
 		$pk = new CraftingDataPacket();
 		$pk->cleanRecipes = true;
 
@@ -2298,7 +2668,14 @@ class Server{
 			$pk->addFurnaceRecipe($recipe);
 		}
 
-		$p->dataPacket($pk);
+		$pk->encode();
+		$pk->isEncoded = true;
+
+		$this->recipeList = $pk;
+	}
+
+	public function sendRecipeList(Player $p){
+		$p->dataPacket(clone $this->recipeList);
 	}
 
 	private function checkTickUpdates($currentTick, $tickTime){
@@ -2327,19 +2704,19 @@ class Server{
 						if($r > $this->baseTickRate){
 							$level->tickRateCounter = $level->getTickRate();
 						}
-						$this->getLogger()->debug("Raising level \"".$level->getName()."\" tick rate to ".$level->getTickRate()." ticks");
+						$this->getLogger()->debug("Raising level \"" . $level->getName() . "\" tick rate to " . $level->getTickRate() . " ticks");
 					}elseif($tickMs >= 50){
 						if($level->getTickRate() === $this->baseTickRate){
 							$level->setTickRate(max($this->baseTickRate + 1, min($this->autoTickRateLimit, floor($tickMs / 50))));
-							$this->getLogger()->debug("Level \"".$level->getName()."\" took ".round($tickMs, 2)."ms, setting tick rate to ".$level->getTickRate()." ticks");
+							$this->getLogger()->debug("Level \"" . $level->getName() . "\" took " . round($tickMs, 2) . "ms, setting tick rate to " . $level->getTickRate() . " ticks");
 						}elseif(($tickMs / $level->getTickRate()) >= 50 and $level->getTickRate() < $this->autoTickRateLimit){
 							$level->setTickRate($level->getTickRate() + 1);
-							$this->getLogger()->debug("Level \"".$level->getName()."\" took ".round($tickMs, 2)."ms, setting tick rate to ".$level->getTickRate()." ticks");
+							$this->getLogger()->debug("Level \"" . $level->getName() . "\" took " . round($tickMs, 2) . "ms, setting tick rate to " . $level->getTickRate() . " ticks");
 						}
 						$level->tickRateCounter = $level->getTickRate();
 					}
 				}
-			}catch(\Exception $e){
+			}catch(\Throwable $e){
 				$this->logger->critical($this->getLanguage()->translateString("ipocket.level.tickError", [$level->getName(), $e->getMessage()]));
 				if(\ipocket\DEBUG > 1 and $this->logger instanceof MainLogger){
 					$this->logger->logException($e);
@@ -2408,16 +2785,16 @@ class Server{
 		$d = Utils::getRealMemoryUsage();
 
 		$u = Utils::getMemoryUsage(true);
-		$usage = round(($u[0] / 1024) / 1024, 2) . "/" . round(($d[0] / 1024) / 1024, 2) . "/" . round(($u[1] / 1024) / 1024, 2) . "/".round(($u[2] / 1024) / 1024, 2)." MB @ " . Utils::getThreadCount() . " threads";
+		$usage = round(($u[0] / 1024) / 1024, 2) . "/" . round(($d[0] / 1024) / 1024, 2) . "/" . round(($u[1] / 1024) / 1024, 2) . "/" . round(($u[2] / 1024) / 1024, 2) . " MB @ " . Utils::getThreadCount() . " threads";
 
 		echo "\x1b]0;" . $this->getName() . " " .
-			$this->getPocketMineVersion() .
+			$this->getGameVersion() . "-#" . $this->getBuild() .
 			" | Online " . count($this->players) . "/" . $this->getMaxPlayers() .
 			" | Memory " . $usage .
 			" | U " . round($this->network->getUpload() / 1024, 2) .
 			" D " . round($this->network->getDownload() / 1024, 2) .
-			" kB/s | TPS " . $this->getTicksPerSecond() .
-			" | Load " . $this->getTickUsage() . "%\x07";
+			" kB/s | TPS " . $this->getTicksPerSecondAverage() .
+			" | Load " . $this->getTickUsageAverage() . "%\x07";
 
 		$this->network->resetStatistics();
 	}
@@ -2434,7 +2811,7 @@ class Server{
 			if(strlen($payload) > 2 and substr($payload, 0, 2) === "\xfe\xfd" and $this->queryHandler instanceof QueryHandler){
 				$this->queryHandler->handle($address, $port, $payload);
 			}
-		}catch(\Exception $e){
+		}catch(\Throwable $e){
 			if(\ipocket\DEBUG > 1){
 				if($this->logger instanceof MainLogger){
 					$this->logger->logException($e);
@@ -2444,6 +2821,45 @@ class Server{
 			$this->getNetwork()->blockAddress($address, 600);
 		}
 		//TODO: add raw packet events
+	}
+
+	/**
+	 * @param             $variable
+	 * @param null        $defaultValue
+	 * @param Config|null $cfg
+	 * @return bool|mixed|null
+	 */
+	public function getAdvancedProperty($variable, $defaultValue = null, Config $cfg = null){
+		$vars = explode(".", $variable);
+		$base = array_shift($vars);
+		if($cfg == null) $cfg = $this->advancedConfig;
+		if($cfg->exists($base)){
+			$base = $cfg->get($base);
+		}else{
+			return $defaultValue;
+		}
+
+		while(count($vars) > 0){
+			$baseKey = array_shift($vars);
+			if(is_array($base) and isset($base[$baseKey])){
+				$base = $base[$baseKey];
+			}else{
+				return $defaultValue;
+			}
+		}
+
+		return $base;
+	}
+
+	public function updateQuery(){
+		try{
+			$this->getPluginManager()->callEvent($this->queryRegenerateTask = new QueryRegenerateEvent($this, 5));
+			if($this->queryHandler !== null){
+				$this->queryHandler->regenerateInfo();
+			}
+		}catch(\Throwable $e){
+			$this->logger->logException($e);
+		}
 	}
 
 
@@ -2487,15 +2903,8 @@ class Server{
 			$this->maxUse = 0;
 
 			if(($this->tickCounter & 0b111111111) === 0){
-				try{
-					$this->getPluginManager()->callEvent($this->queryRegenerateTask = new QueryRegenerateEvent($this, 5));
-					if($this->queryHandler !== null){
-						$this->queryHandler->regenerateInfo();
-					}
-				}catch(\Exception $e){
-					if($this->logger instanceof MainLogger){
-						$this->logger->logException($e);
-					}
+				if(($this->dserverConfig["enable"] and $this->dserverConfig["queryTickUpdate"]) or !$this->dserverConfig["enable"]){
+					$this->updateQuery();
 				}
 			}
 
@@ -2507,17 +2916,19 @@ class Server{
 			$this->doAutoSave();
 		}
 
-		if($this->sendUsageTicker > 0 and --$this->sendUsageTicker === 0){
+		if($this->weatherEnabled) WeatherManager::updateWeather();
+
+		/*if($this->sendUsageTicker > 0 and --$this->sendUsageTicker === 0){
 			$this->sendUsageTicker = 6000;
 			$this->sendUsage(SendUsageTask::TYPE_STATUS);
-		}
+		}*/
 
 		if(($this->tickCounter % 100) === 0){
 			foreach($this->levels as $level){
 				$level->clearCache();
 			}
 
-			if($this->getTicksPerSecondAverage() < 12){
+			if($this->getTicksPerSecondAverage() < 1){
 				$this->logger->warning($this->getLanguage()->translateString("ipocket.server.tickOverload"));
 			}
 		}
@@ -2534,7 +2945,7 @@ class Server{
 		$tick = min(20, 1 / max(0.001, $now - $tickTime));
 		$use = min(1, ($now - $tickTime) / 0.05);
 
-		TimingsHandler::tick($tick <= $this->profilingTickRate);
+		//TimingsHandler::tick($tick <= $this->profilingTickRate);
 
 		if($this->maxTick > $tick){
 			$this->maxTick = $tick;
@@ -2567,15 +2978,54 @@ class Server{
 		Entity::registerEntity(Villager::class);
 		Entity::registerEntity(Zombie::class);
 		Entity::registerEntity(Squid::class);
+		Entity::registerEntity(Chicken::class);
+		Entity::registerEntity(Cow::class);
+		Entity::registerEntity(Pig::class);
+		Entity::registerEntity(Sheep::class);
+		Entity::registerEntity(Wolf::class);
+		Entity::registerEntity(Mooshroom::class);
+		Entity::registerEntity(Creeper::class);
+		Entity::registerEntity(Skeleton::class);
+		Entity::registerEntity(Spider::class);
+		Entity::registerEntity(PigZombie::class);
+		Entity::registerEntity(Slime::class);
+		Entity::registerEntity(Enderman::class);
+		Entity::registerEntity(Silverfish::class);
+		Entity::registerEntity(CaveSpider::class);
+		Entity::registerEntity(Ghast::class);
+		Entity::registerEntity(LavaSlime::class);
+		Entity::registerEntity(Bat::class);
+		Entity::registerEntity(Blaze::class);
+		Entity::registerEntity(Ocelot::class);
+		Entity::registerEntity(SnowGolem::class);
+		Entity::registerEntity(IronGolem::class);
+		Entity::registerEntity(Lightning::class);
+		Entity::registerEntity(ExperienceOrb::class);
+		Entity::registerEntity(ThrownExpBottle::class);
+		Entity::registerEntity(Boat::class);
+		Entity::registerEntity(Minecart::class);
+		Entity::registerEntity(ThrownPotion::class);
+		Entity::registerEntity(Painting::class);
+		Entity::registerEntity(FishingHook::class);
+		Entity::registerEntity(Egg::class);
+		Entity::registerEntity(ZombieVillager::class);
+		Entity::registerEntity(Rabbit::class);
 
 		Entity::registerEntity(Human::class, true);
 	}
 
 	private function registerTiles(){
+		Tile::registerTile(BrewingStand::class);
 		Tile::registerTile(Chest::class);
 		Tile::registerTile(Furnace::class);
 		Tile::registerTile(Sign::class);
 		Tile::registerTile(EnchantTable::class);
+		Tile::registerTile(FlowerPot::class);
+		Tile::registerTile(Skull::class);
+		Tile::registerTile(MobSpawner::class);
+		Tile::registerTile(ItemFrame::class);
+		Tile::registerTile(Dispenser::class);
+		Tile::registerTile(Dropper::class);
+		Tile::registerTile(DLDetector::class);
 	}
-
 }

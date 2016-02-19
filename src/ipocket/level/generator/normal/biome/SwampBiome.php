@@ -14,17 +14,32 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
 
 namespace ipocket\level\generator\normal\biome;
 
+use ipocket\block\Block;
+use ipocket\block\Flower as FlowerBlock;
+use ipocket\level\generator\populator\Flower;
+use ipocket\level\generator\populator\LilyPad;
+
 class SwampBiome extends GrassyBiome{
 
 	public function __construct(){
 		parent::__construct();
+
+		$flower = new Flower();
+		$flower->setBaseAmount(8);
+		$flower->addType([Block::RED_FLOWER, FlowerBlock::TYPE_BLUE_ORCHID]);
+
+		$this->addPopulator($flower);
+
+		$lilypad = new LilyPad();
+		$lilypad->setBaseAmount(4);
+		$this->addPopulator($lilypad);
 
 		$this->setElevation(62, 63);
 
@@ -32,7 +47,7 @@ class SwampBiome extends GrassyBiome{
 		$this->rainfall = 0.9;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Swamp";
 	}
 

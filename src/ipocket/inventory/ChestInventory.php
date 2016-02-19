@@ -14,15 +14,15 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
 
 namespace ipocket\inventory;
 
+use ipocket\block\TrappedChest;
 use ipocket\level\Level;
-use ipocket\network\Network;
 use ipocket\network\protocol\BlockEventPacket;
 use ipocket\Player;
 
@@ -54,9 +54,29 @@ class ChestInventory extends ContainerInventory{
 				$level->addChunkPacket($this->getHolder()->getX() >> 4, $this->getHolder()->getZ() >> 4, $pk);
 			}
 		}
+
+		if($this->getHolder()->getLevel() instanceof Level){
+			/** @var TrappedChest $block */
+			$block = $this->getHolder()->getBlock();
+			if($block instanceof TrappedChest){
+				if(!$block->isActivated()){
+					$block->activate();
+				}
+			}
+		}
 	}
 
 	public function onClose(Player $who){
+		if($this->getHolder()->getLevel() instanceof Level){
+			/** @var TrappedChest $block */
+			$block = $this->getHolder()->getBlock();
+			if($block instanceof TrappedChest){
+				if($block->isActivated()){
+					$block->deactivate();
+				}
+			}
+		}
+
 		if(count($this->getViewers()) === 1){
 			$pk = new BlockEventPacket();
 			$pk->x = $this->getHolder()->getX();

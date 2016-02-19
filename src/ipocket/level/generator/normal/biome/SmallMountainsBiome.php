@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -30,7 +30,7 @@ class SmallMountainsBiome extends MountainsBiome{
 		$this->setElevation(63, 97);
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Small Mountains";
 	}
 }

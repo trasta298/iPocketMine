@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -37,9 +37,10 @@ class Stone extends Solid{
 
 	public function __construct($meta = 0){
 		$this->meta = $meta;
+
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 1.5;
 	}
 
@@ -47,7 +48,7 @@ class Stone extends Solid{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		static $names = [
 			self::NORMAL => "Stone",
 			self::GRANITE => "Granite",
@@ -61,7 +62,7 @@ class Stone extends Solid{
 		return $names[$this->meta & 0x07];
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array {
 		if($item->isPickaxe() >= Tool::TIER_WOODEN){
 			return [
 				[$this->getDamage() === 0 ? Item::COBBLESTONE : Item::STONE, $this->getDamage(), 1],

@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -24,6 +24,7 @@ namespace ipocket\command;
 use ipocket\command\defaults\BanCommand;
 use ipocket\command\defaults\BanIpCommand;
 use ipocket\command\defaults\BanListCommand;
+use ipocket\command\defaults\BiomeCommand;
 use ipocket\command\defaults\DefaultGamemodeCommand;
 use ipocket\command\defaults\DeopCommand;
 use ipocket\command\defaults\DifficultyCommand;
@@ -37,6 +38,8 @@ use ipocket\command\defaults\HelpCommand;
 use ipocket\command\defaults\KickCommand;
 use ipocket\command\defaults\KillCommand;
 use ipocket\command\defaults\ListCommand;
+use ipocket\command\defaults\LoadPluginCommand;
+use ipocket\command\defaults\LvdatCommand;
 use ipocket\command\defaults\MeCommand;
 use ipocket\command\defaults\OpCommand;
 use ipocket\command\defaults\PardonCommand;
@@ -49,10 +52,12 @@ use ipocket\command\defaults\SaveOffCommand;
 use ipocket\command\defaults\SaveOnCommand;
 use ipocket\command\defaults\SayCommand;
 use ipocket\command\defaults\SeedCommand;
+use ipocket\command\defaults\SetBlockCommand;
 use ipocket\command\defaults\SetWorldSpawnCommand;
 use ipocket\command\defaults\SpawnpointCommand;
 use ipocket\command\defaults\StatusCommand;
 use ipocket\command\defaults\StopCommand;
+use ipocket\command\defaults\SummonCommand;
 use ipocket\command\defaults\TeleportCommand;
 use ipocket\command\defaults\TellCommand;
 use ipocket\command\defaults\TimeCommand;
@@ -60,10 +65,22 @@ use ipocket\command\defaults\TimingsCommand;
 use ipocket\command\defaults\VanillaCommand;
 use ipocket\command\defaults\VersionCommand;
 use ipocket\command\defaults\WhitelistCommand;
+use ipocket\command\defaults\XpCommand;
+use ipocket\command\defaults\FillCommand;
 use ipocket\event\TranslationContainer;
 use ipocket\Server;
 use ipocket\utils\MainLogger;
 use ipocket\utils\TextFormat;
+
+use ipocket\command\defaults\MakeServerCommand;
+use ipocket\command\defaults\ExtractPluginCommand;
+use ipocket\command\defaults\ExtractPharCommand;
+use ipocket\command\defaults\MakePluginCommand;
+use ipocket\command\defaults\BancidbynameCommand;
+use ipocket\command\defaults\BanipbynameCommand;
+use ipocket\command\defaults\BanCidCommand;
+use ipocket\command\defaults\PardonCidCommand;
+use ipocket\command\defaults\WeatherCommand;
 
 class SimpleCommandMap implements CommandMap{
 
@@ -81,7 +98,26 @@ class SimpleCommandMap implements CommandMap{
 	}
 
 	private function setDefaultCommands(){
+		$this->register("ipocket", new WeatherCommand("weather"));
+
+		$this->register("ipocket", new BanCidCommand("bancid"));
+		$this->register("ipocket", new PardonCidCommand("pardoncid"));
+		$this->register("ipocket", new BancidbynameCommand("bancidbyname"));
+		$this->register("ipocket", new BanipbynameCommand("banipbyname"));
+
+		$this->register("ipocket", new ExtractPharCommand("extractphar"));
+		$this->register("ipocket", new ExtractPluginCommand("extractplugin"));
+		$this->register("ipocket", new MakePluginCommand("makeplugin"));
+		$this->register("ipocket", new MakeServerCommand("ms"));
+		//$this->register("ipocket", new MakeServerCommand("makeserver"));
+
+		$this->register("ipocket", new LoadPluginCommand("loadplugin"));
+		$this->register("ipocket", new LvdatCommand("lvdat"));
+
+		$this->register("ipocket", new BiomeCommand("biome"));
+
 		$this->register("ipocket", new VersionCommand("version"));
+		$this->register("ipocket", new FillCommand("fill"));
 		$this->register("ipocket", new PluginsCommand("plugins"));
 		$this->register("ipocket", new SeedCommand("seed"));
 		$this->register("ipocket", new HelpCommand("help"));
@@ -112,10 +148,13 @@ class SimpleCommandMap implements CommandMap{
 		$this->register("ipocket", new KillCommand("kill"));
 		$this->register("ipocket", new SpawnpointCommand("spawnpoint"));
 		$this->register("ipocket", new SetWorldSpawnCommand("setworldspawn"));
+		$this->register("ipocket", new SummonCommand("summon"));
 		$this->register("ipocket", new TeleportCommand("tp"));
 		$this->register("ipocket", new TimeCommand("time"));
 		$this->register("ipocket", new TimingsCommand("timings"));
 		$this->register("ipocket", new ReloadCommand("reload"));
+		$this->register("ipocket", new XpCommand("xp"));
+		$this->register("ipocket", new SetBlockCommand("setblock"));
 
 		if($this->server->getProperty("debug.commands", false)){
 			$this->register("ipocket", new StatusCommand("status"));
@@ -193,7 +232,7 @@ class SimpleCommandMap implements CommandMap{
 		$target->timings->startTiming();
 		try{
 			$target->execute($sender, $sentCommandLabel, $args);
-		}catch(\Exception $e){
+		}catch(\Throwable $e){
 			$sender->sendMessage(new TranslationContainer(TextFormat::RED . "%commands.generic.exception"));
 			$this->server->getLogger()->critical($this->server->getLanguage()->translateString("ipocket.command.exception", [$commandLine, (string) $target, $e->getMessage()]));
 			$logger = $sender->getServer()->getLogger();

@@ -14,24 +14,20 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
 
-/**
- * Implementation of the Source RCON Protocol to allow remote console commands
- * Source: https://developer.valvesoftware.com/wiki/Source_RCON_Protocol
- */
 namespace ipocket\network\rcon;
 
 use ipocket\command\RemoteConsoleCommandSender;
 use ipocket\event\server\RemoteServerCommandEvent;
 use ipocket\Server;
-use ipocket\utils\TextFormat;
-
 
 class RCON{
+	const PROTOCOL_VERSION = 2;
+
 	/** @var Server */
 	private $server;
 	private $socket;
@@ -61,7 +57,7 @@ class RCON{
 		socket_set_block($this->socket);
 
 		for($n = 0; $n < $this->threads; ++$n){
-			$this->workers[$n] = new RCONInstance($this->socket, $this->password, $this->clientsPerThread);
+			$this->workers[$n] = new RCONInstance($this->server->getLogger(), $this->socket, $this->password, $this->clientsPerThread);
 		}
 		socket_getsockname($this->socket, $addr, $port);
 		$this->server->getLogger()->info("RCON running on $addr:$port");
@@ -70,32 +66,37 @@ class RCON{
 	public function stop(){
 		for($n = 0; $n < $this->threads; ++$n){
 			$this->workers[$n]->close();
-			usleep(50000);
-			$this->workers[$n]->kill();
+			Server::microSleep(50000);
+			$this->workers[$n]->close();
+			$this->workers[$n]->quit();
 		}
 		@socket_close($this->socket);
 		$this->threads = 0;
 	}
 
-		public function check(){
+	public function check(){
 		for($n = 0; $n < $this->threads; ++$n){
 			if($this->workers[$n]->isTerminated() === true){
 				$this->workers[$n] = new RCONInstance($this->socket, $this->password, $this->clientsPerThread);
 			}elseif($this->workers[$n]->isWaiting()){
 				if($this->workers[$n]->response !== ""){
 					$this->server->getLogger()->info($this->workers[$n]->response);
-					$this->workers[$n]->synchronized(function (RCONInstance $thread){
+					$this->workers[$n]->synchronized(function(RCONInstance $thread){
 						$thread->notify();
 					}, $this->workers[$n]);
 				}else{
+
 					$response = new RemoteConsoleCommandSender();
 					$command = $this->workers[$n]->cmd;
+
 					$this->server->getPluginManager()->callEvent($ev = new RemoteServerCommandEvent($response, $command));
+
 					if(!$ev->isCancelled()){
 						$this->server->dispatchCommand($ev->getSender(), $ev->getCommand());
 					}
-					$this->workers[$n]->response = TextFormat::clean($response->getMessage());
-					$this->workers[$n]->synchronized(function (RCONInstance $thread){
+
+					$this->workers[$n]->response = $response->getMessage();
+					$this->workers[$n]->synchronized(function(RCONInstance $thread){
 						$thread->notify();
 					}, $this->workers[$n]);
 				}

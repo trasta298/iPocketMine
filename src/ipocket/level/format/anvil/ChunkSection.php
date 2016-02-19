@@ -14,14 +14,14 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
 
 namespace ipocket\level\format\anvil;
 
-use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\CompoundTag;
 
 class ChunkSection implements \ipocket\level\format\ChunkSection{
 
@@ -31,7 +31,7 @@ class ChunkSection implements \ipocket\level\format\ChunkSection{
 	private $blockLight;
 	private $skyLight;
 
-	public function __construct(Compound $nbt){
+	public function __construct(CompoundTag $nbt){
 		$this->y = (int) $nbt["Y"];
 		$this->blocks = (string) $nbt["Blocks"];
 		$this->data = (string) $nbt["Data"];

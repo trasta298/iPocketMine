@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -37,11 +37,11 @@ class Cobweb extends Flowable{
 		return true;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Cobweb";
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 4;
 	}
 
@@ -53,7 +53,7 @@ class Cobweb extends Flowable{
 		$entity->resetFallDistance();
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array {
 		//TODO: correct drops
 		return [];
 	}

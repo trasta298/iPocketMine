@@ -1,22 +1,11 @@
 <?php
 
 /*
- *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
- * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * @author iPocket Team
- * @link http://ipocket.link/
- *
- *
+ * iPocket-iTX Genisys
+ * @author iPocket-iTX Team & iTX Technologies LLC.
+ * @link http://mcper.cn
+ *       http://mcpe.asia
+ *       http://pl.zxda.net
 */
 
 namespace ipocket\block;
@@ -24,6 +13,12 @@ namespace ipocket\block;
 use ipocket\item\Item;
 use ipocket\item\Tool;
 use ipocket\Player;
+use ipocket\entity\IronGolem;
+use ipocket\entity\SnowGolem;
+use ipocket\nbt\tag\CompoundTag;
+use ipocket\nbt\tag\EnumTag;
+use ipocket\nbt\tag\DoubleTag;
+use ipocket\nbt\tag\FloatTag;
 
 class LitPumpkin extends Solid{
 
@@ -33,7 +28,7 @@ class LitPumpkin extends Solid{
 		return 15;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 1;
 	}
 
@@ -41,7 +36,7 @@ class LitPumpkin extends Solid{
 		return Tool::TYPE_AXE;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Jack o'Lantern";
 	}
 
@@ -54,6 +49,72 @@ class LitPumpkin extends Solid{
 			$this->meta = ((int) $player->getDirection() + 5) % 4;
 		}
 		$this->getLevel()->setBlock($block, $this, true, true);
+		if($player != null) {
+			$level = $this->getLevel();
+			if($player->getServer()->allowSnowGolem) {
+				$block0 = $level->getBlock($block->add(0,-1,0));
+				$block1 = $level->getBlock($block->add(0,-2,0));
+				if($block0->getId() == Item::SNOW_BLOCK and $block1->getId() == Item::SNOW_BLOCK) {
+					$level->setBlock($block, new Air());
+					$level->setBlock($block0, new Air());
+					$level->setBlock($block1, new Air());
+					$golem = new SnowGolem($player->getLevel()->getChunk($this->getX() >> 4, $this->getZ() >> 4), new CompoundTag("", [
+						"Pos" => new EnumTag("Pos", [
+							new DoubleTag("", $this->x),
+							new DoubleTag("", $this->y),
+							new DoubleTag("", $this->z)
+						]),
+						"Motion" => new EnumTag("Motion", [
+							new DoubleTag("", 0),
+							new DoubleTag("", 0),
+							new DoubleTag("", 0)
+						]),
+						"Rotation" => new EnumTag("Rotation", [
+							new FloatTag("", 0),
+							new FloatTag("", 0)
+						]),
+					]));
+					$golem->spawnToAll();
+				}
+			}
+			if($player->getServer()->allowIronGolem) {
+				$block0 = $level->getBlock($block->add(0,-1,0));
+				$block1 = $level->getBlock($block->add(0,-2,0));
+				$block2 = $level->getBlock($block->add(-1,-1,0));
+				$block3 = $level->getBlock($block->add(1,-1,0));
+				$block4 = $level->getBlock($block->add(0,-1,-1));
+				$block5 = $level->getBlock($block->add(0,-1,1));
+				if($block0->getId() == Item::IRON_BLOCK and $block1->getId() == Item::IRON_BLOCK) {
+					if($block2->getId() == Item::IRON_BLOCK and $block3->getId() == Item::IRON_BLOCK and $block4->getId() == Item::AIR and $block5->getId() == Item::AIR) {
+						$level->setBlock($block2, new Air());
+						$level->setBlock($block3, new Air());
+					}elseif($block4->getId() == Item::IRON_BLOCK and $block5->getId() == Item::IRON_BLOCK and $block2->getId() == Item::AIR and $block3->getId() == Item::AIR){
+						$level->setBlock($block4, new Air());
+						$level->setBlock($block5, new Air());
+					}else return;
+					$level->setBlock($block, new Air());
+					$level->setBlock($block0, new Air());
+					$level->setBlock($block1, new Air());
+					$golem = new IronGolem($player->getLevel()->getChunk($this->getX() >> 4, $this->getZ() >> 4), new CompoundTag("", [
+						"Pos" => new EnumTag("Pos", [
+							new DoubleTag("", $this->x),
+							new DoubleTag("", $this->y),
+							new DoubleTag("", $this->z)
+						]),
+						"Motion" => new EnumTag("Motion", [
+							new DoubleTag("", 0),
+							new DoubleTag("", 0),
+							new DoubleTag("", 0)
+						]),
+						"Rotation" => new EnumTag("Rotation", [
+							new FloatTag("", 0),
+							new FloatTag("", 0)
+						]),
+					]));
+					$golem->spawnToAll();
+				}
+			}
+		}
 
 		return true;
 	}

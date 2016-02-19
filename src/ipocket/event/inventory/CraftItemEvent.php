@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  *  ____            _        _   __  __ _                  __  __ ____
@@ -14,11 +13,10 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link   http://ipocket.link/
+ * @link   http://www.ipocket.net/
  *
  *
  */
-
 namespace ipocket\event\inventory;
 
 use ipocket\event\Cancellable;
@@ -29,7 +27,6 @@ use ipocket\Player;
 
 class CraftItemEvent extends Event implements Cancellable{
 	public static $handlerList = null;
-
 	/** @var Item[] */
 	private $input = [];
 	/** @var Recipe */
@@ -37,11 +34,10 @@ class CraftItemEvent extends Event implements Cancellable{
 	/** @var \ipocket\Player */
 	private $player;
 
-
 	/**
 	 * @param \ipocket\Player $player
-	 * @param Item[] $input
-	 * @param Recipe $recipe
+	 * @param Item[]             $input
+	 * @param Recipe             $recipe
 	 */
 	public function __construct(Player $player, array $input, Recipe $recipe){
 		$this->player = $player;
@@ -57,7 +53,6 @@ class CraftItemEvent extends Event implements Cancellable{
 		foreach($items as $i => $item){
 			$items[$i] = clone $item;
 		}
-
 		return $items;
 	}
 
@@ -69,7 +64,7 @@ class CraftItemEvent extends Event implements Cancellable{
 	}
 
 	/**
-	 * @return \pocktemine\Player
+	 * @return \ipocket\Player
 	 */
 	public function getPlayer(){
 		return $this->player;

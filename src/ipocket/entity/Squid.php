@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -39,6 +39,8 @@ class Squid extends WaterAnimal implements Ageable{
 	public $length = 0.95;
 	public $height = 0.95;
 
+	public $dropExp = [1, 3];
+
 	/** @var Vector3 */
 	public $swimDirection = null;
 	public $swimSpeed = 0.1;
@@ -50,7 +52,7 @@ class Squid extends WaterAnimal implements Ageable{
 		parent::initEntity();
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Squid";
 	}
 

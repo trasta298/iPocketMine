@@ -2,11 +2,11 @@
 
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
+ *  ____			_		_   __  __ _				  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___	  |  \/  |  _ \
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|	 |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -25,16 +25,16 @@ use ipocket\event\entity\EntityDamageEvent;
 use ipocket\event\entity\EntityRegainHealthEvent;
 use ipocket\network\Network;
 use ipocket\network\protocol\MobEffectPacket;
+use ipocket\network\protocol\UpdateAttributePacket;
 use ipocket\Player;
-
+use ipocket\entity\AttributeManager;
 
 class Attribute{
-
 	const MAX_HEALTH = 0;
+	const MAX_HUNGER = 1;
 
-
-	const EXPERIENCE = 1;
-	const EXPERIENCE_LEVEL = 2;
+	const EXPERIENCE = 2;
+	const EXPERIENCE_LEVEL = 3;
 
 	private $id;
 	protected $minValue;
@@ -44,40 +44,28 @@ class Attribute{
 	protected $name;
 	protected $shouldSend;
 
-	/** @var Attribute[] */
+	/** @var Player */
+	protected $player;
+
 	protected static $attributes = [];
 
 	public static function init(){
-		self::addAttribute(self::MAX_HEALTH, "generic.health", 0, 0x7fffffff, 20, true);
-		self::addAttribute(self::EXPERIENCE, "player.experience", 0, 1, 0, true);
-		self::addAttribute(self::EXPERIENCE_LEVEL, "player.level", 0, 24791, 0, true);
+		self::addAttribute(AttributeManager::MAX_HEALTH, "generic.health", 0, 20, 20, true);
+		self::addAttribute(AttributeManager::MAX_HUNGER, "player.hunger", 0, 20, 20, true);
+		self::addAttribute(AttributeManager::EXPERIENCE, "player.experience", 0, 1, 0, true);
+		self::addAttribute(AttributeManager::EXPERIENCE_LEVEL, "player.level", 0, 24791, 0, true);
 	}
 
-	/**
-	 * @param int    $id
-	 * @param string $name
-	 * @param float  $minValue
-	 * @param float  $maxValue
-	 * @param float  $defaultValue
-	 * @param bool   $shouldSend
-	 * @return Attribute
-	 */
-	public static function addAttribute($id, $name, $minValue, $maxValue, $defaultValue, $shouldSend = false){
-		if($minValue > $maxValue or $defaultValue > $maxValue or $defaultValue < $minValue){
-			throw new \InvalidArgumentException("Invalid ranges: min value: $minValue, max value: $maxValue, $defaultValue: $defaultValue");
-		}
-
-		return self::$attributes[(int) $id] = new Attribute($id, $name, $minValue, $maxValue, $defaultValue, $shouldSend);
-	}
-
-	/**
-	 * @param $id
-	 * @return null|Attribute
-	 */
 	public static function getAttribute($id){
 		return isset(self::$attributes[$id]) ? clone self::$attributes[$id] : null;
 	}
 
+	public static function addAttribute($id, $name, $minValue, $maxValue, $defaultValue, $shouldSend = false){
+		if($minValue > $maxValue or $defaultValue > $maxValue or $defaultValue < $minValue){
+			throw new \InvalidArgumentException("Invalid ranges: min value: $minValue, max value: $maxValue, $defaultValue: $defaultValue");
+		}
+		return self::$attributes[(int) $id] = new Attribute($id, $name, $minValue, $maxValue, $defaultValue, $shouldSend);
+	}
 	/**
 	 * @param $name
 	 * @return null|Attribute
@@ -92,7 +80,7 @@ class Attribute{
 		return null;
 	}
 
-	private function __construct($id, $name, $minValue, $maxValue, $defaultValue, $shouldSend = false){
+	public function __construct($id, $name, $minValue, $maxValue, $defaultValue, $shouldSend, $player = null){
 		$this->id = (int) $id;
 		$this->name = (string) $name;
 		$this->minValue = (float) $minValue;
@@ -101,6 +89,8 @@ class Attribute{
 		$this->shouldSend = (float) $shouldSend;
 
 		$this->currentValue = $this->defaultValue;
+
+		$this->player = $player;
 	}
 
 	public function getMinValue(){
@@ -122,7 +112,7 @@ class Attribute{
 
 	public function setMaxValue($maxValue){
 		if($maxValue < $this->getMinValue()){
-			throw new \InvalidArgumentException("Value $maxValue is bigger than the minValue!");
+			throw new \InvalidArgumentException("Value $maxValue is smaller than the minValue!");
 		}
 
 		$this->maxValue = $maxValue;
@@ -147,16 +137,18 @@ class Attribute{
 	}
 
 	public function setValue($value){
-		if($value > $this->getMaxValue() or $value < $this->getMinValue()){
-			throw new \InvalidArgumentException("Value $value exceeds the range!");
+		if($value > $this->getMaxValue()){
+			$value = $this->getMaxValue();
+		} else if($value < $this->getMinValue()){
+			$value = $this->getMinValue();
 		}
-
 		$this->currentValue = $value;
 
-		return $this;
+		if($this->shouldSend and $this->player != null)
+			$this->send();
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return $this->name;
 	}
 
@@ -168,4 +160,14 @@ class Attribute{
 		return $this->shouldSend;
 	}
 
+	public function send() {
+		$pk = new UpdateAttributePacket();
+		$pk->maxValue = $this->getMaxValue();
+		$pk->minValue = $this->getMinValue();
+		$pk->value = $this->currentValue;
+		$pk->name = $this->getName();
+		$pk->entityId = 0;
+		$pk->encode();
+		$this->player->dataPacket($pk);
+	}
 }

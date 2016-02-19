@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -32,11 +32,11 @@ class DiamondOre extends Solid{
 
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 3;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Diamond Ore";
 	}
 
@@ -44,8 +44,8 @@ class DiamondOre extends Solid{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= Tool::TIER_IRON){
+	public function getDrops(Item $item) : array {
+		if($item->isPickaxe() >= 4){
 			return [
 				[Item::DIAMOND, 0, 1],
 			];

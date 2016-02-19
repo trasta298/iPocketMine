@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -36,7 +36,7 @@ class LoginPacket extends DataPacket{
 	public $serverAddress;
 	public $clientSecret;
 
-	public $skinName;
+	public $skinName = null;
 	public $skin = null;
 
 	public function decode(){

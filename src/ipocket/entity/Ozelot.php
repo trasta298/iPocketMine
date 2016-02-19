@@ -14,11 +14,11 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
-
+//Ozelot does not exist it MCPE, should be Ocelot
 namespace ipocket\entity;
 
 

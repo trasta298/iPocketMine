@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -39,7 +39,7 @@ class IcePlainsBiome extends SnowyBiome{
 		$this->rainfall = 0.8;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Ice Plains";
 	}
 }

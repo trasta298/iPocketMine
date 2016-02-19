@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -23,7 +23,7 @@ namespace ipocket;
 
 
 use ipocket\metadata\MetadataValue;
-use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\CompoundTag;
 use ipocket\plugin\Plugin;
 
 class OfflinePlayer implements IPlayer{
@@ -50,7 +50,7 @@ class OfflinePlayer implements IPlayer{
 		return $this->getPlayer() !== null;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return $this->name;
 	}
 
@@ -103,15 +103,15 @@ class OfflinePlayer implements IPlayer{
 	}
 
 	public function getFirstPlayed(){
-		return $this->namedtag instanceof Compound ? $this->namedtag["firstPlayed"] : null;
+		return $this->namedtag instanceof CompoundTag ? $this->namedtag["firstPlayed"] : null;
 	}
 
 	public function getLastPlayed(){
-		return $this->namedtag instanceof Compound ? $this->namedtag["lastPlayed"] : null;
+		return $this->namedtag instanceof CompoundTag ? $this->namedtag["lastPlayed"] : null;
 	}
 
 	public function hasPlayedBefore(){
-		return $this->namedtag instanceof Compound;
+		return $this->namedtag instanceof CompoundTag;
 	}
 
 	public function setMetadata($metadataKey, MetadataValue $metadataValue){

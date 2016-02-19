@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -41,8 +41,8 @@ abstract class UPnP{
 			if($com === false or !is_object($com->StaticPortMappingCollection)){
 				return false;
 			}
-			$com->StaticPortMappingCollection->Add($port, "UDP", $port, $myLocalIP, true, "iPocket");
-		}catch(\Exception $e){
+			$com->StaticPortMappingCollection->Add($port, "UDP", $port, $myLocalIP, true, "iPocket-MP");
+		}catch(\Throwable $e){
 			return false;
 		}
 
@@ -63,7 +63,7 @@ abstract class UPnP{
 				return false;
 			}
 			$com->StaticPortMappingCollection->Remove($port, "UDP");
-		}catch(\Exception $e){
+		}catch(\Throwable $e){
 			return false;
 		}
 

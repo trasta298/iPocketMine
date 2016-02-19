@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -25,10 +25,11 @@ use ipocket\inventory\EnchantInventory;
 use ipocket\item\Item;
 use ipocket\item\Tool;
 
-use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\CompoundTag;
 use ipocket\nbt\tag\IntTag;
 use ipocket\nbt\tag\StringTag;
 use ipocket\Player;
+use ipocket\tile\EnchantTable;
 use ipocket\tile\Tile;
 
 class EnchantingTable extends Transparent{
@@ -41,7 +42,7 @@ class EnchantingTable extends Transparent{
 
 	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
 		$this->getLevel()->setBlock($block, $this, true, true);
-		$nbt = new Compound("", [
+		$nbt = new CompoundTag("", [
 			new StringTag("id", Tile::ENCHANT_TABLE),
 			new IntTag("x", $this->x),
 			new IntTag("y", $this->y),
@@ -63,7 +64,7 @@ class EnchantingTable extends Transparent{
 		return true;
 	}
 
-	public function canBeActivated(){
+	public function canBeActivated() : bool{
 		return true;
 	}
 
@@ -75,7 +76,7 @@ class EnchantingTable extends Transparent{
 		return 6000;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Enchanting Table";
 	}
 
@@ -84,20 +85,45 @@ class EnchantingTable extends Transparent{
 	}
 
 	public function onActivate(Item $item, Player $player = null){
+		if(!$this->getLevel()->getServer()->anviletEnabled) return true;
 		if($player instanceof Player){
 			//TODO lock
 			if($player->isCreative()){
 				return true;
 			}
+			$tile = $this->getLevel()->getTile($this);
+			$enchantTable = null;
+			if($tile instanceof EnchantTable)
+				$enchantTable = $tile;
+		}else{
+			$this->getLevel()->setBlock($this, $this, true, true);
+			$nbt = new CompoundTag("", [
+				new StringTag("id", Tile::ENCHANT_TABLE),
+				new IntTag("x", $this->x),
+				new IntTag("y", $this->y),
+				new IntTag("z", $this->z)
+			]);
 
-			$player->addWindow(new EnchantInventory($this));
+			if($item->hasCustomName()){
+				$nbt->CustomName = new StringTag("CustomName", $item->getCustomName());
+			}
+
+			if($item->hasCustomBlockData()){
+				foreach($item->getCustomBlockData() as $key => $v){
+					$nbt->{$key} = $v;
+				}
+			}
+
+			$enchantTable = Tile::createTile(Tile::ENCHANT_TABLE, $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
 		}
+
+		$player->addWindow($enchantTable->getInventory());
 
 		return true;
 	}
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= Tool::TIER_WOODEN){
+	public function getDrops(Item $item) : array{
+		if($item->isPickaxe() >= 1){
 			return [
 				[$this->id, 0, 1],
 			];

@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -23,7 +23,7 @@ namespace ipocket\item;
 
 class GoldenApple extends Item{
 	public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::GOLDEN_APPLE, $meta, $count, "Golden Apple");
+		parent::__construct(self::GOLDEN_APPLE, $meta, $count, (($meta == 0 ? "Golden Apple" : "Enchanted Golden Apple")));
 	}
 
 }

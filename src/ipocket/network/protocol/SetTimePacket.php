@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -38,7 +38,7 @@ class SetTimePacket extends DataPacket{
 
 	public function encode(){
 		$this->reset();
-		$this->putInt((int) (($this->time / Level::TIME_FULL) * 19200));
+		$this->putInt($this->time);
 		$this->putByte($this->started ? 1 : 0);
 	}
 

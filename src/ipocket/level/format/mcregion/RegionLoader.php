@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -195,7 +195,7 @@ class RegionLoader{
 
 			try{
 				$chunk = zlib_decode(substr($chunk, 5));
-			}catch(\Exception $e){
+			}catch(\Throwable $e){
 				$this->locationTable[$i] = [0, 0, 0]; //Corrupted chunk, remove it
 				continue;
 			}

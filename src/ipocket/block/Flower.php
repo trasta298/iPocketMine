@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -43,7 +43,7 @@ class Flower extends Flowable{
 		$this->meta = $meta;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		static $names = [
 			self::TYPE_POPPY => "Poppy",
 			self::TYPE_BLUE_ORCHID => "Blue Orchid",

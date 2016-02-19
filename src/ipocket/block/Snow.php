@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -32,7 +32,7 @@ class Snow extends Solid{
 
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 0.2;
 	}
 
@@ -40,7 +40,7 @@ class Snow extends Solid{
 		return Tool::TYPE_SHOVEL;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Snow Block";
 	}
 

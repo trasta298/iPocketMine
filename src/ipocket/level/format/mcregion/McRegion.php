@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -26,10 +26,10 @@ use ipocket\level\format\generic\BaseLevelProvider;
 use ipocket\level\generator\Generator;
 use ipocket\level\Level;
 use ipocket\nbt\NBT;
-use ipocket\nbt\tag\Byte;
-use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\ByteTag;
+use ipocket\nbt\tag\CompoundTag;
 use ipocket\nbt\tag\IntTag;
-use ipocket\nbt\tag\Long;
+use ipocket\nbt\tag\LongTag;
 use ipocket\nbt\tag\StringTag;
 use ipocket\tile\Spawnable;
 
@@ -81,9 +81,9 @@ class McRegion extends BaseLevelProvider{
 			mkdir($path . "/region", 0777);
 		}
 		//TODO, add extra details
-		$levelData = new Compound("Data", [
-			"hardcore" => new Byte("hardcore", 0),
-			"initialized" => new Byte("initialized", 1),
+		$levelData = new CompoundTag("Data", [
+			"hardcore" => new ByteTag("hardcore", 0),
+			"initialized" => new ByteTag("initialized", 1),
 			"GameType" => new IntTag("GameType", 0),
 			"generatorVersion" => new IntTag("generatorVersion", 1), //2 in MCPE
 			"SpawnX" => new IntTag("SpawnX", 128),
@@ -91,17 +91,17 @@ class McRegion extends BaseLevelProvider{
 			"SpawnZ" => new IntTag("SpawnZ", 128),
 			"version" => new IntTag("version", 19133),
 			"DayTime" => new IntTag("DayTime", 0),
-			"LastPlayed" => new Long("LastPlayed", microtime(true) * 1000),
-			"RandomSeed" => new Long("RandomSeed", $seed),
-			"SizeOnDisk" => new Long("SizeOnDisk", 0),
-			"Time" => new Long("Time", 0),
+			"LastPlayed" => new LongTag("LastPlayed", microtime(true) * 1000),
+			"RandomSeed" => new LongTag("RandomSeed", $seed),
+			"SizeOnDisk" => new LongTag("SizeOnDisk", 0),
+			"Time" => new LongTag("Time", 0),
 			"generatorName" => new StringTag("generatorName", Generator::getGeneratorName($generator)),
 			"generatorOptions" => new StringTag("generatorOptions", isset($options["preset"]) ? $options["preset"] : ""),
 			"LevelName" => new StringTag("LevelName", $name),
-			"GameRules" => new Compound("GameRules", [])
+			"GameRules" => new CompoundTag("GameRules", [])
 		]);
 		$nbt = new NBT(NBT::BIG_ENDIAN);
-		$nbt->setData(new Compound("", [
+		$nbt->setData(new CompoundTag("", [
 			"Data" => $levelData
 		]));
 		$buffer = $nbt->writeCompressed();
@@ -119,37 +119,42 @@ class McRegion extends BaseLevelProvider{
 			throw new ChunkException("Invalid Chunk sent");
 		}
 
-		$tiles = "";
+		if($this->getServer()->asyncChunkRequest){
+			$task = new ChunkRequestTask($this->getLevel(), $chunk);
+			$this->getServer()->getScheduler()->scheduleAsyncTask($task);
+		}else{
+			$tiles = "";
 
-		if(count($chunk->getTiles()) > 0){
-			$nbt = new NBT(NBT::LITTLE_ENDIAN);
-			$list = [];
-			foreach($chunk->getTiles() as $tile){
-				if($tile instanceof Spawnable){
-					$list[] = $tile->getSpawnCompound();
+			if(count($chunk->getTiles()) > 0){
+				$nbt = new NBT(NBT::LITTLE_ENDIAN);
+				$list = [];
+				foreach($chunk->getTiles() as $tile){
+					if($tile instanceof Spawnable){
+						$list[] = $tile->getSpawnCompound();
+					}
 				}
+				$nbt->setData($list);
+				$tiles = $nbt->write();
 			}
-			$nbt->setData($list);
-			$tiles = $nbt->write();
+
+			$extraData = new BinaryStream();
+			$extraData->putLInt(count($chunk->getBlockExtraDataArray()));
+			foreach($chunk->getBlockExtraDataArray() as $key => $value){
+				$extraData->putLInt($key);
+				$extraData->putLShort($value);
+			}
+
+			$ordered = $chunk->getBlockIdArray() .
+				$chunk->getBlockDataArray() .
+				$chunk->getBlockSkyLightArray() .
+				$chunk->getBlockLightArray() .
+				pack("C*", ...$chunk->getHeightMapArray()) .
+				pack("N*", ...$chunk->getBiomeColorArray()) .
+				$extraData->getBuffer() .
+				$tiles;
+
+			$this->getLevel()->chunkRequestCallback($x, $z, $ordered);
 		}
-
-		$extraData = new BinaryStream();
-		$extraData->putLInt(count($chunk->getBlockExtraDataArray()));
-		foreach($chunk->getBlockExtraDataArray() as $key => $value){
-			$extraData->putLInt($key);
-			$extraData->putLShort($value);
-		}
-
-		$ordered = $chunk->getBlockIdArray() .
-			$chunk->getBlockDataArray() .
-			$chunk->getBlockSkyLightArray() .
-			$chunk->getBlockLightArray() .
-			pack("C*", ...$chunk->getHeightMapArray()) .
-			pack("N*", ...$chunk->getBiomeColorArray()) .
-			$extraData->getBuffer() .
-			$tiles;
-
-		$this->getLevel()->chunkRequestCallback($x, $z, $ordered);
 
 		return null;
 	}

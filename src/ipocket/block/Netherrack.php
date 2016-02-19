@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -32,11 +32,11 @@ class Netherrack extends Solid{
 
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Netherrack";
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 2;
 	}
 
@@ -44,8 +44,8 @@ class Netherrack extends Solid{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= Tool::TIER_WOODEN){
+	public function getDrops(Item $item) : array {
+		if($item->isPickaxe() >= 1){
 			return [
 				[Item::NETHERRACK, 0, 1],
 			];

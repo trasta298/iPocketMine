@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -35,11 +35,11 @@ class Podzol extends Solid{
 		return Tool::TYPE_SHOVEL;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Podzol";
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 2.5;
 	}
 }

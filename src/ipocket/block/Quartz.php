@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -31,22 +31,23 @@ class Quartz extends Solid{
 	const QUARTZ_PILLAR = 2;
 	const QUARTZ_PILLAR2 = 3;
 
+
 	protected $id = self::QUARTZ_BLOCK;
 
 	public function __construct($meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 0.8;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		static $names = [
-			self::QUARTZ_NORMAL => "Quartz Block",
-			self::QUARTZ_CHISELED => "Chiseled Quartz Block",
-			self::QUARTZ_PILLAR => "Quartz Pillar",
-			self::QUARTZ_PILLAR2 => "Quartz Pillar",
+			0 => "Quartz Block",
+			1 => "Chiseled Quartz Block",
+			2 => "Quartz Pillar",
+			3 => "Quartz Pillar",
 		];
 		return $names[$this->meta & 0x03];
 	}
@@ -55,8 +56,8 @@ class Quartz extends Solid{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= Tool::TIER_WOODEN){
+	public function getDrops(Item $item) : array {
+		if($item->isPickaxe() >= 1){
 			return [
 				[Item::QUARTZ_BLOCK, $this->meta & 0x03, 1],
 			];

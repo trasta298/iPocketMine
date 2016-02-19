@@ -1,4 +1,5 @@
 <?php
+
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
@@ -12,28 +13,36 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://ipocket.link/
+ * @author iPocket Team
+ * @link http://www.ipocket.net/
  *
  *
 */
+
 namespace ipocket\scheduler;
+
 use ipocket\Server;
+
 /**
  * Class used to run async tasks in other threads.
  *
- * WARNING: Do not call PocketMine-MP API methods, or save objects from/on other Threads!!
+ * WARNING: Do not call iPocket-MP API methods, or save objects from/on other Threads!!
  */
 abstract class AsyncTask extends \Threaded implements \Collectable{
+
 	/** @var AsyncWorker $worker */
 	public $worker = null;
+
 	private $result = null;
 	private $serialized = false;
 	private $cancelRun = false;
 	/** @var int */
 	private $taskId = null;
+
 	private $crashed = false;
+
 	private $isGarbage = false;
+
 	private $isFinished = false;
 
 	public function isGarbage() : bool{
@@ -51,6 +60,7 @@ abstract class AsyncTask extends \Threaded implements \Collectable{
 	public function run(){
 		$this->result = null;
 		$this->isGarbage = false;
+
 		if($this->cancelRun !== true){
 			try{
 				$this->onRun();
@@ -59,6 +69,7 @@ abstract class AsyncTask extends \Threaded implements \Collectable{
 				$this->worker->handleException($e);
 			}
 		}
+
 		$this->isFinished = true;
 		//$this->setGarbage();
 	}
@@ -138,6 +149,7 @@ abstract class AsyncTask extends \Threaded implements \Collectable{
 	 * @return void
 	 */
 	public abstract function onRun();
+
 	/**
 	 * Actions to execute when completed (on main thread)
 	 * Implement this if you want to handle the data in your AsyncTask after it has been processed
@@ -147,13 +159,15 @@ abstract class AsyncTask extends \Threaded implements \Collectable{
 	 * @return void
 	 */
 	public function onCompletion(Server $server){
+
 	}
 
 	public function cleanObject(){
 		foreach($this as $p => $v){
-			if(!($v instanceof \Threaded)){
+			if(!($v instanceof \Threaded) and !in_array($p, ["isFinished", "isGarbage", "cancelRun"])){
 				$this->{$p} = null;
 			}
 		}
 	}
+
 }

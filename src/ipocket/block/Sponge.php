@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -30,11 +30,11 @@ class Sponge extends Solid{
 
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 0.6;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Sponge";
 	}
 

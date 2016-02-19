@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -23,7 +23,7 @@ namespace ipocket\entity;
 
 use ipocket\level\format\FullChunk;
 use ipocket\level\particle\CriticalParticle;
-use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\CompoundTag;
 use ipocket\network\Network;
 use ipocket\network\protocol\AddEntityPacket;
 use ipocket\Player;
@@ -42,7 +42,7 @@ class Arrow extends Projectile{
 
 	protected $isCritical;
 
-	public function __construct(FullChunk $chunk, Compound $nbt, Entity $shootingEntity = null, $critical = false){
+	public function __construct(FullChunk $chunk, CompoundTag $nbt, Entity $shootingEntity = null, $critical = false){
 		$this->isCritical = (bool) $critical;
 		parent::__construct($chunk, $nbt, $shootingEntity);
 	}

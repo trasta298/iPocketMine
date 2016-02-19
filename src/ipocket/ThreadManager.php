@@ -14,14 +14,14 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
 
 namespace ipocket;
 
-class ThreadManager extends \Threaded{
+class ThreadManager extends \Volatile{
 
 	/** @var ThreadManager */
 	private static $instance = null;

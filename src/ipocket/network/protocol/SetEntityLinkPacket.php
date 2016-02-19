@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -26,6 +26,11 @@ namespace ipocket\network\protocol;
 
 class SetEntityLinkPacket extends DataPacket{
 	const NETWORK_ID = Info::SET_ENTITY_LINK_PACKET;
+
+	const TYPE_REMOVE = 0;
+	const TYPE_RIDE = 1;
+	const TYPE_PASSENGER = 2;
+
 
 	public $from;
 	public $to;

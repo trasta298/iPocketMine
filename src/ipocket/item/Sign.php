@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -29,7 +29,7 @@ class Sign extends Item{
 		parent::__construct(self::SIGN, 0, $count, "Sign");
 	}
 
-	public function getMaxStackSize(){
+	public function getMaxStackSize() : int {
 		return 16;
 	}
 }

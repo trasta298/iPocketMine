@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -39,11 +39,11 @@ class Wood extends Solid{
 		$this->meta = $meta;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 2;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		static $names = [
 			self::OAK => "Oak Wood",
 			self::SPRUCE => "Spruce Wood",
@@ -69,7 +69,7 @@ class Wood extends Solid{
 		return true;
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array {
 		return [
 			[$this->id, $this->meta & 0x03, 1],
 		];

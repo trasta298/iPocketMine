@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -64,7 +64,7 @@ class Tree extends Populator{
 	private function getHighestWorkableBlock($x, $z){
 		for($y = 127; $y > 0; --$y){
 			$b = $this->level->getBlockIdAt($x, $y, $z);
-			if($b === Block::DIRT or $b === Block::GRASS){
+			if($b === Block::DIRT or $b === Block::GRASS or $b === Block::PODZOL){
 				break;
 			}elseif($b !== 0 and $b !== Block::SNOW_LAYER){
 				return -1;

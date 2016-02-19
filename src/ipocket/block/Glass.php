@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -31,15 +31,15 @@ class Glass extends Transparent{
 
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Glass";
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 0.3;
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array {
 		return [];
 	}
 }

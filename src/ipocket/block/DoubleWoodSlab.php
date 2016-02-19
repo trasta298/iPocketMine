@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -22,6 +22,7 @@
 namespace ipocket\block;
 
 use ipocket\item\Item;
+use ipocket\item\Tool;
 
 class DoubleWoodSlab extends Solid{
 
@@ -31,7 +32,7 @@ class DoubleWoodSlab extends Solid{
 		$this->meta = $meta;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 2;
 	}
 
@@ -39,7 +40,7 @@ class DoubleWoodSlab extends Solid{
 		return Tool::TYPE_AXE;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		static $names = [
 			0 => "Oak",
 			1 => "Spruce",
@@ -53,7 +54,7 @@ class DoubleWoodSlab extends Solid{
 		return "Double " . $names[$this->meta & 0x07] . " Wooden Slab";
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array {
 		return [
 			[Item::WOOD_SLAB, $this->meta & 0x07, 2],
 		];

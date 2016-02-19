@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -24,7 +24,11 @@ namespace ipocket\item;
 
 abstract class Armor extends Item{
 
-	public function getMaxStackSize(){
+	public function getMaxStackSize() : int {
 		return 1;
+	}
+
+	public function isArmor(){
+		return true;
 	}
 }

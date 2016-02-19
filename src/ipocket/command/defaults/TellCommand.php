@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -33,7 +33,7 @@ class TellCommand extends VanillaCommand{
 			$name,
 			"%ipocket.command.tell.description",
 			"%commands.message.usage",
-			["w", "msg"]
+			["w", "whisper", "msg", "m"]
 		);
 		$this->setPermission("ipocket.command.tell");
 	}

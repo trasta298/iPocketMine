@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -32,11 +32,11 @@ class Bookshelf extends Solid{
 
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Bookshelf";
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 1.5;
 	}
 

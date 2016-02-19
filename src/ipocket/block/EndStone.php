@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -32,7 +32,7 @@ class EndStone extends Solid{
 
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "End Stone";
 	}
 
@@ -40,7 +40,7 @@ class EndStone extends Solid{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 3;
 	}
 }

@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -23,6 +23,7 @@ namespace ipocket\block;
 
 use ipocket\item\Item;
 use ipocket\item\Tool;
+use ipocket\Player;
 
 class IronDoor extends Door{
 
@@ -32,7 +33,7 @@ class IronDoor extends Door{
 		$this->meta = $meta;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Iron Door Block";
 	}
 
@@ -40,17 +41,22 @@ class IronDoor extends Door{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 5;
 	}
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= Tool::TIER_WOODEN){
+	public function getDrops(Item $item) : array {
+		if($item->isPickaxe() >= 1){
 			return [
 				[Item::IRON_DOOR, 0, 1],
 			];
 		}else{
 			return [];
 		}
+	}
+
+	public function onActivate(Item $item, Player $player = null){
+		if($player instanceof Player) return true;
+		else return parent::onActivate($item, $player);
 	}
 }

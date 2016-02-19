@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -72,7 +72,7 @@ class PermissibleBase implements Permissible{
 	/**
 	 * @param bool $value
 	 *
-	 * @throws \Exception
+	 * @throws \Throwable
 	 */
 	public function setOp($value){
 		if($this->opable === null){
@@ -147,7 +147,7 @@ class PermissibleBase implements Permissible{
 	/**
 	 * @param PermissionAttachment $attachment
 	 *
-	 * @throws \Exception
+	 * @throws \Throwable
 	 */
 	public function removeAttachment(PermissionAttachment $attachment){
 		if($attachment === null){

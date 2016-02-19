@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -42,9 +42,18 @@ class StopCommand extends VanillaCommand{
 			return true;
 		}
 
+		$restart = \Null;
+		if(isset($args[0])){
+			if($args[0] == 'force'){
+				$restart = \true;
+			}else{
+				$restart = \false;
+			}
+		}
+
 		Command::broadcastCommandMessage($sender, new TranslationContainer("commands.stop.start"));
 
-		$sender->getServer()->shutdown();
+		$sender->getServer()->shutdown($restart);
 
 		return true;
 	}

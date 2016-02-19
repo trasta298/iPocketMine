@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -31,7 +31,7 @@ use ipocket\event\entity\EntityRegainHealthEvent;
 use ipocket\event\Timings;
 use ipocket\item\Item as ItemItem;
 use ipocket\math\Vector3;
-use ipocket\nbt\tag\Short;
+use ipocket\nbt\tag\ShortTag;
 use ipocket\network\Network;
 use ipocket\network\protocol\EntityEventPacket;
 
@@ -51,15 +51,17 @@ abstract class Living extends Entity implements Damageable{
 		parent::initEntity();
 
 		if(isset($this->namedtag->HealF)){
-			$this->namedtag->Health = new Short("Health", (int) $this->namedtag["HealF"]);
+			$this->namedtag->Health = new ShortTag("Health", (int) $this->namedtag["HealF"]);
 			unset($this->namedtag->HealF);
 		}
 
-		if(!isset($this->namedtag->Health) or !($this->namedtag->Health instanceof Short)){
-			$this->namedtag->Health = new Short("Health", $this->getMaxHealth());
+		if(!isset($this->namedtag->Health) or !($this->namedtag->Health instanceof ShortTag)){
+			$this->namedtag->Health = new ShortTag("Health", $this->getMaxHealth());
 		}
 
-		$this->setHealth($this->namedtag["Health"]);
+		if($this->namedtag["Health"] <= 0)
+			$this->setHealth(20);
+		else $this->setHealth($this->namedtag["Health"]);
 	}
 
 	public function setHealth($amount){
@@ -75,7 +77,7 @@ abstract class Living extends Entity implements Damageable{
 
 	public function saveNBT(){
 		parent::saveNBT();
-		$this->namedtag->Health = new Short("Health", $this->getHealth());
+		$this->namedtag->Health = new ShortTag("Health", $this->getHealth());
 	}
 
 	public abstract function getName();

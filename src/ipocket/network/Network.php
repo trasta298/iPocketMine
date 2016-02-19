@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -38,6 +38,7 @@ use ipocket\network\protocol\ContainerSetDataPacket;
 use ipocket\network\protocol\ContainerSetSlotPacket;
 use ipocket\network\protocol\CraftingDataPacket;
 use ipocket\network\protocol\CraftingEventPacket;
+use ipocket\network\protocol\ChangeDimensionPacket;
 use ipocket\network\protocol\DataPacket;
 use ipocket\network\protocol\DropItemPacket;
 use ipocket\network\protocol\FullChunkDataPacket;
@@ -67,6 +68,7 @@ use ipocket\network\protocol\SetDifficultyPacket;
 use ipocket\network\protocol\SetEntityDataPacket;
 use ipocket\network\protocol\SetEntityMotionPacket;
 use ipocket\network\protocol\SetHealthPacket;
+use ipocket\network\protocol\SetPlayerGameTypePacket;
 use ipocket\network\protocol\SetSpawnPositionPacket;
 use ipocket\network\protocol\SetTimePacket;
 use ipocket\network\protocol\StartGamePacket;
@@ -74,14 +76,14 @@ use ipocket\network\protocol\TakeItemEntityPacket;
 use ipocket\network\protocol\BlockEventPacket;
 use ipocket\network\protocol\UpdateBlockPacket;
 use ipocket\network\protocol\UseItemPacket;
-use ipocket\network\protocol\SetPlayerGameTypePacket;
 use ipocket\network\protocol\PlayerListPacket;
+use ipocket\network\protocol\PlayerInputPacket;
 use ipocket\Player;
 use ipocket\Server;
 use ipocket\utils\Binary;
 use ipocket\utils\MainLogger;
 
-class Network{
+class Network {
 
 	public static $BATCH_THRESHOLD = 512;
 
@@ -121,28 +123,27 @@ class Network{
 
 	private $name;
 
-	public function __construct(Server $server){
+	public function __construct(Server $server) {
 
 		$this->registerPackets();
 
 		$this->server = $server;
-
 	}
 
-	public function addStatistics($upload, $download){
+	public function addStatistics($upload, $download) {
 		$this->upload += $upload;
 		$this->download += $download;
 	}
 
-	public function getUpload(){
+	public function getUpload() {
 		return $this->upload;
 	}
 
-	public function getDownload(){
+	public function getDownload() {
 		return $this->download;
 	}
 
-	public function resetStatistics(){
+	public function resetStatistics() {
 		$this->upload = 0;
 		$this->download = 0;
 	}
@@ -150,18 +151,18 @@ class Network{
 	/**
 	 * @return SourceInterface[]
 	 */
-	public function getInterfaces(){
+	public function getInterfaces() {
 		return $this->interfaces;
 	}
 
-	public function processInterfaces(){
-		foreach($this->interfaces as $interface){
+	public function processInterfaces() {
+		foreach ($this->interfaces as $interface) {
 			try {
 				$interface->process();
-			}catch(\Exception $e){
+			} catch (\Throwable $e) {
 				$logger = $this->server->getLogger();
-				if(\ipocket\DEBUG > 1){
-					if($logger instanceof MainLogger){
+				if (\ipocket\DEBUG > 1) {
+					if ($logger instanceof MainLogger) {
 						$logger->logException($e);
 					}
 				}
@@ -176,9 +177,9 @@ class Network{
 	/**
 	 * @param SourceInterface $interface
 	 */
-	public function registerInterface(SourceInterface $interface){
+	public function registerInterface(SourceInterface $interface) {
 		$this->interfaces[$hash = spl_object_hash($interface)] = $interface;
-		if($interface instanceof AdvancedSourceInterface){
+		if ($interface instanceof AdvancedSourceInterface) {
 			$this->advancedInterfaces[$hash] = $interface;
 			$interface->setNetwork($this);
 		}
@@ -188,7 +189,7 @@ class Network{
 	/**
 	 * @param SourceInterface $interface
 	 */
-	public function unregisterInterface(SourceInterface $interface){
+	public function unregisterInterface(SourceInterface $interface) {
 		unset($this->interfaces[$hash = spl_object_hash($interface)],
 			$this->advancedInterfaces[$hash]);
 	}
@@ -198,19 +199,19 @@ class Network{
 	 *
 	 * @param string $name
 	 */
-	public function setName($name){
-		$this->name = (string) $name;
-		foreach($this->interfaces as $interface){
+	public function setName($name) {
+		$this->name = (string)$name;
+		foreach ($this->interfaces as $interface) {
 			$interface->setName($this->name);
 		}
 	}
 
-	public function getName(){
+	public function getName() {
 		return $this->name;
 	}
 
-	public function updateName(){
-		foreach($this->interfaces as $interface){
+	public function updateName() {
+		foreach ($this->interfaces as $interface) {
 			$interface->setName($this->name);
 		}
 	}
@@ -219,45 +220,45 @@ class Network{
 	 * @param int        $id 0-255
 	 * @param DataPacket $class
 	 */
-	public function registerPacket($id, $class){
+	public function registerPacket($id, $class) {
 		$this->packetPool[$id] = new $class;
 	}
 
-	public function getServer(){
+	public function getServer() {
 		return $this->server;
 	}
 
-	public function processBatch(BatchPacket $packet, Player $p){
+	public function processBatch(BatchPacket $packet, Player $p) {
 		$str = zlib_decode($packet->payload, 1024 * 1024 * 64); //Max 64MB
 		$len = strlen($str);
 		$offset = 0;
-		try{
-			while($offset < $len){
+		try {
+			while ($offset < $len) {
 				$pkLen = Binary::readInt(substr($str, $offset, 4));
 				$offset += 4;
 
 				$buf = substr($str, $offset, $pkLen);
 				$offset += $pkLen;
 
-				if(($pk = $this->getPacket(ord($buf{0}))) !== null){
-					if($pk::NETWORK_ID === Info::BATCH_PACKET){
+				if (($pk = $this->getPacket(ord($buf{1}))) !== null) {
+					if ($pk::NETWORK_ID === Info::BATCH_PACKET) {
 						throw new \InvalidStateException("Invalid BatchPacket inside BatchPacket");
 					}
 
-					$pk->setBuffer($buf, 1);
+					$pk->setBuffer($buf, 2);
 
 					$pk->decode();
 					$p->handleDataPacket($pk);
 
-					if($pk->getOffset() <= 0){
+					if ($pk->getOffset() <= 0) {
 						return;
 					}
 				}
 			}
-		}catch(\Exception $e){
-			if(\ipocket\DEBUG > 1){
+		} catch (\Throwable $e) {
+			if (\ipocket\DEBUG > 1) {
 				$logger = $this->server->getLogger();
-				if($logger instanceof MainLogger){
+				if ($logger instanceof MainLogger) {
 					$logger->debug("BatchPacket " . " 0x" . bin2hex($packet->payload));
 					$logger->logException($e);
 				}
@@ -270,10 +271,10 @@ class Network{
 	 *
 	 * @return DataPacket
 	 */
-	public function getPacket($id){
+	public function getPacket($id) {
 		/** @var DataPacket $class */
 		$class = $this->packetPool[$id];
-		if($class !== null){
+		if ($class !== null) {
 			return clone $class;
 		}
 		return null;
@@ -285,8 +286,8 @@ class Network{
 	 * @param int    $port
 	 * @param string $payload
 	 */
-	public function sendPacket($address, $port, $payload){
-		foreach($this->advancedInterfaces as $interface){
+	public function sendPacket($address, $port, $payload) {
+		foreach ($this->advancedInterfaces as $interface) {
 			$interface->sendRawPacket($address, $port, $payload);
 		}
 	}
@@ -297,13 +298,13 @@ class Network{
 	 * @param string $address
 	 * @param int    $timeout
 	 */
-	public function blockAddress($address, $timeout = 300){
-		foreach($this->advancedInterfaces as $interface){
+	public function blockAddress($address, $timeout = 300) {
+		foreach ($this->advancedInterfaces as $interface) {
 			$interface->blockAddress($address, $timeout);
 		}
 	}
 
-	private function registerPackets(){
+	private function registerPackets() {
 		$this->packetPool = new \SplFixedArray(256);
 
 		$this->registerPacket(ProtocolInfo::LOGIN_PACKET, LoginPacket::class);
@@ -353,7 +354,9 @@ class Network{
 		$this->registerPacket(ProtocolInfo::BLOCK_ENTITY_DATA_PACKET, BlockEntityDataPacket::class);
 		$this->registerPacket(ProtocolInfo::FULL_CHUNK_DATA_PACKET, FullChunkDataPacket::class);
 		$this->registerPacket(ProtocolInfo::SET_DIFFICULTY_PACKET, SetDifficultyPacket::class);
-		$this->registerPacket(ProtocolInfo::SET_PLAYER_GAMETYPE_PACKET, SetPlayerGameTypePacket::class);
 		$this->registerPacket(ProtocolInfo::PLAYER_LIST_PACKET, PlayerListPacket::class);
+		$this->registerPacket(ProtocolInfo::PLAYER_INPUT_PACKET, PlayerInputPacket::class);
+		$this->registerPacket(ProtocolInfo::SET_PLAYER_GAMETYPE_PACKET, SetPlayerGameTypePacket::class);
+		$this->registerPacket(ProtocolInfo::CHANGE_DIMENSION_PACKET, ChangeDimensionPacket::class);
 	}
 }

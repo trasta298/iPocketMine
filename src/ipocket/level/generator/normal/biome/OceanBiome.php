@@ -14,13 +14,14 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
 
 namespace ipocket\level\generator\normal\biome;
 
+use ipocket\block\Block;
 use ipocket\level\generator\populator\TallGrass;
 
 class OceanBiome extends GrassyBiome{
@@ -28,18 +29,26 @@ class OceanBiome extends GrassyBiome{
 	public function __construct(){
 		parent::__construct();
 
+		$this->setGroundCover([
+			Block::get(Block::DIRT, 0),
+			Block::get(Block::DIRT, 0),
+			Block::get(Block::DIRT, 0),
+			Block::get(Block::DIRT, 0),
+			Block::get(Block::DIRT, 0),
+		]);
+
 		$tallGrass = new TallGrass();
 		$tallGrass->setBaseAmount(5);
 
 		$this->addPopulator($tallGrass);
 
-		$this->setElevation(46, 58);
+		$this->setElevation(46, 68);
 
 		$this->temperature = 0.5;
 		$this->rainfall = 0.5;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Ocean";
 	}
 }

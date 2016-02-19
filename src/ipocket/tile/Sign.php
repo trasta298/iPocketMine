@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -22,13 +22,13 @@
 namespace ipocket\tile;
 
 use ipocket\level\format\FullChunk;
-use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\CompoundTag;
 use ipocket\nbt\tag\IntTag;
 use ipocket\nbt\tag\StringTag;
 
 class Sign extends Spawnable{
 
-	public function __construct(FullChunk $chunk, Compound $nbt){
+	public function __construct(FullChunk $chunk, CompoundTag $nbt){
 		if(!isset($nbt->Text1)){
 			$nbt->Text1 = new StringTag("Text1", "");
 		}
@@ -75,7 +75,7 @@ class Sign extends Spawnable{
 	}
 
 	public function getSpawnCompound(){
-		return new Compound("", [
+		return new CompoundTag("", [
 			new StringTag("id", Tile::SIGN),
 			$this->namedtag->Text1,
 			$this->namedtag->Text2,

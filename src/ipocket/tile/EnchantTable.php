@@ -14,49 +14,47 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
 
 namespace ipocket\tile;
 
-use ipocket\nbt\tag\Compound;
+use ipocket\inventory\EnchantInventory;
+use ipocket\inventory\InventoryHolder;
+use ipocket\item\Item;
+use ipocket\level\format\FullChunk;
+use ipocket\nbt\tag\CompoundTag;
 use ipocket\nbt\tag\IntTag;
 use ipocket\nbt\tag\StringTag;
 
-class EnchantTable extends Spawnable implements Nameable{
+class EnchantTable extends Spawnable implements InventoryHolder{
+	/** @var EnchantInventory */
+	protected $inventory;
 
-
-	public function getName(){
-		return isset($this->namedtag->CustomName) ? $this->namedtag->CustomName->getValue() : "Enchanting Table";
+	public function __construct(FullChunk $chunk, CompoundTag $nbt){
+		parent::__construct($chunk, $nbt);
+		$this->inventory = new EnchantInventory($this);
 	}
 
-	public function hasName(){
-		return isset($this->namedtag->CustomName);
+	public function getName() : string{
+		return "Enchanting Table";
 	}
 
-	public function setName($str){
-		if($str === ""){
-			unset($this->namedtag->CustomName);
-			return;
-		}
-
-		$this->namedtag->CustomName = new StringTag("CustomName", $str);
+	/**
+	 * @return EnchantInventory
+	 */
+	public function getInventory(){
+		return $this->inventory;
 	}
 
 	public function getSpawnCompound(){
-		$c = new Compound("", [
-				new StringTag("id", Tile::ENCHANT_TABLE),
-				new IntTag("x", (int) $this->x),
-				new IntTag("y", (int) $this->y),
-				new IntTag("z", (int) $this->z)
+		return new CompoundTag("", [
+			new StringTag("id", Tile::ENCHANT_TABLE),
+			new IntTag("x", (int) $this->x),
+			new IntTag("y", (int) $this->y),
+			new IntTag("z", (int) $this->z)
 		]);
-
-		if($this->hasName()){
-			$c->CustomName = $this->namedtag->CustomName;
-		}
-
-		return $c;
 	}
 }

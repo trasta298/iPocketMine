@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -29,7 +29,7 @@ class Wood2 extends Wood{
 
 	protected $id = self::WOOD2;
 
-	public function getName(){
+	public function getName() : string{
 		static $names = [
 			0 => "Acacia Wood",
 			1 => "Dark Oak Wood",

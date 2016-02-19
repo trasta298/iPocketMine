@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -33,7 +33,8 @@ class SayCommand extends VanillaCommand{
 		parent::__construct(
 			$name,
 			"%ipocket.command.say.description",
-			"%commands.say.usage"
+			"%commands.say.usage",
+			["broadcast", "announce"]
 		);
 		$this->setPermission("ipocket.command.say");
 	}

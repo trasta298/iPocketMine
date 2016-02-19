@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -23,7 +23,7 @@ namespace ipocket\tile;
 
 use ipocket\level\format\FullChunk;
 use ipocket\nbt\NBT;
-use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\CompoundTag;
 use ipocket\network\Network;
 use ipocket\network\protocol\BlockEntityDataPacket;
 use ipocket\Player;
@@ -48,11 +48,11 @@ abstract class Spawnable extends Tile{
 	}
 
 	/**
-	 * @return Compound
+	 * @return CompoundTag
 	 */
 	public abstract function getSpawnCompound();
 
-	public function __construct(FullChunk $chunk, Compound $nbt){
+	public function __construct(FullChunk $chunk, CompoundTag $nbt){
 		parent::__construct($chunk, $nbt);
 		$this->spawnToAll();
 	}

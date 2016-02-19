@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link   http://ipocket.link/
+ * @link   http://www.ipocket.net/
  *
  *
  */
@@ -65,7 +65,7 @@ class EntityShootBowEvent extends EntityEvent implements Cancellable{
 	}
 
 	/**
-	 * @return Entity
+	 * @return Entity|Projectile
 	 */
 	public function getProjectile(){
 		return $this->projectile;

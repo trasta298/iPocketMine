@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -117,7 +117,7 @@ class ConsoleCommandSender implements CommandSender{
 	/**
 	 * @return string
 	 */
-	public function getName(){
+	public function getName() : string{
 		return "CONSOLE";
 	}
 

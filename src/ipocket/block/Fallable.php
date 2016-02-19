@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -25,10 +25,10 @@ use ipocket\entity\Entity;
 use ipocket\item\Item;
 use ipocket\level\Level;
 use ipocket\math\Vector3;
-use ipocket\nbt\tag\Byte;
-use ipocket\nbt\tag\Compound;
-use ipocket\nbt\tag\Double;
-use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\ByteTag;
+use ipocket\nbt\tag\CompoundTag;
+use ipocket\nbt\tag\DoubleTag;
+use ipocket\nbt\tag\EnumTag;
 use ipocket\nbt\tag\FloatTag;
 use ipocket\nbt\tag\IntTag;
 use ipocket\Player;
@@ -45,23 +45,23 @@ abstract class Fallable extends Solid{
 		if($type === Level::BLOCK_UPDATE_NORMAL){
 			$down = $this->getSide(Vector3::SIDE_DOWN);
 			if($down->getId() === self::AIR or ($down instanceof Liquid)){
-				$fall = Entity::createEntity("FallingSand", $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), new Compound("", [
-					"Pos" => new Enum("Pos", [
-						new Double("", $this->x + 0.5),
-						new Double("", $this->y),
-						new Double("", $this->z + 0.5)
+				$fall = Entity::createEntity("FallingSand", $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), new CompoundTag("", [
+					"Pos" => new EnumTag("Pos", [
+						new DoubleTag("", $this->x + 0.5),
+						new DoubleTag("", $this->y),
+						new DoubleTag("", $this->z + 0.5)
 					]),
-					"Motion" => new Enum("Motion", [
-						new Double("", 0),
-						new Double("", 0),
-						new Double("", 0)
+					"Motion" => new EnumTag("Motion", [
+						new DoubleTag("", 0),
+						new DoubleTag("", 0),
+						new DoubleTag("", 0)
 					]),
-					"Rotation" => new Enum("Rotation", [
+					"Rotation" => new EnumTag("Rotation", [
 						new FloatTag("", 0),
 						new FloatTag("", 0)
 					]),
 					"TileID" => new IntTag("TileID", $this->getId()),
-					"Data" => new Byte("Data", $this->getDamage()),
+					"Data" => new ByteTag("Data", $this->getDamage()),
 				]));
 
 				$fall->spawnToAll();

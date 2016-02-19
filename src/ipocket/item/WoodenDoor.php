@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -29,7 +29,7 @@ class WoodenDoor extends Item{
 		parent::__construct(self::WOODEN_DOOR, 0, $count, "Wooden Door");
 	}
 
-	public function getMaxStackSize(){
+	public function getMaxStackSize() : int {
 		return 1;
 	}
 }

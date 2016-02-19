@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -36,7 +36,7 @@ class FileWriteTask extends AsyncTask{
 	public function onRun(){
 		try{
 			file_put_contents($this->path, $this->contents, (int) $this->flags);
-		}catch (\Exception $e){
+		}catch (\Throwable $e){
 
 		}
 	}

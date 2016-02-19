@@ -1,11 +1,12 @@
 <?php
+
 /*
  *
- *  ____            _        _   __  __ _                  __  __ ____
- * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
+ *  ____            _        _   __  __ _                  __  __ ____  
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,16 +15,18 @@
  *
  * @author PocketMine Team
  * @link http://www.pocketmine.net/
- *
+ * 
  *
 */
-namespace ipocket\utils;
+
+namespace pocketmine\utils;
+
 /**
  * Class used to handle Minecraft chat format, and convert it to other formats like ANSI or HTML
  */
 abstract class TextFormat{
 	const ESCAPE = "\xc2\xa7"; //§
-
+	
 	const BLACK = TextFormat::ESCAPE . "0";
 	const DARK_BLUE = TextFormat::ESCAPE . "1";
 	const DARK_GREEN = TextFormat::ESCAPE . "2";
@@ -40,12 +43,14 @@ abstract class TextFormat{
 	const LIGHT_PURPLE = TextFormat::ESCAPE . "d";
 	const YELLOW = TextFormat::ESCAPE . "e";
 	const WHITE = TextFormat::ESCAPE . "f";
+
 	const OBFUSCATED = TextFormat::ESCAPE . "k";
 	const BOLD = TextFormat::ESCAPE . "l";
 	const STRIKETHROUGH = TextFormat::ESCAPE . "m";
 	const UNDERLINE = TextFormat::ESCAPE . "n";
 	const ITALIC = TextFormat::ESCAPE . "o";
 	const RESET = TextFormat::ESCAPE . "r";
+
 	/**
 	 * Splits the string by Format tokens
 	 *
@@ -56,6 +61,7 @@ abstract class TextFormat{
 	public static function tokenize($string){
 		return preg_split("/(". TextFormat::ESCAPE ."[0123456789abcdefklmnor])/", $string, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
 	}
+
 	/**
 	 * Cleans the string from Minecraft codes and ANSI Escape Codes
 	 *
@@ -70,6 +76,7 @@ abstract class TextFormat{
 		}
 		return str_replace("\x1b", "", preg_replace("/\x1b[\\(\\][[0-9;\\[\\(]+[Bm]/", "", $string));
 	}
+
 	/**
 	 * Returns an JSON-formatted string with colors/markup
 	 *
@@ -90,6 +97,7 @@ abstract class TextFormat{
 		$strikethrough = false;
 		$obfuscated = false;
 		$index = 0;
+
 		foreach($string as $token){
 			if(isset($pointer["text"])){
 				if(!isset($newString["extra"])){
@@ -174,6 +182,7 @@ abstract class TextFormat{
 						$obfuscated = false;
 					}
 					break;
+
 				//Colors
 				case TextFormat::BLACK:
 					$pointer["color"] = "black";
@@ -244,6 +253,7 @@ abstract class TextFormat{
 					break;
 			}
 		}
+
 		if(isset($newString["extra"])){
 			foreach($newString["extra"] as $k => $d){
 				if(!isset($d["text"])){
@@ -251,8 +261,10 @@ abstract class TextFormat{
 				}
 			}
 		}
+
 		return json_encode($newString, JSON_UNESCAPED_SLASHES);
 	}
+
 	/**
 	 * Returns an HTML-formatted string with colors/markup
 	 *
@@ -292,6 +304,7 @@ abstract class TextFormat{
 					$newString .= str_repeat("</span>", $tokens);
 					$tokens = 0;
 					break;
+
 				//Colors
 				case TextFormat::BLACK:
 					$newString .= "<span style=color:#000>";
@@ -362,9 +375,12 @@ abstract class TextFormat{
 					break;
 			}
 		}
+
 		$newString .= str_repeat("</span>", $tokens);
+
 		return $newString;
 	}
+
 	/**
 	 * Returns a string with colorized ANSI Escape codes
 	 *
@@ -376,6 +392,7 @@ abstract class TextFormat{
 		if(!is_array($string)){
 			$string = self::tokenize($string);
 		}
+
 		$newString = "";
 		foreach($string as $token){
 			switch($token){
@@ -397,6 +414,7 @@ abstract class TextFormat{
 				case TextFormat::RESET:
 					$newString .= Terminal::$FORMAT_RESET;
 					break;
+
 				//Colors
 				case TextFormat::BLACK:
 					$newString .= Terminal::$COLOR_BLACK;
@@ -451,6 +469,8 @@ abstract class TextFormat{
 					break;
 			}
 		}
+
 		return $newString;
 	}
+
 }

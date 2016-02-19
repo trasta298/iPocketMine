@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -23,6 +23,7 @@ namespace ipocket\command\defaults;
 
 use ipocket\command\CommandSender;
 use ipocket\event\TranslationContainer;
+use ipocket\Server;
 
 
 class BanListCommand extends VanillaCommand{
@@ -38,23 +39,22 @@ class BanListCommand extends VanillaCommand{
 
 	public function execute(CommandSender $sender, $currentAlias, array $args){
 		if(!$this->testPermission($sender)){
-			return true;
+			return \true;
 		}
 		$list = $sender->getServer()->getNameBans();
 		if(isset($args[0])){
-			$args[0] = strtolower($args[0]);
+			$args[0] = \strtolower($args[0]);
 			if($args[0] === "ips"){
 				$list = $sender->getServer()->getIPBans();
 			}elseif($args[0] === "players"){
 				$list = $sender->getServer()->getNameBans();
+			}elseif($args[0] === "cids") {
+				$list = $sender->getServer()->getCIDBans();
 			}else{
 				$sender->sendMessage(new TranslationContainer("commands.generic.usage", [$this->usageMessage]));
 
-				return false;
+				return \false;
 			}
-		}else{
-			$list = $sender->getServer()->getNameBans();
-			$args[0] = "players";
 		}
 
 		$message = "";
@@ -63,14 +63,15 @@ class BanListCommand extends VanillaCommand{
 			$message .= $entry->getName() . ", ";
 		}
 
+		if(!isset($args[0])) return \false;
 		if($args[0] === "ips"){
-			$sender->sendMessage(new TranslationContainer("commands.banlist.ips", [count($list)]));
-		}else{
-			$sender->sendMessage(new TranslationContainer("commands.banlist.players", [count($list)]));
-		}
+			$sender->sendMessage(Server::getInstance()->getLanguage()->translateString("commands.banlist.ips", [\count($list)]));
+		}elseif($args[0] === "players"){
+			$sender->sendMessage(Server::getInstance()->getLanguage()->translateString("commands.banlist.players", [\count($list)]));
+		}else $sender->sendMessage("共有 ".\count($list)."被ban");
 
-		$sender->sendMessage(substr($message, 0, -2));
+		$sender->sendMessage(\substr($message, 0, -2));
 
-		return true;
+		return \true;
 	}
 }

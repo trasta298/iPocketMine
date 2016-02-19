@@ -14,19 +14,28 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
 
 namespace ipocket\level\generator\normal\biome;
 
+use ipocket\block\Block;
 use ipocket\level\generator\populator\TallGrass;
 
 class RiverBiome extends GrassyBiome{
 
 	public function __construct(){
 		parent::__construct();
+
+		$this->setGroundCover([
+			Block::get(Block::DIRT, 0),
+			Block::get(Block::DIRT, 0),
+			Block::get(Block::DIRT, 0),
+			Block::get(Block::DIRT, 0),
+			Block::get(Block::DIRT, 0),
+		]);
 
 		$tallGrass = new TallGrass();
 		$tallGrass->setBaseAmount(5);
@@ -39,7 +48,7 @@ class RiverBiome extends GrassyBiome{
 		$this->rainfall = 0.7;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "River";
 	}
 }

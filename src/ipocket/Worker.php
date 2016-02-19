@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -28,6 +28,7 @@ abstract class Worker extends \Worker{
 
 	/** @var \ClassLoader */
 	protected $classLoader;
+
 	protected $isKilled = false;
 
 	public function getClassLoader(){
@@ -54,19 +55,23 @@ abstract class Worker extends \Worker{
 
 	public function start(int $options = PTHREADS_INHERIT_ALL){
 		ThreadManager::getInstance()->add($this);
+
 		if(!$this->isRunning() and !$this->isJoined() and !$this->isTerminated()){
 			if($this->getClassLoader() === null){
 				$this->setClassLoader();
 			}
 			return parent::start($options);
 		}
+
 		return false;
 	}
+
 	/**
 	 * Stops the thread using the best way possible. Try to stop it yourself before calling this.
 	 */
 	public function quit(){
 		$this->isKilled = true;
+
 		$this->notify();
 
 		if($this->isRunning()){
@@ -78,6 +83,7 @@ abstract class Worker extends \Worker{
 				$this->join();
 			}
 		}
+
 		ThreadManager::getInstance()->remove($this);
 	}
 

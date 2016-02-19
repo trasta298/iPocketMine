@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -25,18 +25,18 @@
 namespace ipocket\nbt;
 
 use ipocket\item\Item;
-use ipocket\nbt\tag\Byte;
-use ipocket\nbt\tag\ByteArray;
-use ipocket\nbt\tag\Compound;
-use ipocket\nbt\tag\Double;
-use ipocket\nbt\tag\End;
-use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\ByteTag;
+use ipocket\nbt\tag\ByteArrayTag;
+use ipocket\nbt\tag\CompoundTag;
+use ipocket\nbt\tag\DoubleTag;
+use ipocket\nbt\tag\EndTag;
+use ipocket\nbt\tag\EnumTag;
 use ipocket\nbt\tag\FloatTag;
 use ipocket\nbt\tag\IntTag;
-use ipocket\nbt\tag\IntArray;
-use ipocket\nbt\tag\Long;
+use ipocket\nbt\tag\IntArrayTag;
+use ipocket\nbt\tag\LongTag;
 use ipocket\nbt\tag\NamedTAG;
-use ipocket\nbt\tag\Short;
+use ipocket\nbt\tag\ShortTag;
 use ipocket\nbt\tag\StringTag;
 use ipocket\nbt\tag\Tag;
 use ipocket\utils\Utils;
@@ -78,17 +78,17 @@ class NBT{
 	/**
 	 * @param Item $item
 	 * @param int  $slot
-	 * @return Compound
+	 * @return CompoundTag
 	 */
 	public static function putItemHelper(Item $item, $slot = null){
-		$tag = new Compound(null, [
-			"id" => new Short("id", $item->getId()),
-			"Count" => new Byte("Count", $item->getCount()),
-			"Damage" => new Short("Damage", $item->getDamage())
+		$tag = new CompoundTag(null, [
+			"id" => new ShortTag("id", $item->getId()),
+			"Count" => new ByteTag("Count", $item->getCount()),
+			"Damage" => new ShortTag("Damage", $item->getDamage())
 		]);
 
 		if($slot !== null){
-			$tag->Slot = new Byte("Slot", (int) $slot);
+			$tag->Slot = new ByteTag("Slot", (int) $slot);
 		}
 
 		if($item->hasCompoundTag()){
@@ -100,24 +100,24 @@ class NBT{
 	}
 
 	/**
-	 * @param Compound $tag
+	 * @param CompoundTag $tag
 	 * @return Item
 	 */
-	public static function getItemHelper(Compound $tag){
+	public static function getItemHelper(CompoundTag $tag){
 		if(!isset($tag->id) or !isset($tag->Count)){
 			return Item::get(0);
 		}
 
 		$item = Item::get($tag->id->getValue(), !isset($tag->Damage) ? 0 : $tag->Damage->getValue(), $tag->Count->getValue());
 
-		if(isset($tag->tag) and $tag->tag instanceof Compound){
+		if(isset($tag->tag) and $tag->tag instanceof CompoundTag){
 			$item->setNamedTag($tag->tag);
 		}
 
 		return $item;
 	}
 
-	public static function matchList(Enum $tag1, Enum $tag2){
+	public static function matchList(EnumTag $tag1, EnumTag $tag2){
 		if($tag1->getName() !== $tag2->getName() or $tag1->getCount() !== $tag2->getCount()){
 			return false;
 		}
@@ -131,11 +131,11 @@ class NBT{
 				return false;
 			}
 
-			if($v instanceof Compound){
+			if($v instanceof CompoundTag){
 				if(!self::matchTree($v, $tag2->{$k})){
 					return false;
 				}
-			}elseif($v instanceof Enum){
+			}elseif($v instanceof EnumTag){
 				if(!self::matchList($v, $tag2->{$k})){
 					return false;
 				}
@@ -149,7 +149,7 @@ class NBT{
 		return true;
 	}
 
-	public static function matchTree(Compound $tag1, Compound $tag2){
+	public static function matchTree(CompoundTag $tag1, CompoundTag $tag2){
 		if($tag1->getName() !== $tag2->getName() or $tag1->getCount() !== $tag2->getCount()){
 			return false;
 		}
@@ -163,11 +163,11 @@ class NBT{
 				return false;
 			}
 
-			if($v instanceof Compound){
+			if($v instanceof CompoundTag){
 				if(!self::matchTree($v, $tag2->{$k})){
 					return false;
 				}
-			}elseif($v instanceof Enum){
+			}elseif($v instanceof EnumTag){
 				if(!self::matchList($v, $tag2->{$k})){
 					return false;
 				}
@@ -188,7 +188,7 @@ class NBT{
 			if($c === "{"){
 				++$offset;
 				$data = self::parseCompound($data, $offset);
-				return new Compound("", $data);
+				return new CompoundTag("", $data);
 			}elseif($c !== " " and $c !== "\r" and $c !== "\n" and $c !== "\t"){
 				throw new \Exception("Syntax error: unexpected '$c' at offset $offset");
 			}
@@ -218,37 +218,37 @@ class NBT{
 
 			switch($type){
 				case NBT::TAG_Byte:
-					$data[$key] = new Byte($key, $value);
+					$data[$key] = new ByteTag($key, $value);
 					break;
 				case NBT::TAG_Short:
-					$data[$key] = new Short($key, $value);
+					$data[$key] = new ShortTag($key, $value);
 					break;
 				case NBT::TAG_Int:
 					$data[$key] = new IntTag($key, $value);
 					break;
 				case NBT::TAG_Long:
-					$data[$key] = new Long($key, $value);
+					$data[$key] = new LongTag($key, $value);
 					break;
 				case NBT::TAG_Float:
 					$data[$key] = new FloatTag($key, $value);
 					break;
 				case NBT::TAG_Double:
-					$data[$key] = new Double($key, $value);
+					$data[$key] = new DoubleTag($key, $value);
 					break;
 				case NBT::TAG_ByteArray:
-					$data[$key] = new ByteArray($key, $value);
+					$data[$key] = new ByteArrayTag($key, $value);
 					break;
 				case NBT::TAG_String:
-					$data[$key] = new Byte($key, $value);
+					$data[$key] = new ByteTag($key, $value);
 					break;
 				case NBT::TAG_Enum:
-					$data[$key] = new Enum($key, $value);
+					$data[$key] = new EnumTag($key, $value);
 					break;
 				case NBT::TAG_Compound:
-					$data[$key] = new Compound($key, $value);
+					$data[$key] = new CompoundTag($key, $value);
 					break;
 				case NBT::TAG_IntArray:
-					$data[$key] = new IntArray($key, $value);
+					$data[$key] = new IntArrayTag($key, $value);
 					break;
 			}
 
@@ -276,37 +276,37 @@ class NBT{
 
 			switch($type){
 				case NBT::TAG_Byte:
-					$data[$key] = new Byte($key, $value);
+					$data[$key] = new ByteTag($key, $value);
 					break;
 				case NBT::TAG_Short:
-					$data[$key] = new Short($key, $value);
+					$data[$key] = new ShortTag($key, $value);
 					break;
 				case NBT::TAG_Int:
 					$data[$key] = new IntTag($key, $value);
 					break;
 				case NBT::TAG_Long:
-					$data[$key] = new Long($key, $value);
+					$data[$key] = new LongTag($key, $value);
 					break;
 				case NBT::TAG_Float:
 					$data[$key] = new FloatTag($key, $value);
 					break;
 				case NBT::TAG_Double:
-					$data[$key] = new Double($key, $value);
+					$data[$key] = new DoubleTag($key, $value);
 					break;
 				case NBT::TAG_ByteArray:
-					$data[$key] = new ByteArray($key, $value);
+					$data[$key] = new ByteArrayTag($key, $value);
 					break;
 				case NBT::TAG_String:
 					$data[$key] = new StringTag($key, $value);
 					break;
 				case NBT::TAG_Enum:
-					$data[$key] = new Enum($key, $value);
+					$data[$key] = new EnumTag($key, $value);
 					break;
 				case NBT::TAG_Compound:
-					$data[$key] = new Compound($key, $value);
+					$data[$key] = new CompoundTag($key, $value);
 					break;
 				case NBT::TAG_IntArray:
-					$data[$key] = new IntArray($key, $value);
+					$data[$key] = new IntArrayTag($key, $value);
 					break;
 			}
 		}
@@ -480,7 +480,7 @@ class NBT{
 		$this->offset = 0;
 		$this->buffer = "";
 
-		if($this->data instanceof Compound){
+		if($this->data instanceof CompoundTag){
 			$this->writeTag($this->data);
 
 			return $this->buffer;
@@ -505,11 +505,11 @@ class NBT{
 	public function readTag(){
 		switch($this->getByte()){
 			case NBT::TAG_Byte:
-				$tag = new Byte($this->getString());
+				$tag = new ByteTag($this->getString());
 				$tag->read($this);
 				break;
 			case NBT::TAG_Short:
-				$tag = new Short($this->getString());
+				$tag = new ShortTag($this->getString());
 				$tag->read($this);
 				break;
 			case NBT::TAG_Int:
@@ -517,7 +517,7 @@ class NBT{
 				$tag->read($this);
 				break;
 			case NBT::TAG_Long:
-				$tag = new Long($this->getString());
+				$tag = new LongTag($this->getString());
 				$tag->read($this);
 				break;
 			case NBT::TAG_Float:
@@ -525,11 +525,11 @@ class NBT{
 				$tag->read($this);
 				break;
 			case NBT::TAG_Double:
-				$tag = new Double($this->getString());
+				$tag = new DoubleTag($this->getString());
 				$tag->read($this);
 				break;
 			case NBT::TAG_ByteArray:
-				$tag = new ByteArray($this->getString());
+				$tag = new ByteArrayTag($this->getString());
 				$tag->read($this);
 				break;
 			case NBT::TAG_String:
@@ -537,21 +537,21 @@ class NBT{
 				$tag->read($this);
 				break;
 			case NBT::TAG_Enum:
-				$tag = new Enum($this->getString());
+				$tag = new EnumTag($this->getString());
 				$tag->read($this);
 				break;
 			case NBT::TAG_Compound:
-				$tag = new Compound($this->getString());
+				$tag = new CompoundTag($this->getString());
 				$tag->read($this);
 				break;
 			case NBT::TAG_IntArray:
-				$tag = new IntArray($this->getString());
+				$tag = new IntArrayTag($this->getString());
 				$tag->read($this);
 				break;
 
 			case NBT::TAG_End: //No named tag
 			default:
-				$tag = new End;
+				$tag = new EndTag;
 				break;
 		}
 		return $tag;
@@ -628,9 +628,9 @@ class NBT{
 	}
 
 	private static function toArray(array &$data, Tag $tag){
-		/** @var Compound[]|Enum[]|IntArray[] $tag */
+		/** @var CompoundTag[]|EnumTag[]|IntArrayTag[] $tag */
 		foreach($tag as $key => $value){
-			if($value instanceof Compound or $value instanceof Enum or $value instanceof IntArray){
+			if($value instanceof CompoundTag or $value instanceof EnumTag or $value instanceof IntArrayTag){
 				$data[$key] = [];
 				self::toArray($data[$key], $value);
 			}else{
@@ -647,7 +647,7 @@ class NBT{
 		}elseif(is_string($value)){
 			return new StringTag($key, $value);
 		}elseif(is_bool($value)){
-			return new Byte($key, $value ? 1 : 0);
+			return new ByteTag($key, $value ? 1 : 0);
 		}
 
 		return null;
@@ -666,7 +666,7 @@ class NBT{
 						$isIntArray = false;
 					}
 				}
-				$tag{$key} = $isNumeric ? ($isIntArray ? new IntArray($key, []) : new Enum($key, [])) : new Compound($key, []);
+				$tag{$key} = $isNumeric ? ($isIntArray ? new IntArrayTag($key, []) : new EnumTag($key, [])) : new CompoundTag($key, []);
 				self::fromArray($tag->{$key}, $value, $guesser);
 			}else{
 				$v = call_user_func($guesser, $key, $value);
@@ -678,19 +678,19 @@ class NBT{
 	}
 
 	public function setArray(array $data, callable $guesser = null){
-		$this->data = new Compound("", []);
+		$this->data = new CompoundTag("", []);
 		self::fromArray($this->data, $data, $guesser === null ? [self::class, "fromArrayGuesser"] : $guesser);
 	}
 
 	/**
-	 * @return Compound|array
+	 * @return CompoundTag|array
 	 */
 	public function getData(){
 		return $this->data;
 	}
 
 	/**
-	 * @param Compound|array $data
+	 * @param CompoundTag|array $data
 	 */
 	public function setData($data){
 		$this->data = $data;

@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -32,7 +32,7 @@ class HardenedClay extends Solid{
 
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Hardened Clay";
 	}
 
@@ -40,7 +40,7 @@ class HardenedClay extends Solid{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 1.25;
 	}
 }

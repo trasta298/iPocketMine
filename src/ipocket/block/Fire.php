@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -42,7 +42,7 @@ class Fire extends Flowable{
 		return true;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Fire Block";
 	}
 
@@ -71,7 +71,7 @@ class Fire extends Flowable{
 		}
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array {
 		return [];
 	}
 

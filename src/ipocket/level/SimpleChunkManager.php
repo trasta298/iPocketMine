@@ -14,10 +14,12 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
+
+declare(strict_types=1);
 
 namespace ipocket\level;
 
@@ -43,7 +45,7 @@ class SimpleChunkManager implements ChunkManager{
 	 *
 	 * @return int 0-255
 	 */
-	public function getBlockIdAt($x, $y, $z) : int{
+	public function getBlockIdAt(int $x, int $y, int $z) : int{
 		if($chunk = $this->getChunk($x >> 4, $z >> 4)){
 			return $chunk->getBlockId($x & 0xf, $y & 0x7f, $z & 0xf);
 		}
@@ -58,7 +60,7 @@ class SimpleChunkManager implements ChunkManager{
 	 * @param int $z
 	 * @param int $id 0-255
 	 */
-	public function setBlockIdAt($x, $y, $z, $id){
+	public function setBlockIdAt(int $x, int $y, int $z, int $id){
 		if($chunk = $this->getChunk($x >> 4, $z >> 4)){
 			$chunk->setBlockId($x & 0xf, $y & 0x7f, $z & 0xf, $id);
 		}
@@ -73,7 +75,7 @@ class SimpleChunkManager implements ChunkManager{
 	 *
 	 * @return int 0-15
 	 */
-	public function getBlockDataAt($x, $y, $z) : int{
+	public function getBlockDataAt(int $x, int $y, int $z) : int{
 		if($chunk = $this->getChunk($x >> 4, $z >> 4)){
 			return $chunk->getBlockData($x & 0xf, $y & 0x7f, $z & 0xf);
 		}
@@ -88,7 +90,7 @@ class SimpleChunkManager implements ChunkManager{
 	 * @param int $z
 	 * @param int $data 0-15
 	 */
-	public function setBlockDataAt($x, $y, $z, $data){
+	public function setBlockDataAt(int $x, int $y, int $z, int $data){
 		if($chunk = $this->getChunk($x >> 4, $z >> 4)){
 			$chunk->setBlockData($x & 0xf, $y & 0x7f, $z & 0xf, $data);
 		}
@@ -98,10 +100,10 @@ class SimpleChunkManager implements ChunkManager{
 	 * @param int $chunkX
 	 * @param int $chunkZ
 	 *
-	 * @return FullChunk
+	 * @return FullChunk|null
 	 */
-	public function getChunk($chunkX, $chunkZ){
-		return $this->chunks[Level::chunkHash($chunkX, $chunkZ)] ?? null;
+	public function getChunk(int $chunkX, int $chunkZ){
+		return isset($this->chunks[$index = Level::chunkHash($chunkX, $chunkZ)]) ? $this->chunks[$index] : null;
 	}
 
 	/**
@@ -109,7 +111,7 @@ class SimpleChunkManager implements ChunkManager{
 	 * @param int $chunkZ
 	 * @param FullChunk $chunk
 	 */
-	public function setChunk($chunkX, $chunkZ, FullChunk $chunk = null){
+	public function setChunk(int $chunkX, int $chunkZ, FullChunk $chunk = null){
 		if($chunk === null){
 			unset($this->chunks[Level::chunkHash($chunkX, $chunkZ)]);
 			return;

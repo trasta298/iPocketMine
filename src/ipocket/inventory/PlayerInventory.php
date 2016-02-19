@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -233,6 +233,9 @@ class PlayerInventory extends BaseInventory{
 		$old = $this->getItem($index);
 		$this->slots[$index] = clone $item;
 		$this->onSlotChange($index, $old);
+		if($this->getHolder() instanceof Player){
+			if($this->getHolder()->isSurvival()) $this->sendContents($this->getHolder());
+		}
 
 		return true;
 	}
@@ -310,7 +313,6 @@ class PlayerInventory extends BaseInventory{
 		$pk->eid = $this->getHolder()->getId();
 		$pk->slots = $armor;
 		$pk->encode();
-		$pk;
 		$pk->isEncoded = true;
 
 		foreach($target as $player){
@@ -386,10 +388,12 @@ class PlayerInventory extends BaseInventory{
 		$pk->slots = [];
 		$holder = $this->getHolder();
 		if($holder instanceof Player and $holder->isCreative()){
-			//TODO: Remove this workaround because of broken client
-			foreach(Item::getCreativeItems() as $i => $item){
-				$pk->slots[$i] = Item::getCreativeItem($i);
+			for($current = 0; $current < $this->getSize(); ++$current){
+				$pk->slots[$current] = $this->getItem($current);
 			}
+			/*foreach(Item::getCreativeItems() as $i => $item){
+				$pk->slots[$i + $current] = Item::getCreativeItem($i);
+			}*/
 		}else{
 			for($i = 0; $i < $this->getSize(); ++$i){ //Do not send armor by error here
 				$pk->slots[$i] = $this->getItem($i);
@@ -413,6 +417,22 @@ class PlayerInventory extends BaseInventory{
 		}
 	}
 
+	public function addItem(...$slots){
+		$result = parent::addItem(...$slots);
+		if($this->getHolder() instanceof Player){
+			if($this->getHolder()->isSurvival()) $this->sendContents($this->getHolder());
+		}
+		return $result;
+	}
+
+	public function removeItem(...$slots){
+		$result = parent::removeItem(...$slots);
+		if($this->getHolder() instanceof Player){
+			if($this->getHolder()->isSurvival()) $this->sendContents($this->getHolder());
+		}
+		return $result;
+	}
+
 	/**
 	 * @param int             $index
 	 * @param Player|Player[] $target
@@ -423,6 +443,11 @@ class PlayerInventory extends BaseInventory{
 		}
 
 		$pk = new ContainerSetSlotPacket();
+		$pk->hotbar = [];
+		for($i = 0; $i < $this->getHotbarSize(); ++$i){
+			$index = $this->getHotbarSlotIndex($i);
+			$pk->hotbar[] = $index <= -1 ? -1 : $index + 9;
+		}
 		$pk->slot = $index;
 		$pk->item = clone $this->getItem($index);
 

@@ -1,5 +1,4 @@
 <?php
-
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
@@ -14,37 +13,24 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
-
 namespace ipocket\network\protocol;
-
 #include <rules/DataPacket.h>
-
-
 use ipocket\entity\Attribute;
-
 class UpdateAttributesPacket extends DataPacket{
 	const NETWORK_ID = Info::UPDATE_ATTRIBUTES_PACKET;
-
-
 	public $entityId;
 	/** @var Attribute[] */
 	public $entries = [];
-
 	public function decode(){
-
 	}
-
 	public function encode(){
 		$this->reset();
-
 		$this->putLong($this->entityId);
-
 		$this->putShort(count($this->entries));
-
 		foreach($this->entries as $entry){
 			$this->putFloat($entry->getMinValue());
 			$this->putFloat($entry->getMaxValue());
@@ -52,5 +38,4 @@ class UpdateAttributesPacket extends DataPacket{
 			$this->putString($entry->getName());
 		}
 	}
-
 }

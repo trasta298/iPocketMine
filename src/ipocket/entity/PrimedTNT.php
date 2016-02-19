@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -26,7 +26,7 @@ use ipocket\event\entity\EntityDamageEvent;
 
 use ipocket\event\entity\ExplosionPrimeEvent;
 use ipocket\level\Explosion;
-use ipocket\nbt\tag\Byte;
+use ipocket\nbt\tag\ByteTag;
 use ipocket\network\Network;
 use ipocket\network\protocol\AddEntityPacket;
 use ipocket\Player;
@@ -69,7 +69,7 @@ class PrimedTNT extends Entity implements Explosive{
 
 	public function saveNBT(){
 		parent::saveNBT();
-		$this->namedtag->Fuse = new Byte("Fuse", $this->fuse);
+		$this->namedtag->Fuse = new ByteTag("Fuse", $this->fuse);
 	}
 
 	public function onUpdate($currentTick){

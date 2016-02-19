@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -48,6 +48,8 @@ class LevelEventPacket extends DataPacket{
 	const EVENT_SOUND_ANVIL_BREAK = 1020;
 	const EVENT_SOUND_ANVIL_USE = 1021;
 	const EVENT_SOUND_ANVIL_FALL = 1022;
+
+	const EVENT_SOUND_BUTTON_CLICK = 3500;
 
 	const EVENT_PARTICLE_SHOOT = 2000;
 	const EVENT_PARTICLE_DESTROY = 2001;

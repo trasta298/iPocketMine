@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -44,7 +44,7 @@ class ShapedRecipe implements Recipe{
 	 * @param Item     $result
 	 * @param string[] $shape
 	 *
-	 * @throws \Exception
+	 * @throws \Throwable
 	 */
 	public function __construct(Item $result, ...$shape){
 		if(count($shape) === 0){

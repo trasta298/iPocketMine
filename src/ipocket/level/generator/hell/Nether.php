@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -22,14 +22,9 @@
 namespace ipocket\level\generator\hell;
 
 use ipocket\block\Block;
-use ipocket\block\CoalOre;
-use ipocket\block\DiamondOre;
-use ipocket\block\Dirt;
-use ipocket\block\GoldOre;
 use ipocket\block\Gravel;
-use ipocket\block\IronOre;
-use ipocket\block\LapisOre;
-use ipocket\block\RedstoneOre;
+use ipocket\block\NetherQuartzOre;
+use ipocket\block\SoulSand;
 use ipocket\level\ChunkManager;
 use ipocket\level\generator\biome\Biome;
 use ipocket\level\generator\biome\BiomeSelector;
@@ -38,12 +33,11 @@ use ipocket\level\generator\Generator;
 use ipocket\level\generator\noise\Simplex;
 
 use ipocket\level\generator\object\OreType;
-use ipocket\level\generator\populator\GroundCover;
-use ipocket\level\generator\populator\Ore;
+use ipocket\level\generator\populator\GroundFire;
+use ipocket\level\generator\populator\NetherGrowStone;
+use ipocket\level\generator\populator\NetherOre;
 use ipocket\level\generator\populator\Populator;
 
-
-use ipocket\level\Level;
 use ipocket\math\Vector3 as Vector3;
 use ipocket\utils\Random;
 
@@ -110,18 +104,18 @@ class Nether extends Generator{
 		$this->noiseBase = new Simplex($this->random, 4, 1 / 4, 1 / 64);
 		$this->random->setSeed($this->level->getSeed());
 
-		/*$ores = new Ore();
+		$ores = new NetherOre();
 		$ores->setOreTypes([
-			new OreType(new CoalOre(), 20, 16, 0, 128),
-			new OreType(New IronOre(), 20, 8, 0, 64),
-			new OreType(new RedstoneOre(), 8, 7, 0, 16),
-			new OreType(new LapisOre(), 1, 6, 0, 32),
-			new OreType(new GoldOre(), 2, 8, 0, 32),
-			new OreType(new DiamondOre(), 1, 7, 0, 16),
-			new OreType(new Dirt(), 20, 32, 0, 128),
-			new OreType(new Gravel(), 10, 16, 0, 128)
+			new OreType(new NetherQuartzOre(), 20, 16, 0, 128),
+			new OreType(new SoulSand(), 5, 64, 0, 128),
+			new OreType(new Gravel(), 5, 64, 0, 128),
 		]);
-		$this->populators[] = $ores;*/
+		$this->populators[] = $ores;
+		$this->populators[] = new NetherGrowStone();
+		$groundFire = new GroundFire();
+		$groundFire->setBaseAmount(1);
+		$groundFire->setRandomAmount(1);
+		$this->populators[] = $groundFire;
 	}
 
 	public function generateChunk($chunkX, $chunkZ){
@@ -156,6 +150,7 @@ class Nether extends Generator{
 						$chunk->setBlockId($x, $y, $z, Block::NETHERRACK);
 					}elseif($y <= $this->waterHeight){
 						$chunk->setBlockId($x, $y, $z, Block::STILL_LAVA);
+						$chunk->setBlockLight($x, $y, $z, 15);
 					}
 				}
 			}

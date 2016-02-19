@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -112,7 +112,7 @@ class Utils{
 			if(file_exists("/etc/machine-id")){
 				$machine .= file_get_contents("/etc/machine-id");
 			}else{
-				@exec("ifconfig 2>/dev/null", $mac);
+				@exec("ifconfig", $mac);
 				$mac = implode("\n", $mac);
 				if(preg_match_all("#HWaddr[ \t]{1,}([0-9a-f:]{17})#", $mac, $matches)){
 					foreach($matches[1] as $i => $v){
@@ -502,7 +502,7 @@ class Utils{
 		}
 
 		$ch = curl_init($page);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge(["User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0 iPocket"], $extraHeaders));
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge(["User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0 iPocket-MP"], $extraHeaders));
 		curl_setopt($ch, CURLOPT_AUTOREFERER, true);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
@@ -542,7 +542,7 @@ class Utils{
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $args);
 		curl_setopt($ch, CURLOPT_AUTOREFERER, true);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge(["User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0 iPocket"], $extraHeaders));
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge(["User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0 iPocket-MP"], $extraHeaders));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, (int) $timeout);
 		curl_setopt($ch, CURLOPT_TIMEOUT, (int) $timeout);

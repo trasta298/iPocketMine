@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -42,7 +42,7 @@ class Lava extends Liquid{
 		return 15;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Lava";
 	}
 

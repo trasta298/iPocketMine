@@ -13,8 +13,8 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author PocketMine Team
- * @link http://www.pocketmine.net/
+ * @author iPocket Team
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -23,8 +23,9 @@ namespace ipocket\network\rcon;
 
 use ipocket\Thread;
 use ipocket\utils\Binary;
+use ipocket\utils\MainLogger;
 
-class RCONInstance extends \Thread{
+class RCONInstance extends Thread{
 	public $stop;
 	public $cmd;
 	public $response;
@@ -33,12 +34,16 @@ class RCONInstance extends \Thread{
 	private $maxClients;
 	private $waiting;
 
+	/** @var MainLogger */
+	private $logger;
+
 	public function isWaiting(){
 		return $this->waiting === true;
 	}
 
 
-	public function __construct($socket, $password, $maxClients = 50){
+	public function __construct($logger, $socket, $password, $maxClients = 50){
+		$this->logger = $logger;
 		$this->stop = false;
 		$this->cmd = "";
 		$this->response = "";
@@ -133,6 +138,24 @@ class RCONInstance extends \Thread{
 						}
 
 						switch($packetType){
+							case 9: //Protocol check
+								if($this->{"status" . $n} !== 1){
+									$this->{"status" . $n} = -1;
+									continue;
+								}
+								$this->writePacket($client, $requestID, 0, RCON::PROTOCOL_VERSION);
+								$this->response = "";
+
+								if($payload == RCON::PROTOCOL_VERSION) $this->logger->setSendMsg(true); //GeniRCON output
+								break;
+							case 4: //Logger
+								if($this->{"status" . $n} !== 1){
+									$this->{"status" . $n} = -1;
+									continue;
+								}
+								$this->writePacket($client, $requestID, 0, str_replace("\n", "\r\n", trim($this->logger->getMessages())));
+								$this->response = "";
+								break;
 							case 3: //Login
 								if($this->{"status" . $n} !== 0){
 									$this->{"status" . $n} = -1;
@@ -141,11 +164,6 @@ class RCONInstance extends \Thread{
 								if($payload === $this->password){
 									socket_getpeername($client, $addr, $port);
 									$this->response = "[INFO] Successful Rcon connection from: /$addr:$port";
-									$this->synchronized(function (){
-										$this->waiting = true;
-										$this->wait();
-									});
-									$this->waiting = false;
 									$this->response = "";
 									$this->writePacket($client, $requestID, 2, "");
 									$this->{"status" . $n} = 1;
@@ -162,7 +180,7 @@ class RCONInstance extends \Thread{
 								}
 								if(strlen($payload) > 0){
 									$this->cmd = ltrim($payload);
-									$this->synchronized(function (){
+									$this->synchronized(function(){
 										$this->waiting = true;
 										$this->wait();
 									});

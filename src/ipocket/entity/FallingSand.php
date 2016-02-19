@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -30,7 +30,7 @@ use ipocket\event\entity\EntityDamageEvent;
 
 use ipocket\item\Item as ItemItem;
 use ipocket\math\Vector3;
-use ipocket\nbt\tag\Byte;
+use ipocket\nbt\tag\ByteTag;
 use ipocket\nbt\tag\IntTag;
 use ipocket\network\Network;
 use ipocket\network\protocol\AddEntityPacket;
@@ -132,7 +132,13 @@ class FallingSand extends Entity{
 				}else{
 					$this->server->getPluginManager()->callEvent($ev = new EntityBlockChangeEvent($this, $block, Block::get($this->getBlock(), $this->getDamage())));
 					if(!$ev->isCancelled()){
-						$this->getLevel()->setBlock($pos, $ev->getTo(), true);
+					    if(($block->getId() !== ItemItem::CHEST) && ($block->getId() !== ItemItem::TRAPPED_CHEST)){
+					        $this->getLevel()->setBlock($pos, $ev->getTo(), true);
+					    } else{
+					        $pos -> setComponents ($pos -> getX (), round ($pos -> getY () + 1), $pos -> getZ ());
+					        $this->getLevel()->setBlock($pos, $ev->getTo(), true);
+					        $this->kill();
+					    }
 					}
 				}
 				$hasUpdate = true;
@@ -154,7 +160,7 @@ class FallingSand extends Entity{
 
 	public function saveNBT(){
 		$this->namedtag->TileID = new IntTag("TileID", $this->blockId);
-		$this->namedtag->Data = new Byte("Data", $this->damage);
+		$this->namedtag->Data = new ByteTag("Data", $this->damage);
 	}
 
 	public function spawnTo(Player $player){

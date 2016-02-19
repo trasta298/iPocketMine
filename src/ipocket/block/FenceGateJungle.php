@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -26,7 +26,7 @@ class FenceGateJungle extends FenceGate{
 
 	protected $id = self::FENCE_GATE_JUNGLE;
 
-	public function getName(){
+	public function getName() : string{
 		return "Jungle Fence Gate";
 	}
 }

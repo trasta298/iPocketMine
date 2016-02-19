@@ -14,14 +14,40 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
 
 namespace ipocket\entity;
 
+use ipocket\network\protocol\AddEntityPacket;
+use ipocket\Player;
 
 class Silverfish extends Monster{
+	const NETWORK_ID = 39;
 
+	public $dropExp = [5, 5];
+
+	public function getName() : string{
+		return "Silverfish";
+	}
+
+	public function spawnTo(Player $player){
+		$pk = new AddEntityPacket();
+		$pk->eid = $this->getId();
+		$pk->type = Silverfish::NETWORK_ID;
+		$pk->x = $this->x;
+		$pk->y = $this->y;
+		$pk->z = $this->z;
+		$pk->speedX = $this->motionX;
+		$pk->speedY = $this->motionY;
+		$pk->speedZ = $this->motionZ;
+		$pk->yaw = $this->yaw;
+		$pk->pitch = $this->pitch;
+		$pk->metadata = $this->dataProperties;
+		$player->dataPacket($pk);
+
+		parent::spawnTo($player);
+	}
 }

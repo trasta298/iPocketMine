@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -30,7 +30,7 @@ use ipocket\item\Item as ItemItem;
 use ipocket\nbt\NBT;
 
 
-use ipocket\nbt\tag\Short;
+use ipocket\nbt\tag\ShortTag;
 use ipocket\nbt\tag\StringTag;
 use ipocket\network\Network;
 use ipocket\network\protocol\AddItemEntityPacket;
@@ -96,6 +96,8 @@ class Item extends Entity{
 			return false;
 		}
 
+		$this->age++;
+
 		$tickDiff = $currentTick - $this->lastUpdate;
 		if($tickDiff <= 0 and !$this->justCreated){
 			return true;
@@ -138,9 +140,10 @@ class Item extends Entity{
 				$this->motionY *= -0.5;
 			}
 
-			$this->updateMovement();
+			if($currentTick % 5 ==0)
+				$this->updateMovement();
 
-			if($this->age > 6000){
+			if($this->age > 2000){
 				$this->server->getPluginManager()->callEvent($ev = new ItemDespawnEvent($this));
 				if($ev->isCancelled()){
 					$this->age = 0;
@@ -160,9 +163,9 @@ class Item extends Entity{
 	public function saveNBT(){
 		parent::saveNBT();
 		$this->namedtag->Item = NBT::putItemHelper($this->item);
-		$this->namedtag->Health = new Short("Health", $this->getHealth());
-		$this->namedtag->Age = new Short("Age", $this->age);
-		$this->namedtag->PickupDelay = new Short("PickupDelay", $this->pickupDelay);
+		$this->namedtag->Health = new ShortTag("Health", $this->getHealth());
+		$this->namedtag->Age = new ShortTag("Age", $this->age);
+		$this->namedtag->PickupDelay = new ShortTag("PickupDelay", $this->pickupDelay);
 		if($this->owner !== null){
 			$this->namedtag->Owner = new StringTag("Owner", $this->owner);
 		}

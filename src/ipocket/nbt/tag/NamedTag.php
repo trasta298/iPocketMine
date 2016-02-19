@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -28,7 +28,7 @@ abstract class NamedTag extends Tag{
 
 	/**
 	 * @param string                                                      $name
-	 * @param bool|float|double|int|byte|short|array|Compound|Enum|string $value
+	 * @param bool|float|double|int|byte|short|array|CompoundTag|EnumTag|string $value
 	 */
 	public function __construct($name = "", $value = null){
 		$this->__name = ($name === null or $name === false) ? "" : $name;

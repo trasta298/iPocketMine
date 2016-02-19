@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -26,7 +26,7 @@ use ipocket\command\CommandSender;
 use ipocket\event\TranslationContainer;
 use ipocket\item\Item;
 use ipocket\nbt\NBT;
-use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\CompoundTag;
 use ipocket\Player;
 use ipocket\utils\TextFormat;
 
@@ -66,11 +66,11 @@ class GiveCommand extends VanillaCommand{
 			$data = implode(" ", array_slice($args, 3));
 			try{
 				$tags = NBT::parseJSON($data);
-			}catch (\Exception $ex){
+			}catch (\Throwable $ex){
 				$exception = $ex;
 			}
 
-			if(!($tags instanceof Compound) or $exception !== null){
+			if(!($tags instanceof CompoundTag) or $exception !== null){
 				$sender->sendMessage(new TranslationContainer("commands.give.tagError", [$exception !== null ? $exception->getMessage() : "Invalid tag conversion"]));
 				return true;
 			}

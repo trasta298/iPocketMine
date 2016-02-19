@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -31,11 +31,11 @@ class Bedrock extends Solid{
 
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Bedrock";
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return -1;
 	}
 

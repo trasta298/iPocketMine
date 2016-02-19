@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -26,10 +26,10 @@ use ipocket\level\format\generic\BaseLevelProvider;
 use ipocket\level\generator\Generator;
 use ipocket\level\Level;
 use ipocket\nbt\NBT;
-use ipocket\nbt\tag\Byte;
-use ipocket\nbt\tag\Compound;
+use ipocket\nbt\tag\ByteTag;
+use ipocket\nbt\tag\CompoundTag;
 use ipocket\nbt\tag\IntTag;
-use ipocket\nbt\tag\Long;
+use ipocket\nbt\tag\LongTag;
 use ipocket\nbt\tag\StringTag;
 use ipocket\tile\Spawnable;
 use ipocket\utils\Binary;
@@ -62,7 +62,7 @@ class LevelDB extends BaseLevelProvider{
 		$nbt = new NBT(NBT::LITTLE_ENDIAN);
 		$nbt->read(substr(file_get_contents($this->getPath() . "level.dat"), 8));
 		$levelData = $nbt->getData();
-		if($levelData instanceof Compound){
+		if($levelData instanceof CompoundTag){
 			$this->levelData = $levelData;
 		}else{
 			throw new LevelException("Invalid level.dat");
@@ -105,9 +105,9 @@ class LevelDB extends BaseLevelProvider{
 			mkdir($path . "/db", 0777, true);
 		}
 		//TODO, add extra details
-		$levelData = new Compound("", [
-			"hardcore" => new Byte("hardcore", 0),
-			"initialized" => new Byte("initialized", 1),
+		$levelData = new CompoundTag("", [
+			"hardcore" => new ByteTag("hardcore", 0),
+			"initialized" => new ByteTag("initialized", 1),
 			"GameType" => new IntTag("GameType", 0),
 			"generatorVersion" => new IntTag("generatorVersion", 1), //2 in MCPE
 			"SpawnX" => new IntTag("SpawnX", 128),
@@ -115,14 +115,14 @@ class LevelDB extends BaseLevelProvider{
 			"SpawnZ" => new IntTag("SpawnZ", 128),
 			"version" => new IntTag("version", 19133),
 			"DayTime" => new IntTag("DayTime", 0),
-			"LastPlayed" => new Long("LastPlayed", microtime(true) * 1000),
-			"RandomSeed" => new Long("RandomSeed", $seed),
-			"SizeOnDisk" => new Long("SizeOnDisk", 0),
-			"Time" => new Long("Time", 0),
+			"LastPlayed" => new LongTag("LastPlayed", microtime(true) * 1000),
+			"RandomSeed" => new LongTag("RandomSeed", $seed),
+			"SizeOnDisk" => new LongTag("SizeOnDisk", 0),
+			"Time" => new LongTag("Time", 0),
 			"generatorName" => new StringTag("generatorName", Generator::getGeneratorName($generator)),
 			"generatorOptions" => new StringTag("generatorOptions", isset($options["preset"]) ? $options["preset"] : ""),
 			"LevelName" => new StringTag("LevelName", $name),
-			"GameRules" => new Compound("GameRules", [])
+			"GameRules" => new CompoundTag("GameRules", [])
 		]);
 		$nbt = new NBT(NBT::LITTLE_ENDIAN);
 		$nbt->setData($levelData);
@@ -214,7 +214,7 @@ class LevelDB extends BaseLevelProvider{
 		}
 
 		$this->level->timings->syncChunkLoadDataTimer->startTiming();
-		$chunk = $this->readChunk($chunkX, $chunkZ, $create);
+		$chunk = $this->readChunk($chunkX, $chunkZ);
 		if($chunk === null and $create){
 			$chunk = Chunk::getEmptyChunk($chunkX, $chunkZ, $this);
 		}

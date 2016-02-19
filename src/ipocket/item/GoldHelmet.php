@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -25,5 +25,9 @@ namespace ipocket\item;
 class GoldHelmet extends Armor{
 	public function __construct($meta = 0, $count = 1){
 		parent::__construct(self::GOLD_HELMET, $meta, $count, "Gold Helmet");
+	}
+
+	public function isHelmet(){
+		return true;
 	}
 }

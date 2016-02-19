@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -29,7 +29,7 @@ use ipocket\Server;
 
 abstract class Crops extends Flowable{
 
-	public function canBeActivated(){
+	public function canBeActivated() : bool {
 		return true;
 	}
 

@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -24,8 +24,8 @@ namespace ipocket\block;
 use ipocket\item\Item;
 use ipocket\item\Tool;
 use ipocket\nbt\NBT;
-use ipocket\nbt\tag\Compound;
-use ipocket\nbt\tag\Enum;
+use ipocket\nbt\tag\CompoundTag;
+use ipocket\nbt\tag\EnumTag;
 use ipocket\nbt\tag\IntTag;
 use ipocket\nbt\tag\StringTag;
 use ipocket\Player;
@@ -40,15 +40,15 @@ class BurningFurnace extends Solid{
 		$this->meta = $meta;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Burning Furnace";
 	}
 
-	public function canBeActivated(){
+	public function canBeActivated() : bool {
 		return true;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 3.5;
 	}
 
@@ -69,8 +69,8 @@ class BurningFurnace extends Solid{
 		];
 		$this->meta = $faces[$player instanceof Player ? $player->getDirection() : 0];
 		$this->getLevel()->setBlock($block, $this, true, true);
-		$nbt = new Compound("", [
-			new Enum("Items", []),
+		$nbt = new CompoundTag("", [
+			new EnumTag("Items", []),
 			new StringTag("id", Tile::FURNACE),
 			new IntTag("x", $this->x),
 			new IntTag("y", $this->y),
@@ -106,8 +106,8 @@ class BurningFurnace extends Solid{
 			if($t instanceof Furnace){
 				$furnace = $t;
 			}else{
-				$nbt = new Compound("", [
-					new Enum("Items", []),
+				$nbt = new CompoundTag("", [
+					new EnumTag("Items", []),
 					new StringTag("id", Tile::FURNACE),
 					new IntTag("x", $this->x),
 					new IntTag("y", $this->y),
@@ -133,9 +133,9 @@ class BurningFurnace extends Solid{
 		return true;
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array {
 		$drops = [];
-		if($item->isPickaxe() >= Tool::TIER_WOODEN){
+		if($item->isPickaxe() >= 1){
 			$drops[] = [Item::FURNACE, 0, 1];
 		}
 

@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -34,7 +34,7 @@ class SignPost extends Transparent{
 		$this->meta = $meta;
 	}
 
-	public function getHardness(){
+	public function getHardness() {
 		return 1;
 	}
 
@@ -42,7 +42,7 @@ class SignPost extends Transparent{
 		return false;
 	}
 
-	public function getName(){
+	public function getName() : string{
 		return "Sign Post";
 	}
 
@@ -88,12 +88,12 @@ class SignPost extends Transparent{
 	}
 
 	public function onBreak(Item $item){
-		$this->getLevel()->setBlock($this, new Air(), true, true);
+		$this->getLevel()->setBlock($this, new Air(), true, true, true);
 
 		return true;
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item) : array {
 		return [
 			[Item::SIGN, 0, 1],
 		];

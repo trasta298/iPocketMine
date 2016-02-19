@@ -1,5 +1,4 @@
 <?php
-
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
@@ -14,13 +13,11 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
-
 namespace ipocket\inventory;
-
 class StonecutterShapedRecipe extends ShapedRecipe{
 
 }
