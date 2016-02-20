@@ -2408,6 +2408,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$item = $this->inventory->getItem($packet->slot);
 				$this->inventory->setHeldItemSlot($packet->selectedSlot);
 
+				if($packet->selectedSlot >= 0 and $packet->selectedSlot < $this->inventory->getHotbarSize()){
+					$this->inventory->setHeldItemIndex($packet->selectedSlot);
+					$this->inventory->setHeldItemSlot($slot);
+				}else{
+					$this->inventory->sendContents($this);
+					break;
+				}
 				$this->inventory->sendHeldItem($this->hasSpawned);
 
 				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
@@ -2421,7 +2428,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				$this->craftingType = 0;
 
-				if($packet->face >= 0 and $packet->face <= 5){ //blockを使った時
+				if($packet->face >= 0 and $packet->face <= 5){ //Use Block, place
 					$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
 
 					if(!$this->canInteract($blockVector->add(0.5, 0.5, 0.5), 13) or $this->isSpectator()){
@@ -2456,14 +2463,27 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$this->level->sendBlocks([$this], [$target, $block], UpdateBlockPacket::FLAG_ALL_PRIORITY);
 					break;
 				}elseif($packet->face === 0xff){
-					if($this->isSpectator()) break;//Spectatorモードの場合は以下の処理はしない
+					if($this->isSpectator()) break;
 
 					$aimPos = (new Vector3($packet->x / 32768, $packet->y / 32768, $packet->z / 32768))->normalize();
 
-					$item = $this->inventory->getItemInHand();
+					if($this->isCreative()){
+						$item = $this->inventory->getItemInHand();
+					}elseif(!$this->inventory->getItemInHand()->deepEquals($packet->item)){
+						$this->inventory->sendHeldItem($this);
+						break;
+					}else{
+						$item = $this->inventory->getItemInHand();
+					}
 
 					$ev = new PlayerInteractEvent($this, $item, $aimPos, $packet->face, PlayerInteractEvent::RIGHT_CLICK_AIR);
+
 					$this->server->getPluginManager()->callEvent($ev);
+
+					if($ev->isCancelled()){
+						$this->inventory->sendHeldItem($this);
+						break;
+					}
 
 					if($item->getId() === Item::FISHING_ROD){
 						if($this->fishingHook instanceof FishingHook){
@@ -2486,12 +2506,14 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 									new FloatTag("", $this->pitch)
 								])
 							]);
+
+							$f = 0.6;
 							$this->fishingHook = new FishingHook($this->chunk, $nbt, $this);
-							$this->fishingHook->setMotion($this->fishingHook->getMotion()->multiply(0.6));
+							$this->fishingHook->setMotion($this->fishingHook->getMotion()->multiply($f));
 							//$this->fishingHook->owner = $this;
 							$this->fishingHook->spawnToAll();
 						}
-					}else
+					}
 
 					if($item->getId() === Item::SNOWBALL){
 						$nbt = new CompoundTag("", [
@@ -2501,6 +2523,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 								new DoubleTag("", $this->z)
 							]),
 							"Motion" => new EnumTag("Motion", [
+								/*new DoubleTag("", $aimPos->x),
+								new DoubleTag("", $aimPos->y),
+								new DoubleTag("", $aimPos->z)*/
+								//TODO: remove this because of a broken client
 								new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
 								new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
 								new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
@@ -2510,8 +2536,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 								new FloatTag("", $this->pitch)
 							]),
 						]);
+
+						$f = 1.5;
 						$snowball = Entity::createEntity("Snowball", $this->chunk, $nbt, $this);
-						$snowball->setMotion($snowball->getMotion()->multiply(1.5));
+						$snowball->setMotion($snowball->getMotion()->multiply($f));
 						if($this->isSurvival()){
 							$item->setCount($item->getCount() - 1);
 							$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
@@ -2527,7 +2555,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						}else{
 							$snowball->spawnToAll();
 						}
-					}else
+					}
 
 					if($item->getId() === Item::EGG){
 						$nbt = new CompoundTag("", [
@@ -2546,8 +2574,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 								new FloatTag("", $this->pitch)
 							]),
 						]);
+
+						$f = 1.5;
 						$egg = Entity::createEntity("Egg", $this->chunk, $nbt, $this);
-						$egg->setMotion($egg->getMotion()->multiply(1.5));
+						$egg->setMotion($egg->getMotion()->multiply($f));
 						if($this->isSurvival()){
 							$item->setCount($item->getCount() - 1);
 							$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
@@ -2563,7 +2593,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						}else{
 							$egg->spawnToAll();
 						}
-					}else
+					}
 
 					if($item->getId() == Item::ENCHANTING_BOTTLE){
 						$nbt = new CompoundTag("", [
@@ -2582,8 +2612,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 								new FloatTag("", $this->pitch)
 							]),
 						]);
+
+						$f = 1.1;
 						$thrownExpBottle = new ThrownExpBottle($this->chunk, $nbt, $this);
-						$thrownExpBottle->setMotion($thrownExpBottle->getMotion()->multiply(1.1));
+						$thrownExpBottle->setMotion($thrownExpBottle->getMotion()->multiply($f));
 						if($this->isSurvival()){
 							$item->setCount($item->getCount() - 1);
 							$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
@@ -2599,7 +2631,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						}else{
 							$thrownExpBottle->spawnToAll();
 						}
-					}else
+					}
 
 					if($item->getId() == Item::SPLASH_POTION){
 						$nbt = new CompoundTag("", [
@@ -2619,8 +2651,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 							]),
 							"PotionId" => new ShortTag("PotionId", $item->getDamage()),
 						]);
+
+						$f = 1.1;
 						$thrownPotion = new ThrownPotion($this->chunk, $nbt, $this);
-						$thrownPotion->setMotion($thrownPotion->getMotion()->multiply(1.1));
+						$thrownPotion->setMotion($thrownPotion->getMotion()->multiply($f));
 						if($this->isSurvival()){
 							$item->setCount($item->getCount() - 1);
 							$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
