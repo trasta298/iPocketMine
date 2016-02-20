@@ -90,7 +90,7 @@ class Sapling extends Flowable{
 			if($this->getSide(0)->isTransparent() === true){
 				$this->getLevel()->useBreakOn($this);
 				$particle = new ipocket\level\particle\DestroyBlockParticle($this, $this);
-				$this->getLevel()->addParticle($particle);
+				$this->addParticle($particle);
 
 				return Level::BLOCK_UPDATE_NORMAL;
 			}

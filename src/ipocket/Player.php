@@ -2413,26 +2413,47 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
 				break;
 			case ProtocolInfo::USE_ITEM_PACKET:
+				if($this->spawned === false or !$this->isAlive() or $this->blocked){
+					break;
+				}
+
 				$blockVector = new Vector3($packet->x, $packet->y, $packet->z);
 
 				$this->craftingType = 0;
 
 				if($packet->face >= 0 and $packet->face <= 5){ //blockを使った時
-					if($this->canInteract($blockVector->add(0.5, 0.5, 0.5), 13) or !$this->isSpectator()){
+					$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
+
+					if(!$this->canInteract($blockVector->add(0.5, 0.5, 0.5), 13) or $this->isSpectator()){
+
+					}elseif($this->isCreative()){
 						$item = $this->inventory->getItemInHand();
-						$this->level->useItemOn($blockVector, $item, $packet->face, $packet->fx, $packet->fy, $packet->fz, $this);
-					}
-
-					if($item->getID() != Item::AIR){
+						if($this->level->useItemOn($blockVector, $item, $packet->face, $packet->fx, $packet->fy, $packet->fz, $this) === true){
+							break;
+						}
+					}elseif(!$this->inventory->getItemInHand()->deepEquals($packet->item)){
 						$this->inventory->sendHeldItem($this);
+					}else{
+						$item = $this->inventory->getItemInHand();
+						$oldItem = clone $item;
+						if($this->level->useItemOn($blockVector, $item, $packet->face, $packet->fx, $packet->fy, $packet->fz, $this)){
+							if(!$item->deepEquals($oldItem) or $item->getCount() !== $oldItem->getCount()){
+								$this->inventory->setItemInHand($item);
+								$this->inventory->sendHeldItem($this->hasSpawned);
+							}
+							break;
+						}
 					}
 
+					$this->inventory->sendHeldItem($this);
+
+					if($blockVector->distanceSquared($this) > 10000){
+						break;
+					}
 					$target = $this->level->getBlock($blockVector);
 					$block = $target->getSide($packet->face);
 
 					$this->level->sendBlocks([$this], [$target, $block], UpdateBlockPacket::FLAG_ALL_PRIORITY);
-
-					$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
 					break;
 				}elseif($packet->face === 0xff){
 					if($this->isSpectator()) break;//Spectatorモードの場合は以下の処理はしない

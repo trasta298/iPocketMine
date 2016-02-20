@@ -24,7 +24,7 @@ class WallSign extends SignPost{
 				if ($this->getSide($faces[$this->meta])->getId() === self::AIR) {
 					$this->getLevel()->useBreakOn($this);
 				$particle = new ipocket\level\particle\DestroyBlockParticle($this, $this);
-				$this->getLevel()->addParticle($particle);
+				$this->addParticle($particle);
 				}
 				return Level::BLOCK_UPDATE_NORMAL;
 			}
