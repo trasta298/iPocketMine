@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -57,11 +57,11 @@ class Installer{
 		echo "[*] " . $this->lang->language_has_been_selected . "\n";
 
 		if(!$this->showLicense()){
-			\ipocket\kill(getmypid());
+			\iPocket\kill(getmypid());
 			exit(-1);
 		}
 
-		echo "[?] " . $this->lang->skip_installer . " (y/N): ";
+		echo "[?] " . $this->lang->skip_installer . " (y: yes/n: no): ";
 		if(strtolower($this->getInput()) === "y"){
 			return;
 		}
@@ -75,7 +75,7 @@ class Installer{
 		$this->endWizard();
 	}
 
-	private function showLicense(){
+	private function showLicense() : bool{
 		echo $this->lang->welcome_to_ipocket . "\n";
 		echo <<<LICENSE
 
@@ -84,11 +84,16 @@ class Installer{
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
+  -----日本語訳-----
+  このプログラムは無料のソフトウェアです。あなたはこれを再配布および/または変更することができます。
+  GNU劣等一般公衆利用許諾契約書の条件の下で、公開されています。
+  フリーソフトウェア財団、ライセンスのいずれかのバージョン3、または
+  それ以降のバージョンが適応されます。（それを決めるのはオプションで）
+
 LICENSE;
-		echo "\n[?] " . $this->lang->accept_license . " (y/N): ";
+		echo "\n[?] " . $this->lang->accept_license . " (y: yes/n: no): ";
 		if(strtolower($this->getInput("n")) != "y"){
 			echo "[!] " . $this->lang->you_have_to_accept_the_license . "\n";
-			sleep(5);
 
 			return false;
 		}
@@ -104,7 +109,7 @@ LICENSE;
 	}
 
 	private function generateBaseConfig(){
-		$config = new Config(\ipocket\DATA . "server.properties", Config::PROPERTIES);
+		$config = new Config(\iPocket\DATA . "server.properties", Config::PROPERTIES);
 		echo "[?] " . $this->lang->name_your_server . " (" . self::DEFAULT_NAME . "): ";
 		$config->set("server-name", $this->getInput(self::DEFAULT_NAME));
 		echo "[*] " . $this->lang->port_warning . "\n";
@@ -116,9 +121,6 @@ LICENSE;
 			}
 		}while($port <= 0 or $port > 65535);
 		$config->set("server-port", $port);
-		/*echo "[*] " . $this->lang->ram_warning . "\n";
-		echo "[?] " . $this->lang->server_ram . " (" . self::DEFAULT_MEMORY . "): ";
-		$config->set("memory-limit", ((int) $this->getInput(self::DEFAULT_MEMORY)) . "M");*/
 		echo "[*] " . $this->lang->gamemode_info . "\n";
 		do{
 			echo "[?] " . $this->lang->default_gamemode . ": (" . self::DEFAULT_GAMEMODE . "): ";
@@ -144,13 +146,13 @@ LICENSE;
 		if($op === ""){
 			echo "[!] " . $this->lang->op_warning . "\n";
 		}else{
-			$ops = new Config(\ipocket\DATA . "ops.txt", Config::ENUM);
+			$ops = new Config(\iPocket\DATA . "ops.txt", Config::ENUM);
 			$ops->set($op, true);
 			$ops->save();
 		}
 		echo "[*] " . $this->lang->whitelist_info . "\n";
-		echo "[?] " . $this->lang->whitelist_enable . " (y/N): ";
-		$config = new Config(\ipocket\DATA . "server.properties", Config::PROPERTIES);
+		echo "[?] " . $this->lang->whitelist_enable . " (y: yes/n: no): ";
+		$config = new Config(\iPocket\DATA . "server.properties", Config::PROPERTIES);
 		if(strtolower($this->getInput("n")) === "y"){
 			echo "[!] " . $this->lang->whitelist_warning . "\n";
 			$config->set("white-list", true);
@@ -161,10 +163,10 @@ LICENSE;
 	}
 
 	private function networkFunctions(){
-		$config = new Config(\ipocket\DATA . "server.properties", Config::PROPERTIES);
+		$config = new Config(\iPocket\DATA . "server.properties", Config::PROPERTIES);
 		echo "[!] " . $this->lang->query_warning1 . "\n";
 		echo "[!] " . $this->lang->query_warning2 . "\n";
-		echo "[?] " . $this->lang->query_disable . " (y/N): ";
+		echo "[?] " . $this->lang->query_disable . " (y: yes/n: no): ";
 		if(strtolower($this->getInput("n")) === "y"){
 			$config->set("enable-query", false);
 		}else{
@@ -172,7 +174,7 @@ LICENSE;
 		}
 
 		echo "[*] " . $this->lang->rcon_info . "\n";
-		echo "[?] " . $this->lang->rcon_enable . " (y/N): ";
+		echo "[?] " . $this->lang->rcon_enable . " (y: yes/n: no): ";
 		if(strtolower($this->getInput("n")) === "y"){
 			$config->set("enable-rcon", true);
 			$password = substr(base64_encode(@Utils::getRandomBytes(20, false)), 3, 10);
@@ -183,7 +185,7 @@ LICENSE;
 		}
 
 		/*echo "[*] " . $this->lang->usage_info . "\n";
-		echo "[?] " . $this->lang->usage_disable . " (y/N): ";
+		echo "[?] " . $this->lang->usage_disable . " (y: yes/n: no): ";
 		if(strtolower($this->getInput("n")) === "y"){
 			$config->set("send-usage", false);
 		}else{
@@ -206,7 +208,6 @@ LICENSE;
 		echo "[*] " . $this->lang->you_have_finished . "\n";
 		echo "[*] " . $this->lang->ipocket_plugins . "\n";
 		echo "[*] " . $this->lang->ipocket_will_start . "\n\n\n";
-		sleep(4);
 	}
 
 	private function getInput($default = ""){

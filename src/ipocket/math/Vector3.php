@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -40,47 +40,47 @@ class Vector3{
 		$this->z = $z;
 	}
 
-	public function getX(){
+	public function getX() : int{
 		return $this->x;
 	}
 
-	public function getY(){
+	public function getY() : int{
 		return $this->y;
 	}
 
-	public function getZ(){
+	public function getZ() : int{
 		return $this->z;
 	}
 
-	public function getFloorX(){
+	public function getFloorX() : int{
 		return (int) floor($this->x);
 	}
 
-	public function getFloorY(){
+	public function getFloorY() : int{
 		return (int) floor($this->y);
 	}
 
-	public function getFloorZ(){
+	public function getFloorZ() : int{
 		return (int) floor($this->z);
 	}
 
-	public function getRight(){
+	public function getRight() : int{
 		return $this->x;
 	}
 
-	public function getUp(){
+	public function getUp() : int{
 		return $this->y;
 	}
 
-	public function getForward(){
+	public function getForward() : int{
 		return $this->z;
 	}
 
-	public function getSouth(){
+	public function getSouth() : int{
 		return $this->x;
 	}
 
-	public function getWest(){
+	public function getWest() : int{
 		return $this->z;
 	}
 
@@ -226,7 +226,7 @@ class Vector3{
 		);
 	}
 
-	public function equals(Vector3 $v){
+	public function equals(Vector3 $v) : bool{
 		return $this->x == $v->x and $this->y == $v->y and $this->z == $v->z;
 	}
 

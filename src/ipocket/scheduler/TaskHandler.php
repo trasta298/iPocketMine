@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -60,7 +60,7 @@ class TaskHandler{
 		$this->taskId = $taskId;
 		$this->delay = $delay;
 		$this->period = $period;
-		$this->timingName = $timingName === null ? "Unknown" : $timingName;
+		$this->timingName = $timingName ?? "Unknown";
 		$this->timings = Timings::getPluginTaskTimings($this, $period);
 	}
 

@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -35,8 +35,8 @@ class AsyncWorker extends Worker{
 
 	public function run(){
 		$this->registerClassLoader();
-		gc_enable();
 		ini_set("memory_limit", -1);
+		gc_enable();
 
 		global $store;
 		$store = [];
@@ -46,7 +46,7 @@ class AsyncWorker extends Worker{
 		$this->logger->logException($e);
 	}
 
-	public function getThreadName(){
+	public function getThreadName() : string{
 		return "Asynchronous Worker #" . $this->id;
 	}
 }

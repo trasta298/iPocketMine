@@ -28,15 +28,14 @@ class DServerTask extends AsyncTask{
 	}
 
 
-	public function getInfo($ds, $time = 1){
+	public function getInfo($ds, $time = 1) : array{
 		$tmp = explode(":", $ds);
 		$ip = $tmp[0];
 		$port = $tmp[1];
-		$client = stream_socket_client("udp://" . $ip . ":" . $port, $errno, $errstr);    //非阻塞Socket
+		$client = stream_socket_client("udp://" . $ip . ":" . $port, $errno, $errstr);
 		if($client){
 			stream_set_timeout($client, 1);
-			$Handshake_to = "\xFE\xFD" . chr(9) . pack("N", 233);
-			fwrite($client, $Handshake_to);
+			fwrite($client, "\xFE\xFD" . chr(9) . pack("N", 233));
 			$Handshake_re_1 = fread($client, 65535);
 			if($Handshake_re_1 != ""){
 				$Handshake_re = $this->decode($Handshake_re_1);
@@ -53,7 +52,9 @@ class DServerTask extends AsyncTask{
 		}
 		if($time < $this->autotimes){
 			return $this->getInfo($ds, $time + 1);
-		}elseif($time = $this->autotimes) return [0, 0];
+		}elseif($time = $this->autotimes){
+			return [0, 0];
+		}
 		return [0, 0];
 	}
 
@@ -64,7 +65,7 @@ class DServerTask extends AsyncTask{
 		//$server->getNetwork()->updateName();
 	}
 
-	public function decode($buffer){
+	public function decode($buffer) : array{
 		$redata = [];
 		$redata["packetType"] = ord($buffer{0});
 		$redata["sessionID"] = unpack("N", substr($buffer, 1, 4))[1];

@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -83,7 +83,7 @@ abstract class BaseInventory implements Inventory{
 		$this->slots = [];
 	}
 
-	public function getSize(){
+	public function getSize() : int{
 		return $this->size;
 	}
 
@@ -107,7 +107,7 @@ abstract class BaseInventory implements Inventory{
 		return isset($this->slots[$index]) ? clone $this->slots[$index] : Item::get(Item::AIR, null, 0);
 	}
 
-	public function getContents(){
+	public function getContents() : array{
 		return $this->slots;
 	}
 
@@ -221,7 +221,7 @@ abstract class BaseInventory implements Inventory{
 		return -1;
 	}
 
-	public function canAddItem(Item $item){
+	public function canAddItem(Item $item) : bool{
 		$item = clone $item;
 		$checkDamage = $item->getDamage() === null ? false : true;
 		$checkTags = $item->getCompoundTag() === null ? false : true;
@@ -444,22 +444,18 @@ abstract class BaseInventory implements Inventory{
 	 * @param Player|Player[] $target
 	 */
 	public function sendSlot($index, $target){
-		if($target instanceof Player){
-			$target = [$target];
-		}
-
 		$pk = new ContainerSetSlotPacket();
 		$pk->slot = $index;
 		$pk->item = clone $this->getItem($index);
 
-		foreach($target as $player){
+		/*foreach($target as $player){
 			if(($id = $player->getWindowId($this)) === -1){
 				$this->close($player);
 				continue;
-			}
+			}*/
 			$pk->windowid = $id;
 			$player->dataPacket($pk);
-		}
+		//}
 	}
 
 	public function getType(){

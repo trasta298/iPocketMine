@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -44,7 +44,7 @@ class McRegion extends BaseLevelProvider{
 	/** @var Chunk[] */
 	protected $chunks = [];
 
-	public static function getProviderName(){
+	public static function getProviderName() : string{
 		return "mcregion";
 	}
 
@@ -52,7 +52,7 @@ class McRegion extends BaseLevelProvider{
 		return self::ORDER_ZXY;
 	}
 
-	public static function usesChunkSection(){
+	public static function usesChunkSection() : bool{
 		return false;
 	}
 
@@ -170,7 +170,7 @@ class McRegion extends BaseLevelProvider{
 		return $this->levelData["generatorName"];
 	}
 
-	public function getGeneratorOptions(){
+	public function getGeneratorOptions() : array{
 		return ["preset" => $this->levelData["generatorOptions"]];
 	}
 
@@ -178,7 +178,7 @@ class McRegion extends BaseLevelProvider{
 		return $this->chunks;
 	}
 
-	public function isChunkLoaded($x, $z){
+	public function isChunkLoaded($x, $z) : bool{
 		return isset($this->chunks[Level::chunkHash($x, $z)]);
 	}
 
@@ -225,7 +225,7 @@ class McRegion extends BaseLevelProvider{
 		return Chunk::getEmptyChunk($chunkX, $chunkZ, $this);
 	}
 
-	public function unloadChunk($x, $z, $safe = true){
+	public function unloadChunk($x, $z, $safe = true) : bool{
 		$chunk = isset($this->chunks[$index = Level::chunkHash($x, $z)]) ? $this->chunks[$index] : null;
 		if($chunk instanceof FullChunk and $chunk->unload(false, $safe)){
 			unset($this->chunks[$index]);
@@ -298,7 +298,7 @@ class McRegion extends BaseLevelProvider{
 		return null;
 	}
 
-	public function isChunkGenerated($chunkX, $chunkZ){
+	public function isChunkGenerated($chunkX, $chunkZ) : bool{
 		if(($region = $this->getRegion($chunkX >> 5, $chunkZ >> 5)) !== null){
 			return $region->chunkExists($chunkX - $region->getX() * 32, $chunkZ - $region->getZ() * 32) and $this->getChunk($chunkX - $region->getX() * 32, $chunkZ - $region->getZ() * 32, true)->isGenerated();
 		}

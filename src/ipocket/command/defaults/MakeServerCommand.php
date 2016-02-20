@@ -24,7 +24,7 @@ class MakeServerCommand extends VanillaCommand{
 		}
 
 		$server = $sender->getServer();
-		$pharPath = Server::getInstance()->getPluginPath().DIRECTORY_SEPARATOR . "iPocket-iTX" . DIRECTORY_SEPARATOR . $server->getName()."_".$server->getiPocketVersion().".phar";
+		$pharPath = Server::getInstance()->getPluginPath().DIRECTORY_SEPARATOR . "iPocket" . DIRECTORY_SEPARATOR . $server->getName()."_".$server->getiPocketVersion().".phar";
 		if(file_exists($pharPath)){
 			$sender->sendMessage("Phar file already exists, overwriting...");
 			@unlink($pharPath);
@@ -35,14 +35,13 @@ class MakeServerCommand extends VanillaCommand{
 			"version" => $server->getiPocketVersion(),
 			"api" => $server->getApiVersion(),
 			"minecraft" => $server->getVersion(),
-			"protocol" => Info::CURRENT_PROTOCOL,
-			"creationDate" => time()
+			"protocol" => Info::CURRENT_PROTOCOL
 		]);
 		$phar->setStub('<?php define("ipocket\\\\PATH", "phar://". __FILE__ ."/"); require_once("phar://". __FILE__ ."/src/ipocket/iPocket.php");  __HALT_COMPILER();');
 		$phar->setSignatureAlgorithm(\Phar::SHA1);
 		$phar->startBuffering();
 
-		$filePath = substr(\ipocket\PATH, 0, 7) === "phar://" ? \ipocket\PATH : realpath(\ipocket\PATH) . "/";
+		$filePath = substr(\iPocket\PATH, 0, 7) === "phar://" ? \iPocket\PATH : realpath(\iPocket\PATH) . "/";
 		$filePath = rtrim(str_replace("\\", "/", $filePath), "/") . "/";
 		foreach(new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($filePath . "src")) as $file){
 			$path = ltrim(str_replace(["\\", $filePath], ["/", ""], $file), "/");
@@ -50,7 +49,7 @@ class MakeServerCommand extends VanillaCommand{
 				continue;
 			}
 			$phar->addFile($file, $path);
-			$sender->sendMessage("[iPocket-iTX] Adding $path");
+			$sender->sendMessage("[iPocket] Adding $path");
 		}
 		foreach($phar as $file => $finfo){
 			/** @var \PharFileInfo $finfo */
@@ -58,8 +57,8 @@ class MakeServerCommand extends VanillaCommand{
 				$finfo->compress(\Phar::GZ);
 			}
 		}
-		$phar->compressFiles(\Phar::GZ);
-		$phar->stopBuffering();
+		//$phar->compressFiles(\Phar::GZ);
+		//$phar->stopBuffering();
 
 		$sender->sendMessage($server->getName() . " " . $server->getiPocketVersion() . " Phar file has been created on ".$pharPath);
 

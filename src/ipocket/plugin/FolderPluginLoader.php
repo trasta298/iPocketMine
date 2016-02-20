@@ -1,4 +1,5 @@
 <?php
+
 namespace ipocket\plugin;
 
 use ipocket\event\plugin\PluginDisableEvent;
@@ -33,10 +34,10 @@ class FolderPluginLoader implements PluginLoader{
 	public function loadPlugin($file){
 		if(is_dir($file) and file_exists($file . "/plugin.yml") and file_exists($file . "/src/")){
 			if(($description = $this->getPluginDescription($file)) instanceof PluginDescription){
-				MainLogger::getLogger()->info(TextFormat::LIGHT_PURPLE."读取中... " . $description->getFullName());
+				MainLogger::getLogger()->info(TextFormat::LIGHT_PURPLE . "読込中... " . $description->getFullName());
 				$dataFolder = dirname($file) . DIRECTORY_SEPARATOR . $description->getName();
 				if(file_exists($dataFolder) and !is_dir($dataFolder)){
-					trigger_error("项目数据目录 '" . $dataFolder . "' 给 " . $description->getName() . " 已存在但不是一个目录", E_USER_WARNING);
+					trigger_error("プロジェクトのデータディレクトリ '" . $dataFolder . "' へ " . $description->getName() . " 読み込みができませんでした。", E_USER_WARNING);
 
 					return null;
 				}
@@ -51,7 +52,7 @@ class FolderPluginLoader implements PluginLoader{
 
 					return $plugin;
 				}else{
-					trigger_error("无法加载源码插件 " . $description->getName() . "：未找到主类", E_USER_WARNING);
+					trigger_error("ソースウィジェットをロードできませんでした。 " . $description->getName() . "： マスタークラスが見つかりません。", E_USER_WARNING);
 
 					return null;
 				}
@@ -84,7 +85,7 @@ class FolderPluginLoader implements PluginLoader{
 	 *
 	 * @return array
 	 */
-	public function getPluginFilters(){
+	public function getPluginFilters() : string{
 		return "/[^\\.]/";
 	}
 
@@ -104,7 +105,7 @@ class FolderPluginLoader implements PluginLoader{
 	 */
 	public function enablePlugin(Plugin $plugin){
 		if($plugin instanceof PluginBase and !$plugin->isEnabled()){
-			MainLogger::getLogger()->info("开启中... " . $plugin->getDescription()->getFullName());
+			MainLogger::getLogger()->info(TextFormat::LIGHT_PURPLE."有効化中... " . $plugin->getDescription()->getFullName());
 
 			$plugin->setEnabled(true);
 
@@ -117,7 +118,7 @@ class FolderPluginLoader implements PluginLoader{
 	 */
 	public function disablePlugin(Plugin $plugin){
 		if($plugin instanceof PluginBase and $plugin->isEnabled()){
-			MainLogger::getLogger()->info("关闭中... " . $plugin->getDescription()->getFullName());
+			MainLogger::getLogger()->info("無効化中... " . $plugin->getDescription()->getFullName());
 
 			Server::getInstance()->getPluginManager()->callEvent(new PluginDisableEvent($plugin));
 

@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -108,13 +108,7 @@ class Chunk extends BaseFullChunk{
 			unset($this->nbt->Biomes);
 		}
 
-		unset($this->nbt->Blocks);
-		unset($this->nbt->Data);
-		unset($this->nbt->SkyLight);
-		unset($this->nbt->BlockLight);
-		unset($this->nbt->BiomeColors);
-		unset($this->nbt->HeightMap);
-		unset($this->nbt->Biomes);
+		unset($this->nbt->Blocks, $this->nbt->Data, $this->nbt->SkyLight, $this->nbt->BlockLight, $this->nbt->BiomeColors, $this->nbt->HeightMap, $this->nbt->Biomes);
 	}
 
 	public function getBlockId($x, $y, $z){
@@ -198,7 +192,7 @@ class Chunk extends BaseFullChunk{
 		return $changed;
 	}
 
-	public function getBlockSkyLight($x, $y, $z){
+	public function getBlockSkyLight($x, $y, $z) : int{
 		$sl = ord($this->skyLight{($x << 10) | ($z << 6) | ($y >> 1)});
 		if(($y & 1) === 0){
 			return $sl & 0x0F;
@@ -322,7 +316,6 @@ class Chunk extends BaseFullChunk{
 	}
 
 	public static function fromFastBinary($data, LevelProvider $provider = null){
-
 		try{
 			$offset = 0;
 

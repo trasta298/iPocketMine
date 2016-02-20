@@ -14,7 +14,7 @@
  * (at your option) any later version.
  *
  * @author iPocket Team
- * @link http://ipocket.link/
+ * @link http://www.ipocket.net/
  *
  *
 */
@@ -108,7 +108,7 @@ class Config{
 	 *
 	 * @return bool
 	 */
-	public function load($file, $type = Config::DETECT, $default = []){
+	public function load($file, $type = Config::DETECT, $default = []) : bool{
 		$this->correct = true;
 		$this->type = (int) $type;
 		$this->file = $file;
@@ -170,7 +170,7 @@ class Config{
 	/**
 	 * @return boolean
 	 */
-	public function check(){
+	public function check() : bool{
 		return $this->correct === true;
 	}
 
@@ -179,7 +179,7 @@ class Config{
 	 *
 	 * @return boolean
 	 */
-	public function save($async = false){
+	public function save($async = false) : bool{
 		if($this->correct === true){
 			try{
 				$content = null;
@@ -243,7 +243,7 @@ class Config{
 	 *
 	 * @return boolean
 	 */
-	public function __isset($k){
+	public function __isset($k) : bool{
 		return $this->exists($k);
 	}
 
@@ -382,7 +382,7 @@ class Config{
 	 *
 	 * @return boolean
 	 */
-	public function exists($k, $lowercase = false){
+	public function exists($k, $lowercase = false) : bool{
 		if($lowercase === true){
 			$k = strtolower($k); //Convert requested  key to lower
 			$array = array_change_key_case($this->config, CASE_LOWER); //Change all keys in array to lower
@@ -404,7 +404,7 @@ class Config{
 	 *
 	 * @return array
 	 */
-	public function getAll($keys = false){
+	public function getAll($keys = false) : array{
 		return ($keys === true ? array_keys($this->config) : $this->config);
 	}
 
@@ -454,7 +454,7 @@ class Config{
 	/**
 	 * @return string
 	 */
-	private function writeProperties(){
+	private function writeProperties() : string{
 		$content = "#Properties Config file\r\n#" . date("D M j H:i:s T Y") . "\r\n";
 		foreach($this->config as $k => $v){
 			if(is_bool($v) === true){
