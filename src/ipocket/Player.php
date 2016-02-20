@@ -2405,16 +2405,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				break;
 			case ProtocolInfo::MOB_EQUIPMENT_PACKET:
-				$item = $this->inventory->getItem($packet->slot);
 				$this->inventory->setHeldItemSlot($packet->selectedSlot);
 
-				if($packet->selectedSlot >= 0 and $packet->selectedSlot < $this->inventory->getHotbarSize()){
-					$this->inventory->setHeldItemIndex($packet->selectedSlot);
-					$this->inventory->setHeldItemSlot($slot);
-				}else{
-					$this->inventory->sendContents($this);
-					break;
-				}
 				$this->inventory->sendHeldItem($this->hasSpawned);
 
 				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
@@ -2470,7 +2462,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					if($this->isCreative()){
 						$item = $this->inventory->getItemInHand();
 					}elseif(!$this->inventory->getItemInHand()->deepEquals($packet->item)){
-						$this->inventory->sendHeldItem($this);
 						break;
 					}else{
 						$item = $this->inventory->getItemInHand();
@@ -2481,7 +2472,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$this->server->getPluginManager()->callEvent($ev);
 
 					if($ev->isCancelled()){
-						$this->inventory->sendHeldItem($this);
 						break;
 					}
 
@@ -2884,22 +2874,19 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				break;
 
 			case ProtocolInfo::REMOVE_BLOCK_PACKET:
-				if(!$this->spawned or $this->blocked or !$this->isAlive()){
+				if($this->spawned === false or $this->blocked === true or !$this->isAlive()){
 					break;
 				}
 				$this->craftingType = 0;
 
 				$vector = new Vector3($packet->x, $packet->y, $packet->z);
 
-				$this->inventory->sendContents($this);
-				$target = $this->level->getBlock($vector);
 
-				$particle = new DestroyBlockParticle($vector, $target);
-				$this->level->addParticle($particle);
-
-				$vector = new Vector3($packet->x, $packet->y, $packet->z);
-
-				$item = $this->inventory->getItemInHand();
+				if($this->isCreative()){
+					$item = $this->inventory->getItemInHand();
+				}else{
+					$item = $this->inventory->getItemInHand();
+				}
 
 				$oldItem = clone $item;
 
@@ -2913,13 +2900,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					break;
 				}
 
+				$this->inventory->sendContents($this);
+				$target = $this->level->getBlock($vector);
 				$tile = $this->level->getTile($vector);
 
 				$this->level->sendBlocks([$this], [$target], UpdateBlockPacket::FLAG_ALL_PRIORITY);
 
-				if($item->getID() != Item::AIR){
-					$this->inventory->sendHeldItem($this);
-				}
+				$this->inventory->sendHeldItem($this);
 
 				if($tile instanceof Spawnable){
 					$tile->spawnTo($this);
