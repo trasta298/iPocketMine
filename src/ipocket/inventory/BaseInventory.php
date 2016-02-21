@@ -448,13 +448,22 @@ abstract class BaseInventory implements Inventory{
 		$pk->slot = $index;
 		$pk->item = clone $this->getItem($index);
 
-		foreach($target as $player){
+		if(is_array($target)){
+			foreach($target as $player){
+				if(($id = $player->getWindowId($this)) === -1){
+					$this->close($player);
+					continue;
+				}
+				$pk->windowid = $id;
+				$player->dataPacket($pk);
+			}
+		}elseif($target instanceof Player){
 			if(($id = $player->getWindowId($this)) === -1){
 				$this->close($player);
 				continue;
 			}
 			$pk->windowid = $id;
-			$player->dataPacket($pk);
+			$target->dataPacket($pk);
 		}
 	}
 
