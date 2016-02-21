@@ -460,7 +460,7 @@ abstract class BaseInventory implements Inventory{
 		}elseif($target instanceof Player){
 			if(($id = $target->getWindowId($this)) === -1){
 				$this->close($target);
-				continue;
+				break;
 			}
 			$pk->windowid = $id;
 			$target->dataPacket($pk);
